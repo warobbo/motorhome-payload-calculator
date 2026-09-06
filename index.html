@@ -324,6 +324,14 @@
     }
     .intro p { margin: 0; color: var(--muted); }
 
+    .how-to-use {
+      margin: 0 0 1.2rem;
+      max-width: 42rem;
+    }
+    .how-to-use h2 { margin-top: 0; }
+    .how-to-use ol { margin: 0; padding-left: 1.2rem; }
+    .how-to-use li { margin: 0.35rem 0; }
+
     .layout {
       display: grid;
       gap: 1rem;
@@ -876,6 +884,17 @@
       <h2>Is your 3.5t van actually legal once it’s loaded?</h2>
       <p>Built for UK Fiat Ducato and Peugeot Boxer campers. Add people, water, gas, batteries and kit — remaining payload updates as you type.</p>
     </div>
+
+    <section class="prose how-to-use" id="how-to-use">
+      <h2>How to use</h2>
+      <ol>
+        <li>Look up the UK registration if you can, then confirm MAM and axle ratings from the <a href="#weight-plate">weight plate or VIN plate</a> (driver’s door frame, under the bonnet, habitation door, or handbook).</li>
+        <li>Enter MIRO from the handbook, or better, a weighbridge ticket for the empty van.</li>
+        <li>Add the people travelling today, current tank levels, gas and the kit on board.</li>
+        <li>Watch remaining payload. Green is comfortable, amber is tight, red means you need to leave something behind.</li>
+        <li>Use “What if I empty the water?” to see the cheapest weight saving before a weighbridge.</li>
+      </ol>
+    </section>
 
     <div class="layout">
       <div>
@@ -1449,17 +1468,6 @@
       </ul>
     </section>
 
-    <section class="prose" id="how-to-use">
-      <h2>How to use</h2>
-      <ol>
-        <li>Look up the UK registration if you can, then confirm MAM and axle ratings from the <a href="#weight-plate">weight plate or VIN plate</a> (driver’s door frame, under the bonnet, habitation door, or handbook).</li>
-        <li>Enter MIRO from the handbook, or better, a weighbridge ticket for the empty van.</li>
-        <li>Add the people travelling today, current tank levels, gas and the kit on board.</li>
-        <li>Watch remaining payload. Green is comfortable, amber is tight, red means you need to leave something behind.</li>
-        <li>Use “What if I empty the water?” to see the cheapest weight saving before a weighbridge.</li>
-      </ol>
-    </section>
-
     <section class="prose" id="about">
       <h2>About</h2>
       <p>This free calculator is for UK motorhome owners — especially anyone on a 3.5-tonne Fiat Ducato or Peugeot Boxer — who wants a clear picture of payload before a trip. It runs entirely in your browser. The last figures you type are stored on this device only.</p>
@@ -1483,9 +1491,9 @@
     <div class="footer-inner">
       <p class="disclaimer"><strong>Disclaimer:</strong> This is an estimate only. Always verify with a calibrated weighbridge for legal compliance.</p>
       <nav class="footer-links" aria-label="Footer">
+        <a href="#how-to-use">How to use</a>
         <a href="#faq">FAQ</a>
         <a href="#weight-plate">Weight plate</a>
-        <a href="#how-to-use">How to use</a>
         <a href="#about">About</a>
         <a href="#privacy">Privacy</a>
       </nav>
