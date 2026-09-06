@@ -40,7 +40,7 @@ This is an **estimate**. Confirm on a calibrated weighbridge before you treat th
 
 ## Registration lookup
 
-The official DVLA Vehicle Enquiry API returns **make** and **revenue weight** (kg). It does **not** return MIRO or a guaranteed model. On Ducato / Boxer vans the revenue weight is usually the plated MAM; always confirm on the VIN plate.
+The official DVLA Vehicle Enquiry API returns **make** and **year**, plus **revenue weight** (kg). **Model** is not on the DVLA record, so the calculator infers it for common van platforms (Ducato, Boxer, Relay, Sprinter, and others). You can also type make, model and year and press **Look up make / model / year** to apply typical 3.5t MAM and MIRO figures.
 
 Without an API key, these demo plates work:
 

@@ -1,6 +1,6 @@
 "use strict";
 
-const { lookupVehicle } = require("../lib/vehicle-lookup");
+const { lookupVehicle, lookupByMakeModelYear } = require("../lib/vehicle-lookup");
 
 function send(res, status, body) {
   res.statusCode = status;
@@ -23,12 +23,18 @@ async function handleLookup(req, res) {
   }
 
   let vrm = "";
+  let make = "";
+  let model = "";
+  let year = "";
   let apiKey = req.headers["x-api-key"] || "";
   let motApiKey = req.headers["x-mot-api-key"] || "";
 
   if (req.method === "GET") {
     const url = new URL(req.url, "http://localhost");
     vrm = url.searchParams.get("vrm") || "";
+    make = url.searchParams.get("make") || "";
+    model = url.searchParams.get("model") || "";
+    year = url.searchParams.get("year") || "";
   } else if (req.method === "POST") {
     let body = {};
     if (req.body && typeof req.body === "object" && !Buffer.isBuffer(req.body)) {
@@ -45,6 +51,9 @@ async function handleLookup(req, res) {
       }
     }
     vrm = body.registrationNumber || body.vrm || "";
+    make = body.make || "";
+    model = body.model || "";
+    year = body.year || body.yearOfManufacture || "";
     apiKey = body.apiKey || apiKey;
     motApiKey = body.motApiKey || motApiKey;
   } else {
@@ -53,7 +62,11 @@ async function handleLookup(req, res) {
   }
 
   try {
-    const result = await lookupVehicle({ vrm, apiKey, motApiKey });
+    const result = vrm
+      ? await lookupVehicle({ vrm, apiKey, motApiKey })
+      : (make || model)
+        ? await lookupByMakeModelYear({ make, model, year })
+        : { ok: false, status: 400, error: "missing_query", message: "Enter a UK registration, or make, model and year." };
     send(res, result.status || (result.ok ? 200 : 400), result);
   } catch (err) {
     send(res, 500, {
