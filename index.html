@@ -158,6 +158,14 @@
               "@type": "Answer",
               "text": "Many Fiat Ducato and Peugeot Boxer conversions on a 3,500 kg chassis have 350–550 kg of payload. Premium or winterised vans can be lower. A chassis uprate (for example to 3,650 kg or 4,250 kg) only helps if the axles, brakes, tyres and driving licence also allow it."
             }
+          },
+          {
+            "@type": "Question",
+            "name": "Do I need a C1 licence for a 3.5t motorhome?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Not if the plated MAM is 3,500 kg or less — a category B car licence covers that. You need C1 if the van is plated over 3,500 kg. Drivers who passed their car test before 1 January 1997 often already have C1 as acquired rights."
+            }
           }
         ]
       }
@@ -777,6 +785,50 @@
       margin-top: 0.12rem;
     }
 
+    .explore {
+      margin-top: 1.6rem;
+    }
+    .explore > h3 {
+      font-family: var(--font);
+      font-size: 1.2rem;
+      letter-spacing: -0.02em;
+      margin: 0 0 0.7rem;
+      color: #1d2939;
+    }
+    .explore-card {
+      background: #fff;
+      border: 1px solid #e4e7ec;
+      border-radius: 14px;
+      padding: 0.95rem 1.05rem 0.4rem;
+    }
+    .explore-head {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 700;
+      color: #344054;
+      margin: 0 0 0.15rem;
+    }
+    .explore-head svg { flex: 0 0 auto; color: #2e90fa; }
+    .explore-links {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .explore-links a {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.78rem 0;
+      border-top: 1px solid #f2f4f7;
+      text-decoration: none;
+      color: #344054;
+      font-weight: 650;
+    }
+    .explore-links li:first-child a { border-top: 0; }
+    .explore-links a:hover { color: var(--pine); }
+    .explore-links .arrow { color: #98a2b3; font-size: 1.05rem; }
+
     /* Print */
     @media print {
       .site-header, .presets, .dock, .btn, .units, footer.site-footer .footer-links {
@@ -1285,19 +1337,27 @@
     <section class="prose" id="explain">
       <h2>MAM vs MIRO vs payload</h2>
       <div class="terms">
-        <article class="term">
-          <h3>MAM / GVM / MTPLM</h3>
-          <p>The legal maximum the motorhome may weigh on the road. It is on the VIN plate, usually 3,500 kg on UK Ducato and Boxer campers.</p>
+        <article class="term" id="mam-explained">
+          <h3>MAM explained</h3>
+          <p>Maximum Authorised Mass is the legal maximum the motorhome may weigh on the road. It is on the VIN plate, usually 3,500 kg on UK Ducato and Boxer campers.</p>
+        </article>
+        <article class="term" id="gvw-explained">
+          <h3>GVW explained</h3>
+          <p>Gross Vehicle Weight is the same ceiling as MAM. You may also see GVM or MTPLM. Whatever the label, it is the plated maximum — not an empty or typical touring weight.</p>
+        </article>
+        <article class="term" id="payload-explained">
+          <h3>Payload explained</h3>
+          <p>Everything else: extra people, water, waste, gas, food, bikes, dog, aftermarket batteries and solar. Payload = MAM − MIRO, before real-world extras eat it.</p>
         </article>
         <article class="term">
           <h3>MIRO / kerb / running order</h3>
           <p>The converter’s ready-to-drive weight. Typically driver + 90% fuel. Fresh water is usually empty. Treat brochure MIRO as optimistic until you weigh.</p>
         </article>
-        <article class="term">
-          <h3>Payload</h3>
-          <p>Everything else: extra people, water, waste, gas, food, bikes, dog, aftermarket batteries and solar. Payload = MAM − MIRO, before real-world extras eat it.</p>
-        </article>
       </div>
+
+      <h2 id="c1-licence">C1 licence explained</h2>
+      <p>A standard UK category B car licence covers motorhomes up to <strong>3,500 kg MAM</strong>. If the plated weight is higher — a chassis uprate to 3,650 kg, 4,250 kg or 5,000 kg — you normally need category <strong>C1</strong> (vehicles from 3,500 kg to 7,500 kg).</p>
+      <p>If you passed your car test <strong>before 1 January 1997</strong>, C1 is often already on your licence as acquired rights. After that date you usually need a C1 test, medical and the correct entitlement on your photocard. Matching tyres, brakes and speed limiter does not change the licence you need — the plated MAM does.</p>
 
       <h2 id="weight-plate">Where to find your weight plate, or VIN plate</h2>
       <p>Your motorhome’s weight plate is usually found in one of these places:</p>
@@ -1362,6 +1422,31 @@
         <summary>What is a realistic payload on a typical UK 3.5t conversion?</summary>
         <p>Many Fiat Ducato and Peugeot Boxer conversions on a 3,500 kg chassis have 350–550 kg of payload. Premium or winterised vans can be lower. A chassis uprate (for example to 3,650 kg or 4,250 kg) only helps if the axles, brakes, tyres and driving licence also allow it.</p>
       </details>
+      <details>
+        <summary>Do I need a C1 licence for a 3.5t motorhome?</summary>
+        <p>Not if the plated MAM is 3,500 kg or less — a category B car licence covers that. You need C1 if the van is plated over 3,500 kg. Drivers who passed their car test before 1 January 1997 often already have C1 as acquired rights.</p>
+      </details>
+
+      <div class="explore">
+        <h3>Learn more &amp; explore</h3>
+        <div class="explore-card">
+          <p class="explore-head">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15.5a.5.5 0 0 1-.5.5H6.5A2.5 2.5 0 0 0 4 21V5.5Z" stroke="currentColor" stroke-width="1.7"/>
+              <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3" stroke="currentColor" stroke-width="1.7"/>
+              <path d="M8 7h8M8 11h8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+            </svg>
+            Understand the numbers
+          </p>
+          <ul class="explore-links">
+            <li><a href="#gvw-explained"><span class="arrow" aria-hidden="true">→</span> GVW explained</a></li>
+            <li><a href="#c1-licence"><span class="arrow" aria-hidden="true">→</span> C1 licence explained</a></li>
+            <li><a href="#payload-explained"><span class="arrow" aria-hidden="true">→</span> Payload explained</a></li>
+            <li><a href="#mam-explained"><span class="arrow" aria-hidden="true">→</span> MAM explained</a></li>
+            <li><a href="#weight-plate"><span class="arrow" aria-hidden="true">→</span> Where to find your weight plate, or VIN plate</a></li>
+          </ul>
+        </div>
+      </div>
     </section>
 
     <section class="prose" id="how-to-use">
