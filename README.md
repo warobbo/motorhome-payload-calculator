@@ -2,7 +2,7 @@
 
 A free, mobile-first **UK motorhome / campervan payload calculator** for checking whether a loaded van stays under its legal MAM (especially 3.5-tonne Fiat Ducato and Peugeot Boxer conversions).
 
-The whole app is a single HTML file. There is no backend, no account, and no build step.
+The calculator is a single HTML page. Registration lookup uses a tiny `/api/vehicle-lookup` proxy so DVLA keys never sit in the browser.
 
 ## Open it
 
@@ -17,6 +17,7 @@ Then visit [http://localhost:4173](http://localhost:4173).
 
 ## What it does
 
+- UK registration lookup for make and plated revenue weight (often the MAM)
 - Live remaining-payload calculation as you type
 - Vehicle base (MAM, MIRO, optional weighbridge empty weight, axle ratings)
 - People, pets, water, diesel, gas bottles, batteries, solar and touring kit
@@ -37,6 +38,21 @@ Internal maths is always metric.
 
 This is an **estimate**. Confirm on a calibrated weighbridge before you treat the result as legal.
 
+## Registration lookup
+
+The official DVLA Vehicle Enquiry API returns **make** and **revenue weight** (kg). It does **not** return MIRO or a guaranteed model. On Ducato / Boxer vans the revenue weight is usually the plated MAM; always confirm on the VIN plate.
+
+Without an API key, these demo plates work:
+
+- `DEMO3500` — Fiat Ducato 3,500 kg
+- `BOXER35` — Peugeot Boxer 3,500 kg
+- `RELAY35` — Citroën Relay 3,500 kg
+- `SPRINT35` — Mercedes-Benz Sprinter 3,500 kg
+
+For live lookups, copy `.env.example` to `.env` and add a free key from the [DVLA developer portal](https://developer-portal.driver-vehicle-licensing.api.gov.uk/), or paste the key in the lookup panel. Restart `npm start` after changing `.env`.
+
+Optional `MOT_API_KEY` (DVSA MOT history trade API) fills the model when DVLA does not.
+
 ## Hosting
 
-Copy `index.html` to any static host. Replace the `https://www.example.com/` canonical, Open Graph and Twitter URLs (and `og:image`) with your real domain before publishing.
+Copy the project to any host that can run the Node server or Vercel’s `/api/vehicle-lookup` function. Replace the `https://www.example.com/` canonical, Open Graph and Twitter URLs (and `og:image`) with your real domain before publishing.

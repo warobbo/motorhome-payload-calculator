@@ -1,14 +1,26 @@
 #!/usr/bin/env node
 /**
- * Tiny static server for the payload calculator.
- * HTTP/1.1 on 0.0.0.0 so Cursor can port-forward Preview.
+ * Tiny static server for the payload calculator, plus /api/vehicle-lookup.
  */
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
+const handleLookup = require("./api/vehicle-lookup");
 
 const PORT = Number(process.env.PORT || 4173);
 const ROOT = __dirname;
+
+try {
+  const envFile = fs.readFileSync(path.join(ROOT, ".env"), "utf8");
+  envFile.split("\n").forEach(function (line) {
+    const match = line.match(/^([A-Z0-9_]+)=(.*)$/);
+    if (match && !process.env[match[1]]) {
+      process.env[match[1]] = match[2].trim().replace(/^["']|["']$/g, "");
+    }
+  });
+} catch (err) {
+  /* no .env file — demo plates still work */
+}
 
 const MIME = {
   ".html": "text/html; charset=utf-8",
@@ -22,6 +34,12 @@ const MIME = {
 
 const server = http.createServer((req, res) => {
   const urlPath = decodeURIComponent((req.url || "/").split("?")[0]);
+
+  if (urlPath === "/api/vehicle-lookup") {
+    handleLookup(req, res);
+    return;
+  }
+
   const requested = path.normalize(urlPath === "/" ? "/index.html" : urlPath);
   let filePath = path.join(ROOT, requested);
 
@@ -54,6 +72,6 @@ const server = http.createServer((req, res) => {
 
 server.listen(PORT, "0.0.0.0", () => {
   console.log("Motorhome Payload Calculator ready");
-  console.log(`  Local:   http://localhost:${PORT}/`);
-  console.log(`  Network: http://127.0.0.1:${PORT}/`);
+  console.log("  Local:   http://localhost:" + PORT + "/");
+  console.log("  Lookup:  POST /api/vehicle-lookup");
 });

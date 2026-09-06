@@ -64,7 +64,7 @@
           "Live MAM and remaining payload calculation",
           "Metric and imperial units",
           "People, fluids, gas, batteries, solar and gear breakdown",
-          "Typical UK 3.5t Ducato and Boxer presets",
+          "UK registration lookup for make and plated weight",
           "Local storage of last vehicle details"
         ],
         "audience": {
@@ -133,6 +133,14 @@
             "acceptedAnswer": {
               "@type": "Answer",
               "text": "This is an estimate. MIRO figures are often optimistic, converters vary, and household kit is easy to under-count. Use the calculator to see where weight is coming from, then confirm on a calibrated weighbridge — ideally per axle — before a trip. The printed results are not a legal document."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I look up my motorhome by registration?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Enter the UK number plate to pull make and the DVLA revenue weight, which is often the plated MAM on Ducato and Boxer vans. DVLA does not supply MIRO or a guaranteed model, so keep the handbook running-order weight and check the VIN plate. Demo plates such as DEMO3500 work without an API key; live lookups need a free DVLA Vehicle Enquiry key."
             }
           },
           {
@@ -675,6 +683,49 @@
       .dock { display: none; }
     }
 
+    .lookup {
+      background: var(--pine-soft);
+      border: 1px solid #c5ddd4;
+      border-radius: 14px;
+      padding: 0.85rem 0.9rem;
+      margin-bottom: 1rem;
+    }
+    .lookup-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.55rem;
+    }
+    @media (min-width: 560px) {
+      .lookup-row { grid-template-columns: 1fr auto; align-items: end; }
+    }
+    .vrm-input {
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-weight: 700;
+      font-size: 1.15rem;
+    }
+    .lookup-status {
+      min-height: 1.2em;
+      margin: 0.45rem 0 0;
+      font-size: 0.86rem;
+      color: var(--muted);
+    }
+    .lookup-status.ok { color: var(--ok); font-weight: 650; }
+    .lookup-status.err { color: var(--danger); font-weight: 650; }
+    .identity {
+      display: none;
+      margin-top: 0.7rem;
+      background: #fff;
+      border-radius: 12px;
+      padding: 0.7rem 0.8rem;
+      border: 1px solid var(--line);
+    }
+    .identity.show { display: block; }
+    .identity h4 { margin: 0 0 0.35rem; font-size: 1.02rem; }
+    .identity p { margin: 0; color: var(--muted); font-size: 0.86rem; }
+    .api-key-box { margin-top: 0.65rem; }
+    .api-key-box summary { cursor: pointer; font-size: 0.82rem; font-weight: 650; color: var(--pine); }
+
     /* Print */
     @media print {
       .site-header, .presets, .dock, .btn, .units, footer.site-footer .footer-links {
@@ -734,7 +785,42 @@
             </span>
           </summary>
           <div class="body">
-            <p class="lede">Start with the plated MAM and the handbook MIRO. If you have a weighbridge ticket for the empty van, use that instead — it is usually more honest.</p>
+            <p class="lede">Look up a UK registration, or type the plated MAM and handbook MIRO. If you have a weighbridge ticket for the empty van, use that instead — it is usually more honest.</p>
+            <div class="lookup">
+              <div class="lookup-row">
+                <div class="field">
+                  <span class="field-row">
+                    <label for="vrm">UK registration</label>
+                    <span class="tip" tabindex="0" data-tip="DVLA supplies make and revenue weight (often the MAM on vans). It does not supply MIRO or a guaranteed model. Try DEMO3500 without an API key.">?</span>
+                  </span>
+                  <input id="vrm" class="vrm-input" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="10" placeholder="e.g. WN67 DSO or DEMO3500" data-key="vrm">
+                </div>
+                <button type="button" class="btn btn-primary" id="lookupBtn">Look up vehicle</button>
+              </div>
+              <p class="lookup-status" id="lookupStatus" role="status" aria-live="polite">Try DEMO3500, BOXER35 or RELAY35 without an API key. Live DVLA lookup needs a free Vehicle Enquiry key.</p>
+              <div class="identity" id="identityCard">
+                <h4 id="identityTitle">Vehicle</h4>
+                <p id="identityMeta"></p>
+              </div>
+              <div class="grid-2" style="margin-top:0.7rem">
+                <div class="field">
+                  <label for="make">Make</label>
+                  <input id="make" type="text" data-key="make" placeholder="Fiat">
+                </div>
+                <div class="field">
+                  <label for="model">Model</label>
+                  <input id="model" type="text" data-key="model" placeholder="Ducato">
+                </div>
+              </div>
+              <details class="api-key-box">
+                <summary>Use my DVLA API key for live lookups</summary>
+                <div class="field" style="margin-top:0.5rem">
+                  <label for="dvlaApiKey">Vehicle Enquiry API key</label>
+                  <input id="dvlaApiKey" type="password" autocomplete="off" placeholder="Stored only in this browser">
+                  <span class="hint">Get a key from the <a href="https://developer-portal.driver-vehicle-licensing.api.gov.uk/" target="_blank" rel="noopener">DVLA developer portal</a>. It is sent only to this site’s lookup proxy, never stored on a server.</span>
+                </div>
+              </details>
+            </div>
             <div class="grid-2">
               <div class="field">
                 <span class="field-row">
@@ -1065,6 +1151,7 @@
       <!-- Results -->
       <aside class="results" id="results" aria-live="polite">
         <h2>Loaded weight vs MAM</h2>
+        <p class="note" id="vehicleSummary" hidden></p>
         <div class="remaining status-ok" id="remainingBox">
           <div class="label" id="remainingLabel">Remaining payload</div>
           <div class="value" id="remainingValue">—</div>
@@ -1150,6 +1237,10 @@
         <p>This is an estimate. MIRO figures are often optimistic, converters vary, and household kit is easy to under-count. Use the calculator to see where weight is coming from, then confirm on a calibrated weighbridge — ideally per axle — before a trip. The printed results are not a legal document.</p>
       </details>
       <details>
+        <summary>Can I look up my motorhome by registration?</summary>
+        <p>Yes. Enter the UK number plate to pull make and the DVLA revenue weight, which is often the plated MAM on Ducato and Boxer vans. DVLA does not supply MIRO or a guaranteed model, so keep the handbook running-order weight and check the VIN plate. Demo plates such as DEMO3500 work without an API key; live lookups need a free DVLA Vehicle Enquiry key.</p>
+      </details>
+      <details>
         <summary>What is a realistic payload on a typical UK 3.5t conversion?</summary>
         <p>Many Fiat Ducato and Peugeot Boxer conversions on a 3,500 kg chassis have 350–550 kg of payload. Premium or winterised vans can be lower. A chassis uprate (for example to 3,650 kg or 4,250 kg) only helps if the axles, brakes, tyres and driving licence also allow it.</p>
       </details>
@@ -1158,7 +1249,7 @@
     <section class="prose" id="how-to-use">
       <h2>How to use</h2>
       <ol>
-        <li>Read MAM and axle ratings from the VIN plate in the engine bay or on the door pillar.</li>
+        <li>Look up the UK registration if you can, then confirm MAM and axle ratings from the VIN plate in the engine bay or on the door pillar.</li>
         <li>Enter MIRO from the handbook, or better, a weighbridge ticket for the empty van.</li>
         <li>Add the people travelling today, current tank levels, gas and the kit on board.</li>
         <li>Watch remaining payload. Green is comfortable, amber is tight, red means you need to leave something behind.</li>
@@ -1173,7 +1264,7 @@
 
     <section class="prose" id="privacy">
       <h2>Privacy</h2>
-      <p>No account, no cookies for advertising, and no server. Vehicle details stay in your browser’s local storage so the form is still filled in next time. Clear site data in your browser to delete it. Replace the example.com canonical and Open Graph URLs if you host this page on your own domain.</p>
+      <p>No account and no advertising cookies. Calculator figures stay in this browser’s local storage. A registration lookup is sent only to this site’s proxy, which calls DVLA if you have supplied an API key. The key stays in this browser. Clear site data to delete it.</p>
     </section>
   </main>
 
@@ -1206,6 +1297,7 @@
     (function () {
       "use strict";
 
+      var KEY_STORAGE = "mh-payload-dvla-key";
       var STORAGE_KEY = "mh-payload-calc-v1";
       var KG_PER_LB = 0.45359237;
       var L_PER_UK_GAL = 4.54609;
@@ -1223,6 +1315,12 @@
         driverKg: 75,
         miroIncludesDriver: true,
         miroIncludesFuel: true,
+        vrm: "",
+        make: "",
+        model: "",
+        yearOfManufacture: "",
+        colour: "",
+        fuelType: "",
         extraAdults: 1,
         adultKg: 80,
         children: 0,
@@ -1434,6 +1532,8 @@
           state[key] = el.value === "" ? "" : storeWeight(el.value);
         } else if (kind === "volume") {
           state[key] = el.value === "" ? "" : storeVolume(el.value);
+        } else if (el.type === "text" || el.type === "password") {
+          state[key] = el.value;
         } else if (el.tagName === "SELECT") {
           state[key] = el.value;
         } else {
@@ -1587,6 +1687,102 @@
         document.getElementById("driverHint").textContent = usingActualEmpty()
           ? "Added because you entered a weighed empty van."
           : "Used only if MIRO does not include the driver, or you enter a weighed empty weight.";
+        updateIdentityCard();
+      }
+
+      function titleCase(value) {
+        if (!value) return "";
+        return String(value).toLowerCase().replace(/(^|[\s/-])([a-z])/g, function (_, a, b) {
+          return a + b.toUpperCase();
+        });
+      }
+
+      function updateIdentityCard() {
+        var card = document.getElementById("identityCard");
+        var title = document.getElementById("identityTitle");
+        var meta = document.getElementById("identityMeta");
+        var summary = document.getElementById("vehicleSummary");
+        var name = [titleCase(state.make), state.model].filter(Boolean).join(" ");
+        if (!name && !state.vrm) {
+          card.classList.remove("show");
+          summary.hidden = true;
+          return;
+        }
+        var bits = [];
+        if (state.vrm) bits.push(state.vrm);
+        if (state.yearOfManufacture) bits.push(String(state.yearOfManufacture));
+        if (state.colour) bits.push(titleCase(state.colour));
+        if (state.fuelType) bits.push(titleCase(state.fuelType));
+        title.textContent = name || state.vrm || "Looked-up vehicle";
+        meta.textContent = bits.join(" · ");
+        card.classList.add("show");
+        summary.hidden = !name;
+        summary.textContent = name ? (name + (state.vrm ? " · " + state.vrm : "")) : "";
+      }
+
+      function setLookupStatus(message, kind) {
+        var el = document.getElementById("lookupStatus");
+        el.textContent = message;
+        el.className = "lookup-status" + (kind ? " " + kind : "");
+      }
+
+      async function lookupRegistration() {
+        var btn = document.getElementById("lookupBtn");
+        var vrm = (state.vrm || document.getElementById("vrm").value || "").trim();
+        if (!vrm) {
+          setLookupStatus("Enter a UK registration first.", "err");
+          return;
+        }
+        btn.disabled = true;
+        setLookupStatus("Looking up " + vrm.toUpperCase().replace(/\s+/g, "") + "…");
+        var apiKey = "";
+        try { apiKey = localStorage.getItem(KEY_STORAGE) || ""; } catch (e) {}
+        apiKey = document.getElementById("dvlaApiKey").value || apiKey;
+        try {
+          var res = await fetch("/api/vehicle-lookup", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ registrationNumber: vrm, apiKey: apiKey })
+          });
+          var data = await res.json();
+          if (!data.ok || !data.vehicle) {
+            var extra = data.demoPlates && data.demoPlates.length
+              ? " Demo plates: " + data.demoPlates.join(", ") + "."
+              : "";
+            setLookupStatus((data.message || "Lookup failed.") + extra, "err");
+            return;
+          }
+          applyLookup(data.vehicle);
+        } catch (err) {
+          setLookupStatus("Lookup needs the site running over http (npm start). Demo plates still work on the server.", "err");
+        } finally {
+          btn.disabled = false;
+        }
+      }
+
+      function applyLookup(vehicle) {
+        state.vrm = vehicle.registrationNumber || state.vrm;
+        state.make = titleCase(vehicle.make || "");
+        state.model = vehicle.model || "";
+        state.yearOfManufacture = vehicle.yearOfManufacture || "";
+        state.colour = titleCase(vehicle.colour || "");
+        state.fuelType = vehicle.fuelType || "";
+        var notes = [];
+        if (vehicle.applyAsMam && vehicle.revenueWeight) {
+          state.mam = vehicle.revenueWeight;
+          notes.push("Revenue weight " + vehicle.revenueWeight + " kg applied as MAM.");
+        } else if (vehicle.revenueWeight) {
+          notes.push("DVLA revenue weight is " + vehicle.revenueWeight + " kg — check the VIN plate before using it as MAM.");
+        } else {
+          notes.push("No plated weight on the DVLA record. Enter MAM from the VIN plate.");
+        }
+        notes.push("DVLA does not supply MIRO — keep the handbook or weighbridge figure.");
+        if (vehicle.modelInferred) notes.push("Model is inferred from make for this van platform; edit it if the conversion badge is different.");
+        if (vehicle.source === "demo") notes.push("Demo record — not a live DVLA result.");
+        fillForm();
+        saveState();
+        calculate();
+        setLookupStatus(notes.join(" "), "ok");
       }
 
       function applyPreset(partial) {
@@ -1634,6 +1830,21 @@
       });
 
       document.getElementById("printResults").addEventListener("click", function () { window.print(); });
+
+      document.getElementById("lookupBtn").addEventListener("click", function () { lookupRegistration(); });
+      document.getElementById("vrm").addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          lookupRegistration();
+        }
+      });
+      document.getElementById("dvlaApiKey").addEventListener("change", function () {
+        try { localStorage.setItem(KEY_STORAGE, this.value.trim()); } catch (e) {}
+      });
+      try {
+        var savedKey = localStorage.getItem(KEY_STORAGE) || "";
+        if (savedKey) document.getElementById("dvlaApiKey").value = savedKey;
+      } catch (e) {}
 
       /* Collapse extra sections on small screens so the first inputs stay reachable. */
       if (window.matchMedia("(max-width: 979px)").matches) {
