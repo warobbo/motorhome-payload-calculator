@@ -1,0 +1,1650 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="theme-color" content="#1e4f43">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Payload Calc">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+  <title>Motorhome Payload Calculator | Free UK 3.5t Ducato &amp; Boxer Weight Checker</title>
+  <meta name="description" content="Free UK motorhome payload calculator for 3.5t Fiat Ducato and Peugeot Boxer vans. Instantly check MAM, MIRO, water, gas and gear so you stay legal.">
+  <meta name="keywords" content="motorhome payload calculator, campervan weight checker, Fiat Ducato 3.5t payload, Peugeot Boxer motorhome weight, MAM GVM MTPLM, MIRO kerb weight, UK motorhome legal weight, 3500kg campervan">
+  <meta name="author" content="Motorhome Payload Calculator">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://www.example.com/">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Motorhome Payload Calculator | Free UK 3.5t Ducato &amp; Boxer Weight Checker">
+  <meta property="og:description" content="Check whether your motorhome is over its legal MAM once loaded. Built for UK 3.5t Fiat Ducato and Peugeot Boxer campers.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.example.com/">
+  <meta property="og:image" content="https://www.example.com/og-image.png">
+  <meta property="og:image:alt" content="Motorhome payload calculator showing remaining payload for a 3.5-tonne UK campervan">
+  <meta property="og:locale" content="en_GB">
+  <meta property="og:site_name" content="Motorhome Payload Calculator">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Motorhome Payload Calculator | Free UK 3.5t Weight Checker">
+  <meta name="twitter:description" content="Free UK payload calculator for 3.5t Ducato and Boxer motorhomes. See remaining payload as you add people, water, gas and gear.">
+  <meta name="twitter:image" content="https://www.example.com/og-image.png">
+
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231e4f43'/%3E%3Cpath fill='%23f4ead8' d='M6 20h20v3H6zm2-7h16l3 7H5l3-7zm3 0V9h8v4'/%3E%3Ccircle cx='10' cy='24' r='2' fill='%23c4622d'/%3E%3Ccircle cx='22' cy='24' r='2' fill='%23c4622d'/%3E%3C/svg%3E">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&amp;family=Outfit:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "Motorhome Payload Calculator",
+        "alternateName": "UK Campervan Weight Checker",
+        "url": "https://www.example.com/",
+        "description": "Free UK motorhome payload calculator for 3.5t Fiat Ducato and Peugeot Boxer vans. Check MAM, MIRO, water, gas and gear so you stay legal.",
+        "applicationCategory": "UtilitiesApplication",
+        "operatingSystem": "Any",
+        "browserRequirements": "Requires JavaScript. Works in modern mobile and desktop browsers.",
+        "inLanguage": "en-GB",
+        "isAccessibleForFree": true,
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "GBP"
+        },
+        "featureList": [
+          "Live MAM and remaining payload calculation",
+          "Metric and imperial units",
+          "People, fluids, gas, batteries, solar and gear breakdown",
+          "Typical UK 3.5t Ducato and Boxer presets",
+          "Local storage of last vehicle details"
+        ],
+        "audience": {
+          "@type": "Audience",
+          "audienceType": "UK motorhome and campervan owners",
+          "geographicArea": {
+            "@type": "Country",
+            "name": "United Kingdom"
+          }
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is MAM, GVM and MTPLM?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "MAM (Maximum Authorised Mass), GVM (Gross Vehicle Mass) and MTPLM (Maximum Technically Permitted Laden Mass) are names for the same legal ceiling: the most the motorhome may weigh on the road, including people, fuel, water, gas and everything you have loaded. For most UK Ducato and Boxer campers this is 3,500 kg. Going over it is illegal."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is MIRO — and does it include fresh water?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "MIRO (Mass in Running Order) is the manufacturer’s ready-to-drive weight. Under current European rules it usually includes the driver (75 kg), oils, 90% fuel and standard tools. Fresh water is normally assumed empty on UK motorhomes, so a full tank is extra payload. Always check your handbook, because converters differ."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Why do so many 3.5-tonne Ducato and Boxer campers run out of payload?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "A typical conversion leaves only 300–500 kg after MIRO. Two adults, a full 90–120 L water tank, gas bottles, a leisure battery, an awning and two bikes can use that allowance before food, clothes or a dog are added. That is why 3.5 t vans feel tight and why a weighbridge visit is worthwhile."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does the driver count towards payload?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "If you are using the manufacturer MIRO figure, the driver is already included (usually at 75 kg). Extra adults, children and pets are additional. If you enter an actual weighbridge empty weight of the van only, add the driver as well as passengers."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How should I treat fuel, gas and water in this calculator?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Water weighs 1 kg per litre. Diesel is about 0.84 kg per litre. A 9 kg propane bottle weighs around 18–19 kg when full because of the steel cylinder. MIRO already assumes about 90% fuel, so this calculator only adds the difference from that assumption unless you are working from a weighed empty van."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is it illegal to drive a motorhome over its MAM?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Exceeding MAM can mean a roadside prohibition, a fine, points, and invalid insurance if you are involved in a collision. Overloaded axles are a separate offence even when the total is under MAM. There is no ‘small margin’ in law — stay under the plated figures."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How accurate is this calculator compared with a weighbridge?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "This is an estimate. MIRO figures are often optimistic, converters vary, and household kit is easy to under-count. Use the calculator to see where weight is coming from, then confirm on a calibrated weighbridge — ideally per axle — before a trip. The printed results are not a legal document."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is a realistic payload on a typical UK 3.5t conversion?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Many Fiat Ducato and Peugeot Boxer conversions on a 3,500 kg chassis have 350–550 kg of payload. Premium or winterised vans can be lower. A chassis uprate (for example to 3,650 kg or 4,250 kg) only helps if the axles, brakes, tyres and driving licence also allow it."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <style>
+    /* =========================================================================
+       Motorhome Payload Calculator — embedded styles
+       Mobile-first, high-contrast, print-friendly
+       ========================================================================= */
+    :root {
+      --bg: #efe6d6;
+      --bg-deep: #e2d4be;
+      --paper: #fffaf2;
+      --ink: #1a1612;
+      --muted: #5a5248;
+      --line: #d7cbb8;
+      --pine: #1e4f43;
+      --pine-2: #163a32;
+      --pine-soft: #e4f0eb;
+      --copper: #c4622d;
+      --copper-soft: #f8e6d9;
+      --ok: #157a4b;
+      --ok-bg: #e5f6ec;
+      --amber: #9a6700;
+      --amber-bg: #fff4d6;
+      --danger: #b42318;
+      --danger-bg: #fde8e6;
+      --shadow: 0 10px 30px rgba(26, 22, 18, 0.08);
+      --radius: 18px;
+      --font: "Outfit", system-ui, sans-serif;
+      --display: "Fraunces", Georgia, serif;
+      --sticky-header: 4.35rem;
+      --focus: 0 0 0 3px #fff, 0 0 0 6px var(--pine);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: var(--font);
+      color: var(--ink);
+      background:
+        radial-gradient(1200px 500px at 10% -10%, #f7efe2 0%, transparent 50%),
+        radial-gradient(900px 400px at 100% 0%, #e8f0ea 0%, transparent 45%),
+        var(--bg);
+      line-height: 1.5;
+      font-size: 1.02rem;
+    }
+
+    img, svg { max-width: 100%; display: block; }
+    button, input, select { font-family: inherit; }
+    a { color: var(--pine); }
+
+    .skip {
+      position: absolute;
+      left: -999px;
+      top: 0;
+      background: var(--pine);
+      color: #fff;
+      padding: 0.6rem 1rem;
+      z-index: 100;
+    }
+    .skip:focus { left: 0.75rem; top: 0.75rem; }
+
+    /* Header */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: rgba(255, 250, 242, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
+    }
+    .header-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0.7rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      min-width: 0;
+      text-decoration: none;
+      color: inherit;
+    }
+    .logo {
+      flex: 0 0 42px;
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: var(--pine);
+      color: #f4ead8;
+      display: grid;
+      place-items: center;
+    }
+    .brand h1 {
+      margin: 0;
+      font-size: 0.98rem;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+    .brand p {
+      margin: 0.1rem 0 0;
+      color: var(--muted);
+      font-size: 0.78rem;
+      line-height: 1.3;
+    }
+
+    .units {
+      display: flex;
+      background: var(--bg-deep);
+      border-radius: 999px;
+      padding: 4px;
+      border: 1px solid var(--line);
+      flex: 0 0 auto;
+    }
+    .units input { position: absolute; opacity: 0; pointer-events: none; }
+    .units label {
+      padding: 0.45rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--muted);
+    }
+    .units input:checked + label {
+      background: var(--pine);
+      color: #fff;
+    }
+    .units input:focus-visible + label { box-shadow: var(--focus); }
+
+    /* Layout */
+    .wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 1rem 1rem 6.5rem;
+    }
+    .intro {
+      margin: 0.4rem 0 1.1rem;
+      max-width: 42rem;
+    }
+    .intro h2 {
+      font-family: var(--display);
+      font-size: clamp(1.6rem, 4vw, 2.35rem);
+      line-height: 1.15;
+      margin: 0 0 0.45rem;
+      letter-spacing: -0.03em;
+    }
+    .intro p { margin: 0; color: var(--muted); }
+
+    .layout {
+      display: grid;
+      gap: 1rem;
+    }
+    @media (min-width: 980px) {
+      .layout {
+        grid-template-columns: minmax(0, 1fr) 360px;
+        align-items: start;
+        gap: 1.25rem;
+      }
+      .wrap { padding-bottom: 2.5rem; }
+    }
+
+    /* Cards / collapsible blocks */
+    .block {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin: 0 0 0.9rem;
+    }
+    .block > summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 0.95rem 1.05rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      font-weight: 650;
+    }
+    .block > summary::-webkit-details-marker { display: none; }
+    .block > summary::after {
+      content: "";
+      width: 0.55rem;
+      height: 0.55rem;
+      border-right: 2px solid var(--pine);
+      border-bottom: 2px solid var(--pine);
+      transform: rotate(45deg);
+      transition: transform 0.15s ease;
+      margin-top: -4px;
+    }
+    .block[open] > summary::after { transform: rotate(-135deg); margin-top: 4px; }
+    .block h3 {
+      margin: 0;
+      font-size: 1.02rem;
+    }
+    .eyebrow {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 650;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--copper);
+      margin-bottom: 0.15rem;
+    }
+    .body { padding: 0 1.05rem 1.15rem; }
+    .lede {
+      margin: 0 0 0.9rem;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .grid-2, .grid-3 {
+      display: grid;
+      gap: 0.75rem;
+    }
+    @media (min-width: 640px) {
+      .grid-2 { grid-template-columns: 1fr 1fr; }
+      .grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+    }
+
+    .field { display: flex; flex-direction: column; gap: 0.28rem; }
+    .field-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+    label, .lbl {
+      font-size: 0.86rem;
+      font-weight: 600;
+    }
+    .hint { color: var(--muted); font-size: 0.78rem; font-weight: 400; }
+    input[type="number"], input[type="text"], select {
+      width: 100%;
+      min-height: 48px;
+      border: 1.5px solid var(--line);
+      border-radius: 12px;
+      padding: 0.55rem 0.75rem;
+      font-size: 1.05rem;
+      background: #fff;
+      color: var(--ink);
+    }
+    input:focus, select:focus, button:focus-visible {
+      outline: none;
+      box-shadow: var(--focus);
+      border-color: var(--pine);
+    }
+    .unit-suffix {
+      color: var(--muted);
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .check {
+      display: flex;
+      gap: 0.55rem;
+      align-items: flex-start;
+      font-size: 0.9rem;
+      margin: 0.55rem 0;
+    }
+    .check input {
+      width: 1.15rem;
+      height: 1.15rem;
+      margin-top: 0.15rem;
+      accent-color: var(--pine);
+    }
+
+    .item {
+      display: grid;
+      grid-template-columns: 1.4fr 0.9fr;
+      gap: 0.55rem;
+      align-items: end;
+      padding: 0.55rem 0;
+      border-top: 1px solid var(--line);
+    }
+    .item:first-child { border-top: 0; padding-top: 0; }
+
+    .tip {
+      display: inline-grid;
+      place-items: center;
+      width: 1.15rem;
+      height: 1.15rem;
+      border-radius: 999px;
+      background: var(--pine-soft);
+      color: var(--pine);
+      font-size: 0.72rem;
+      font-weight: 700;
+      cursor: help;
+      position: relative;
+    }
+    .tip:hover::after, .tip:focus::after, .tip:hover::before, .tip:focus::before {
+      opacity: 1;
+      transform: translate(-50%, 0);
+      pointer-events: none;
+    }
+    .tip::after {
+      content: attr(data-tip);
+      position: absolute;
+      left: 50%;
+      bottom: calc(100% + 8px);
+      width: min(240px, 70vw);
+      background: var(--ink);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 400;
+      line-height: 1.35;
+      padding: 0.5rem 0.6rem;
+      border-radius: 8px;
+      opacity: 0;
+      transform: translate(-50%, 4px);
+      transition: 0.12s ease;
+      z-index: 5;
+    }
+    .tip::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: calc(100% + 2px);
+      border: 6px solid transparent;
+      border-top-color: var(--ink);
+      opacity: 0;
+      transform: translate(-50%, 4px);
+    }
+
+    .presets {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .btn {
+      appearance: none;
+      border: 1.5px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      border-radius: 999px;
+      min-height: 44px;
+      padding: 0.45rem 0.9rem;
+      font-weight: 600;
+      font-size: 0.88rem;
+      cursor: pointer;
+    }
+    .btn:hover { border-color: var(--pine); }
+    .btn-primary {
+      background: var(--pine);
+      border-color: var(--pine);
+      color: #fff;
+    }
+    .btn-ghost { background: transparent; }
+    .btn-warn { background: var(--copper); border-color: var(--copper); color: #fff; }
+
+    /* Results */
+    .results {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.05rem;
+    }
+    @media (min-width: 980px) {
+      .results {
+        position: sticky;
+        top: calc(var(--sticky-header) + 0.75rem);
+      }
+    }
+    .results h2 {
+      margin: 0 0 0.35rem;
+      font-size: 1.05rem;
+    }
+    .remaining {
+      text-align: center;
+      padding: 0.85rem 0.5rem 0.5rem;
+      border-radius: 16px;
+      margin: 0.6rem 0 0.85rem;
+    }
+    .remaining .label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .remaining .value {
+      font-family: var(--display);
+      font-size: clamp(2.6rem, 8vw, 3.4rem);
+      line-height: 1;
+      letter-spacing: -0.03em;
+      margin: 0.15rem 0;
+    }
+    .remaining .sub { font-size: 0.88rem; font-weight: 600; }
+    .status-ok { background: var(--ok-bg); color: var(--ok); }
+    .status-tight { background: var(--amber-bg); color: var(--amber); }
+    .status-critical, .status-over { background: var(--danger-bg); color: var(--danger); }
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.5rem;
+      padding: 0.35rem 0;
+      font-size: 0.92rem;
+      border-bottom: 1px solid var(--line);
+    }
+    .stat-row b { font-variant-numeric: tabular-nums; }
+    .meter {
+      height: 10px;
+      background: var(--bg-deep);
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 0.7rem 0 0.3rem;
+    }
+    .meter > span {
+      display: block;
+      height: 100%;
+      width: 0;
+      background: var(--ok);
+      transition: width 0.2s ease, background 0.2s ease;
+    }
+    .warn {
+      display: none;
+      margin: 0.75rem 0;
+      padding: 0.7rem 0.75rem;
+      border-radius: 12px;
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+    .warn.show { display: block; }
+    .warn-over { background: var(--danger-bg); color: var(--danger); }
+    .warn-low { background: var(--amber-bg); color: #7a4e00; }
+
+    .breakdown { margin-top: 0.85rem; }
+    .breakdown h3 { margin: 0 0 0.45rem; font-size: 0.92rem; }
+    .bar-row { margin: 0.4rem 0 0.65rem; }
+    .bar-row header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      margin-bottom: 0.18rem;
+    }
+    .bar {
+      height: 7px;
+      background: var(--bg);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .bar > span { display: block; height: 100%; background: var(--pine); }
+    .note {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin: 0.7rem 0 0;
+    }
+    .result-actions { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-top: 0.85rem; }
+
+    /* Supporting copy */
+    .prose h2, .prose h3 { font-family: var(--display); letter-spacing: -0.02em; }
+    .prose h2 { font-size: 1.45rem; margin: 1.5rem 0 0.5rem; }
+    .prose p, .prose li { color: var(--ink); }
+    .prose ul { padding-left: 1.15rem; }
+    .terms {
+      display: grid;
+      gap: 0.7rem;
+    }
+    @media (min-width: 720px) {
+      .terms { grid-template-columns: 1fr 1fr 1fr; }
+    }
+    .term {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 0.9rem;
+    }
+    .term h3 { margin: 0 0 0.3rem; font-size: 1rem; }
+    .term p { margin: 0; color: var(--muted); font-size: 0.9rem; }
+
+    .faq details {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 0.7rem 0.9rem;
+      margin: 0.45rem 0;
+    }
+    .faq summary { cursor: pointer; font-weight: 650; }
+    .faq details p { color: var(--muted); margin: 0.45rem 0 0.15rem; }
+
+    footer.site-footer {
+      border-top: 1px solid var(--line);
+      background: var(--pine-2);
+      color: #e7efe9;
+      padding: 1.4rem 1rem 2rem;
+    }
+    .footer-inner { max-width: 1180px; margin: 0 auto; }
+    .footer-inner a { color: #f3d2bc; }
+    .disclaimer {
+      font-size: 0.92rem;
+      margin: 0 0 0.7rem;
+    }
+    .footer-links { display: flex; flex-wrap: wrap; gap: 0.9rem; font-size: 0.88rem; }
+    .fine { opacity: 0.8; font-size: 0.78rem; margin: 0.8rem 0 0; }
+
+    /* Mobile dock */
+    .dock {
+      position: sticky;
+      bottom: 0;
+      z-index: 30;
+      margin: 0 -1rem -6.5rem;
+      background: var(--paper);
+      border-top: 1px solid var(--line);
+      padding: 0.65rem 1rem calc(0.7rem + env(safe-area-inset-bottom));
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.7rem;
+      box-shadow: 0 -8px 24px rgba(26, 22, 18, 0.08);
+    }
+    .dock strong {
+      font-family: var(--display);
+      font-size: 1.55rem;
+      line-height: 1;
+    }
+    .dock-ok { color: var(--ok); }
+    .dock-tight { color: var(--amber); }
+    .dock-critical, .dock-over { color: var(--danger); }
+    @media (min-width: 980px) {
+      .dock { display: none; }
+    }
+
+    /* Print */
+    @media print {
+      .site-header, .presets, .dock, .btn, .units, footer.site-footer .footer-links {
+        display: none !important;
+      }
+      body { background: #fff; }
+      .wrap { padding: 0; }
+      .layout { display: block; }
+      .results { box-shadow: none; position: static; border: 2px solid #222; }
+      .block { break-inside: avoid; box-shadow: none; }
+      a { text-decoration: none; color: inherit; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#calculator">Skip to calculator</a>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="#top" id="top">
+        <span class="logo" aria-hidden="true">
+          <svg width="26" height="26" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+            <path fill="currentColor" d="M5 19h22v3.2H5zm2.2-7.2h17.2L27 19H5l2.2-7.2zM10 8.5h9.2V12H10z"/>
+            <circle cx="10.2" cy="24.2" r="2.1" fill="#c4622d"/>
+            <circle cx="21.8" cy="24.2" r="2.1" fill="#c4622d"/>
+          </svg>
+        </span>
+        <span>
+          <h1>Motorhome Payload Calculator</h1>
+          <p>Stay under MAM before you leave the drive</p>
+        </span>
+      </a>
+
+      <div class="units" role="radiogroup" aria-label="Units">
+        <input type="radio" name="units" id="unit-metric" value="metric" checked>
+        <label for="unit-metric">Metric</label>
+        <input type="radio" name="units" id="unit-imperial" value="imperial">
+        <label for="unit-imperial">Imperial</label>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap" id="calculator">
+    <div class="intro">
+      <h2>Is your 3.5t van actually legal once it’s loaded?</h2>
+      <p>Built for UK Fiat Ducato and Peugeot Boxer campers. Add people, water, gas, batteries and kit — remaining payload updates as you type.</p>
+    </div>
+
+    <div class="layout">
+      <div>
+        <!-- Vehicle -->
+        <details class="block" open>
+          <summary>
+            <span>
+              <span class="eyebrow">01</span>
+              <h3>Vehicle base</h3>
+            </span>
+          </summary>
+          <div class="body">
+            <p class="lede">Start with the plated MAM and the handbook MIRO. If you have a weighbridge ticket for the empty van, use that instead — it is usually more honest.</p>
+            <div class="grid-2">
+              <div class="field">
+                <span class="field-row">
+                  <label for="mam">MAM / GVM / MTPLM</label>
+                  <span class="tip" tabindex="0" data-tip="The legal maximum the van may weigh on the road. Most UK Ducato/Boxer campers are 3,500 kg.">?</span>
+                </span>
+                <input id="mam" type="number" inputmode="decimal" min="0" step="1" data-key="mam" data-kind="weight">
+                <span class="hint"><span class="u-weight">kg</span> on the VIN plate</span>
+              </div>
+              <div class="field">
+                <span class="field-row">
+                  <label for="miro">MIRO / Mass in running order</label>
+                  <span class="tip" tabindex="0" data-tip="Manufacturer ready-to-drive weight. Typically includes the driver and 90% fuel. Fresh water is usually empty.">?</span>
+                </span>
+                <input id="miro" type="number" inputmode="decimal" min="0" step="1" data-key="miro" data-kind="weight">
+                <span class="hint">Handbook figure, <span class="u-weight">kg</span></span>
+              </div>
+              <div class="field">
+                <span class="field-row">
+                  <label for="actualEmpty">Actual weighed empty (optional)</label>
+                  <span class="tip" tabindex="0" data-tip="Weighbridge weight of the van without people or water. When set, this replaces MIRO as the starting weight.">?</span>
+                </span>
+                <input id="actualEmpty" type="number" inputmode="decimal" min="0" step="1" data-key="actualEmpty" data-kind="weight" placeholder="Leave blank to use MIRO">
+              </div>
+              <div class="field">
+                <label for="driverKg">Driver weight</label>
+                <input id="driverKg" type="number" inputmode="decimal" min="0" step="1" data-key="driverKg" data-kind="weight">
+                <span class="hint" id="driverHint">Used when you enter a weighed empty van. MIRO already includes the driver.</span>
+              </div>
+              <div class="field">
+                <label for="frontAxle">Front axle rating (optional)</label>
+                <input id="frontAxle" type="number" inputmode="decimal" min="0" step="1" data-key="frontAxle" data-kind="weight">
+              </div>
+              <div class="field">
+                <label for="rearAxle">Rear axle rating (optional)</label>
+                <input id="rearAxle" type="number" inputmode="decimal" min="0" step="1" data-key="rearAxle" data-kind="weight">
+              </div>
+            </div>
+            <label class="check">
+              <input type="checkbox" id="miroIncludesDriver" data-key="miroIncludesDriver">
+              <span>MIRO already includes the driver (usual for handbook figures)</span>
+            </label>
+            <label class="check">
+              <input type="checkbox" id="miroIncludesFuel" data-key="miroIncludesFuel">
+              <span>MIRO already includes 90% fuel (usual). Only the difference from 90% is added.</span>
+            </label>
+          </div>
+        </details>
+
+        <!-- People -->
+        <details class="block" open>
+          <summary>
+            <span>
+              <span class="eyebrow">02</span>
+              <h3>People &amp; pets</h3>
+            </span>
+          </summary>
+          <div class="body">
+            <p class="lede">Additional adults are everyone except the driver already counted in MIRO. Default 80 <span class="u-weight">kg</span> each — adjust to real body weight plus clothes you travel in.</p>
+            <div class="grid-3">
+              <div class="field">
+                <label for="extraAdults">Additional adults</label>
+                <input id="extraAdults" type="number" inputmode="numeric" min="0" step="1" data-key="extraAdults">
+              </div>
+              <div class="field">
+                <label for="adultKg">Weight each</label>
+                <input id="adultKg" type="number" inputmode="decimal" min="0" step="1" data-key="adultKg" data-kind="weight">
+              </div>
+              <div class="field">
+                <span class="hint" style="margin-top:1.7rem" id="peopleNote"></span>
+              </div>
+              <div class="field">
+                <label for="children">Children</label>
+                <input id="children" type="number" inputmode="numeric" min="0" step="1" data-key="children">
+              </div>
+              <div class="field">
+                <label for="childKg">Weight each</label>
+                <input id="childKg" type="number" inputmode="decimal" min="0" step="1" data-key="childKg" data-kind="weight">
+              </div>
+              <div></div>
+              <div class="field">
+                <label for="pets">Pets (optional)</label>
+                <input id="pets" type="number" inputmode="numeric" min="0" step="1" data-key="pets">
+              </div>
+              <div class="field">
+                <label for="petKg">Weight each</label>
+                <input id="petKg" type="number" inputmode="decimal" min="0" step="1" data-key="petKg" data-kind="weight">
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <!-- Fluids -->
+        <details class="block" open>
+          <summary>
+            <span>
+              <span class="eyebrow">03</span>
+              <h3>Fluids</h3>
+            </span>
+          </summary>
+          <div class="body">
+            <p class="lede">Water is 1 kg per litre. A “full tanks” departure can cost 90–150 <span class="u-weight">kg</span> on a typical Ducato. Manufacturer MIRO usually assumes empty fresh water.</p>
+            <div class="grid-2">
+              <div class="field">
+                <label for="freshCap">Fresh water capacity</label>
+                <input id="freshCap" type="number" inputmode="decimal" min="0" step="1" data-key="freshCap" data-kind="volume">
+                <span class="hint"><span class="u-volume">litres</span> · 1 L of water = 1 kg</span>
+              </div>
+              <div class="field">
+                <label for="freshFill">Fresh fill level (%)</label>
+                <input id="freshFill" type="number" inputmode="decimal" min="0" max="100" step="1" data-key="freshFill">
+              </div>
+              <div class="field">
+                <label for="greyCap">Grey water capacity</label>
+                <input id="greyCap" type="number" inputmode="decimal" min="0" step="1" data-key="greyCap" data-kind="volume">
+                <span class="hint"><span class="u-volume">litres</span></span>
+              </div>
+              <div class="field">
+                <label for="greyFill">Grey fill level (%)</label>
+                <input id="greyFill" type="number" inputmode="decimal" min="0" max="100" step="1" data-key="greyFill">
+              </div>
+              <div class="field">
+                <label for="blackCap">Black / cassette capacity</label>
+                <input id="blackCap" type="number" inputmode="decimal" min="0" step="1" data-key="blackCap" data-kind="volume">
+                <span class="hint">Thetford-style cassette, <span class="u-volume">litres</span></span>
+              </div>
+              <div class="field">
+                <label for="blackFill">Cassette fill level (%)</label>
+                <input id="blackFill" type="number" inputmode="decimal" min="0" max="100" step="1" data-key="blackFill">
+              </div>
+              <div class="field">
+                <span class="field-row">
+                  <label for="fuelCap">Fuel tank capacity (diesel)</label>
+                  <span class="tip" tabindex="0" data-tip="Fiat Ducato / Boxer tanks are commonly around 90 litres. Diesel ≈ 0.84 kg per litre.">?</span>
+                </span>
+                <input id="fuelCap" type="number" inputmode="decimal" min="0" step="1" data-key="fuelCap" data-kind="volume">
+                <span class="hint"><span class="u-volume">litres</span></span>
+              </div>
+              <div class="field">
+                <label for="fuelFill">Fuel fill level (%)</label>
+                <input id="fuelFill" type="number" inputmode="decimal" min="0" max="100" step="1" data-key="fuelFill">
+              </div>
+              <div class="field">
+                <label for="fuelDensity">Diesel density</label>
+                <input id="fuelDensity" type="number" inputmode="decimal" min="0.7" max="1" step="0.01" data-key="fuelDensity">
+                <span class="hint">kg per litre (0.84 is a realistic UK diesel figure)</span>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <!-- Gas -->
+        <details class="block">
+          <summary>
+            <span>
+              <span class="eyebrow">04</span>
+              <h3>Gas bottles</h3>
+            </span>
+          </summary>
+          <div class="body">
+            <p class="lede">The stamped “6 kg / 9 kg / 13 kg” is the gas only. A full 9 kg propane cylinder is typically 18–19 <span class="u-weight">kg</span> on the weighbridge because of the steel bottle.</p>
+            <div class="item">
+              <div class="field">
+                <label for="gas6">6 kg bottles (qty)</label>
+                <input id="gas6" type="number" inputmode="numeric" min="0" step="1" data-key="gas6">
+              </div>
+              <div class="field">
+                <label for="gas6Full">Full weight each</label>
+                <input id="gas6Full" type="number" inputmode="decimal" min="0" step="0.1" data-key="gas6Full" data-kind="weight">
+              </div>
+            </div>
+            <div class="item">
+              <div class="field">
+                <label for="gas9">9 kg bottles (qty)</label>
+                <input id="gas9" type="number" inputmode="numeric" min="0" step="1" data-key="gas9">
+              </div>
+              <div class="field">
+                <label for="gas9Full">Full weight each</label>
+                <input id="gas9Full" type="number" inputmode="decimal" min="0" step="0.1" data-key="gas9Full" data-kind="weight">
+              </div>
+            </div>
+            <div class="item">
+              <div class="field">
+                <label for="gas13">13 kg bottles (qty)</label>
+                <input id="gas13" type="number" inputmode="numeric" min="0" step="1" data-key="gas13">
+              </div>
+              <div class="field">
+                <label for="gas13Full">Full weight each</label>
+                <input id="gas13Full" type="number" inputmode="decimal" min="0" step="0.1" data-key="gas13Full" data-kind="weight">
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <!-- Electrical -->
+        <details class="block">
+          <summary>
+            <span>
+              <span class="eyebrow">05</span>
+              <h3>Electrical &amp; solar</h3>
+            </span>
+          </summary>
+          <div class="body">
+            <p class="lede">Add batteries, solar and inverters that are not already in the MIRO or your empty weighbridge ticket. 100 Ah LiFePO4 is about 12 <span class="u-weight">kg</span>; the same capacity in AGM is closer to 28 <span class="u-weight">kg</span>.</p>
+            <div class="grid-2">
+              <div class="field">
+                <label for="battType">Leisure batteries</label>
+                <select id="battType" data-key="battType">
+                  <option value="none">None / already in MIRO</option>
+                  <option value="life100">LiFePO4 100 Ah (~12 kg)</option>
+                  <option value="life200">LiFePO4 200 Ah (~24 kg)</option>
+                  <option value="agm100">AGM 100 Ah (~28 kg)</option>
+                  <option value="agm110">AGM 110 Ah (~32 kg)</option>
+                  <option value="custom">Custom weight</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="battQty">Quantity</label>
+                <input id="battQty" type="number" inputmode="numeric" min="0" step="1" data-key="battQty">
+              </div>
+              <div class="field" id="battCustomWrap">
+                <label for="battCustomKg">Custom battery weight each</label>
+                <input id="battCustomKg" type="number" inputmode="decimal" min="0" step="0.1" data-key="battCustomKg" data-kind="weight">
+              </div>
+              <div class="field">
+                <label for="solarType">Solar array</label>
+                <select id="solarType" data-key="solarType">
+                  <option value="none">None</option>
+                  <option value="rigid100">Rigid 100 W (~7.5 kg incl. mounts)</option>
+                  <option value="rigid200">Rigid 200 W (~14 kg)</option>
+                  <option value="flex100">Flexible 100 W (~2.2 kg)</option>
+                  <option value="flex200">Flexible 200 W (~4.2 kg)</option>
+                  <option value="custom">Custom weight</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="solarQty">Panels / arrays</label>
+                <input id="solarQty" type="number" inputmode="numeric" min="0" step="1" data-key="solarQty">
+              </div>
+              <div class="field" id="solarCustomWrap">
+                <label for="solarCustomKg">Custom solar weight each</label>
+                <input id="solarCustomKg" type="number" inputmode="decimal" min="0" step="0.1" data-key="solarCustomKg" data-kind="weight">
+              </div>
+              <div class="field">
+                <label for="inverterKg">Inverter</label>
+                <input id="inverterKg" type="number" inputmode="decimal" min="0" step="0.1" data-key="inverterKg" data-kind="weight">
+                <span class="hint">A typical 2,000 W unit is about 4–5 <span class="u-weight">kg</span></span>
+              </div>
+              <div class="field">
+                <label for="elecExtrasKg">Cables, MPPT &amp; extras</label>
+                <input id="elecExtrasKg" type="number" inputmode="decimal" min="0" step="0.1" data-key="elecExtrasKg" data-kind="weight">
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <!-- Gear -->
+        <details class="block">
+          <summary>
+            <span>
+              <span class="eyebrow">06</span>
+              <h3>Gear &amp; other</h3>
+            </span>
+          </summary>
+          <div class="body">
+            <p class="lede">Tick what you actually carry and edit the weights. Defaults are typical UK touring kit, not brochure minimums.</p>
+            <div class="item">
+              <label class="check"><input type="checkbox" id="awning" data-key="awning"><span>Cassette awning</span></label>
+              <div class="field"><label for="awningKg">Weight</label><input id="awningKg" type="number" min="0" step="0.1" data-key="awningKg" data-kind="weight"></div>
+            </div>
+            <div class="item">
+              <div class="field">
+                <label for="bikes">Bikes on the back</label>
+                <input id="bikes" type="number" min="0" step="1" data-key="bikes">
+              </div>
+              <div class="field">
+                <label for="bikeKg">Each bike</label>
+                <input id="bikeKg" type="number" min="0" step="0.1" data-key="bikeKg" data-kind="weight">
+              </div>
+            </div>
+            <div class="field" style="margin:0.4rem 0 0.7rem">
+              <label for="rackKg">Bike rack</label>
+              <input id="rackKg" type="number" min="0" step="0.1" data-key="rackKg" data-kind="weight">
+              <span class="hint">Rack weight is added when you carry one or more bikes</span>
+            </div>
+            <div class="item">
+              <label class="check"><input type="checkbox" id="ramps" data-key="ramps"><span>Levelling ramps</span></label>
+              <div class="field"><label for="rampsKg">Weight</label><input id="rampsKg" type="number" min="0" step="0.1" data-key="rampsKg" data-kind="weight"></div>
+            </div>
+            <div class="item">
+              <label class="check"><input type="checkbox" id="furniture" data-key="furniture"><span>Extra furniture / chairs</span></label>
+              <div class="field"><label for="furnitureKg">Weight</label><input id="furnitureKg" type="number" min="0" step="0.1" data-key="furnitureKg" data-kind="weight"></div>
+            </div>
+            <div class="item">
+              <label class="check"><input type="checkbox" id="generator" data-key="generator"><span>Portable generator</span></label>
+              <div class="field"><label for="generatorKg">Weight</label><input id="generatorKg" type="number" min="0" step="0.1" data-key="generatorKg" data-kind="weight"></div>
+            </div>
+            <div class="item">
+              <label class="check"><input type="checkbox" id="toolbox" data-key="toolbox"><span>Toolbox / spares</span></label>
+              <div class="field"><label for="toolboxKg">Weight</label><input id="toolboxKg" type="number" min="0" step="0.1" data-key="toolboxKg" data-kind="weight"></div>
+            </div>
+            <div class="grid-2" style="margin-top:0.6rem">
+              <div class="field">
+                <label for="foodKg">Food &amp; drink</label>
+                <input id="foodKg" type="number" min="0" step="0.1" data-key="foodKg" data-kind="weight">
+              </div>
+              <div class="field">
+                <label for="miscKg">Clothes, bedding &amp; miscellaneous</label>
+                <input id="miscKg" type="number" min="0" step="0.1" data-key="miscKg" data-kind="weight">
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <!-- Presets -->
+        <section class="block" id="presets" style="padding:1rem 1.05rem">
+          <span class="eyebrow">Presets</span>
+          <h3 style="margin:0 0 0.55rem">Start from a typical van, not a blank page</h3>
+          <p class="lede">These do not replace your VIN plate. They show how quickly a 3.5 t Ducato or Boxer fills up.</p>
+          <div class="presets">
+            <button type="button" class="btn btn-primary" id="preset-typical">Typical UK 3.5t Ducato/Boxer setup</button>
+            <button type="button" class="btn" id="preset-light">Light weekend setup</button>
+            <button type="button" class="btn btn-ghost" id="preset-reset">Reset to defaults</button>
+          </div>
+        </section>
+      </div>
+
+      <!-- Results -->
+      <aside class="results" id="results" aria-live="polite">
+        <h2>Loaded weight vs MAM</h2>
+        <div class="remaining status-ok" id="remainingBox">
+          <div class="label" id="remainingLabel">Remaining payload</div>
+          <div class="value" id="remainingValue">—</div>
+          <div class="sub" id="remainingSub">Enter your van details</div>
+        </div>
+        <div class="stat-row"><span>Estimated total loaded</span><b id="totalWeight">—</b></div>
+        <div class="stat-row"><span>Maximum allowed (MAM)</span><b id="mamOut">—</b></div>
+        <div class="stat-row"><span>Manufacturer payload (MAM − MIRO)</span><b id="platedPayload">—</b></div>
+        <div class="stat-row"><span>Payload used</span><b id="payloadPct">—</b></div>
+        <div class="meter" aria-hidden="true"><span id="meterFill"></span></div>
+        <div class="warn warn-over" id="warnOver">Overweight: estimated total exceeds MAM. Do not drive until you lose weight — water, gear and passengers are the fastest levers.</div>
+        <div class="warn warn-low" id="warnLow">Low payload remaining. There is little margin for weighing error, extra shopping or a full waste tank on the way home.</div>
+        <div class="breakdown">
+          <h3>Where the weight is coming from</h3>
+          <div id="breakdown"></div>
+        </div>
+        <p class="note" id="waterWhatIf"></p>
+        <p class="note">Manufacturer MIRO usually assumes <strong>empty fresh water</strong>, the driver, and about 90% fuel. A full tank is extra payload, not “already in the van figure”.</p>
+        <p class="note" id="axleNote"></p>
+        <div class="result-actions">
+          <button type="button" class="btn btn-warn" id="emptyWater">What if I empty the water?</button>
+          <button type="button" class="btn" id="printResults">Print results</button>
+        </div>
+      </aside>
+    </div>
+
+    <section class="prose" id="explain">
+      <h2>MAM vs MIRO vs payload</h2>
+      <div class="terms">
+        <article class="term">
+          <h3>MAM / GVM / MTPLM</h3>
+          <p>The legal maximum the motorhome may weigh on the road. It is on the VIN plate, usually 3,500 kg on UK Ducato and Boxer campers.</p>
+        </article>
+        <article class="term">
+          <h3>MIRO / kerb / running order</h3>
+          <p>The converter’s ready-to-drive weight. Typically driver + 90% fuel. Fresh water is usually empty. Treat brochure MIRO as optimistic until you weigh.</p>
+        </article>
+        <article class="term">
+          <h3>Payload</h3>
+          <p>Everything else: extra people, water, waste, gas, food, bikes, dog, aftermarket batteries and solar. Payload = MAM − MIRO, before real-world extras eat it.</p>
+        </article>
+      </div>
+
+      <h2>Typical Fiat Ducato / Peugeot Boxer notes</h2>
+      <ul>
+        <li>The Sevel van (Ducato, Boxer, Relay) on a 3,500 kg chassis is the UK’s default 3.5 t camper platform.</li>
+        <li>A converted panel van often leaves <strong>350–550 kg</strong> of payload. Coachbuilts and winterised vans can be tighter still.</li>
+        <li>Front axle ratings are commonly around 1,850–2,100 kg and the rear around 2,000–2,400 kg — overloaded rear axles from bikes, tanks and boot kit are a frequent MOT and roadside issue.</li>
+        <li>A 90 L diesel tank full is about 76 kg of fuel. MIRO already assumes most of that, so topping right up adds only a little; water tanks are the bigger swing.</li>
+        <li>Chassis uprates exist, but tyres, brakes, speed limiter and your licence (B vs C1) must match. This calculator does not change the plated MAM for you.</li>
+      </ul>
+    </section>
+
+    <section class="prose faq" id="faq">
+      <h2>Payload FAQ</h2>
+
+      <details open>
+        <summary>What is MAM, GVM and MTPLM?</summary>
+        <p>MAM (Maximum Authorised Mass), GVM (Gross Vehicle Mass) and MTPLM (Maximum Technically Permitted Laden Mass) are names for the same legal ceiling: the most the motorhome may weigh on the road, including people, fuel, water, gas and everything you have loaded. For most UK Ducato and Boxer campers this is 3,500 kg. Going over it is illegal.</p>
+      </details>
+      <details>
+        <summary>What is MIRO — and does it include fresh water?</summary>
+        <p>MIRO (Mass in Running Order) is the manufacturer’s ready-to-drive weight. Under current European rules it usually includes the driver (75 kg), oils, 90% fuel and standard tools. Fresh water is normally assumed empty on UK motorhomes, so a full tank is extra payload. Always check your handbook, because converters differ.</p>
+      </details>
+      <details>
+        <summary>Why do so many 3.5-tonne Ducato and Boxer campers run out of payload?</summary>
+        <p>A typical conversion leaves only 300–500 kg after MIRO. Two adults, a full 90–120 L water tank, gas bottles, a leisure battery, an awning and two bikes can use that allowance before food, clothes or a dog are added. That is why 3.5 t vans feel tight and why a weighbridge visit is worthwhile.</p>
+      </details>
+      <details>
+        <summary>Does the driver count towards payload?</summary>
+        <p>If you are using the manufacturer MIRO figure, the driver is already included (usually at 75 kg). Extra adults, children and pets are additional. If you enter an actual weighbridge empty weight of the van only, add the driver as well as passengers.</p>
+      </details>
+      <details>
+        <summary>How should I treat fuel, gas and water in this calculator?</summary>
+        <p>Water weighs 1 kg per litre. Diesel is about 0.84 kg per litre. A 9 kg propane bottle weighs around 18–19 kg when full because of the steel cylinder. MIRO already assumes about 90% fuel, so this calculator only adds the difference from that assumption unless you are working from a weighed empty van.</p>
+      </details>
+      <details>
+        <summary>Is it illegal to drive a motorhome over its MAM?</summary>
+        <p>Yes. Exceeding MAM can mean a roadside prohibition, a fine, points, and invalid insurance if you are involved in a collision. Overloaded axles are a separate offence even when the total is under MAM. There is no “small margin” in law — stay under the plated figures.</p>
+      </details>
+      <details>
+        <summary>How accurate is this calculator compared with a weighbridge?</summary>
+        <p>This is an estimate. MIRO figures are often optimistic, converters vary, and household kit is easy to under-count. Use the calculator to see where weight is coming from, then confirm on a calibrated weighbridge — ideally per axle — before a trip. The printed results are not a legal document.</p>
+      </details>
+      <details>
+        <summary>What is a realistic payload on a typical UK 3.5t conversion?</summary>
+        <p>Many Fiat Ducato and Peugeot Boxer conversions on a 3,500 kg chassis have 350–550 kg of payload. Premium or winterised vans can be lower. A chassis uprate (for example to 3,650 kg or 4,250 kg) only helps if the axles, brakes, tyres and driving licence also allow it.</p>
+      </details>
+    </section>
+
+    <section class="prose" id="how-to-use">
+      <h2>How to use</h2>
+      <ol>
+        <li>Read MAM and axle ratings from the VIN plate in the engine bay or on the door pillar.</li>
+        <li>Enter MIRO from the handbook, or better, a weighbridge ticket for the empty van.</li>
+        <li>Add the people travelling today, current tank levels, gas and the kit on board.</li>
+        <li>Watch remaining payload. Green is comfortable, amber is tight, red means you need to leave something behind.</li>
+        <li>Use “What if I empty the water?” to see the cheapest weight saving before a weighbridge.</li>
+      </ol>
+    </section>
+
+    <section class="prose" id="about">
+      <h2>About</h2>
+      <p>This free calculator is for UK motorhome owners — especially anyone on a 3.5-tonne Fiat Ducato or Peugeot Boxer — who wants a clear picture of payload before a trip. It runs entirely in your browser. The last figures you type are stored on this device only.</p>
+    </section>
+
+    <section class="prose" id="privacy">
+      <h2>Privacy</h2>
+      <p>No account, no cookies for advertising, and no server. Vehicle details stay in your browser’s local storage so the form is still filled in next time. Clear site data in your browser to delete it. Replace the example.com canonical and Open Graph URLs if you host this page on your own domain.</p>
+    </section>
+  </main>
+
+  <div class="dock" id="dock">
+    <div>
+      <div class="hint">Remaining payload</div>
+      <strong id="dockValue">—</strong>
+    </div>
+    <a class="btn btn-primary" href="#results">Full breakdown</a>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p class="disclaimer"><strong>Disclaimer:</strong> This is an estimate only. Always verify with a calibrated weighbridge for legal compliance.</p>
+      <nav class="footer-links" aria-label="Footer">
+        <a href="#about">About</a>
+        <a href="#how-to-use">How to use</a>
+        <a href="#privacy">Privacy</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+      <p class="fine">Not affiliated with Fiat, Peugeot, Citroën or any converter. Plated weights on your vehicle always take priority.</p>
+    </div>
+  </footer>
+
+  <script>
+    /* =========================================================================
+       Payload maths — all internal values are metric (kg / litres).
+       The unit toggle only changes what is shown and what the user types.
+       ========================================================================= */
+    (function () {
+      "use strict";
+
+      var STORAGE_KEY = "mh-payload-calc-v1";
+      var KG_PER_LB = 0.45359237;
+      var L_PER_UK_GAL = 4.54609;
+
+      var BATT_KG = { none: 0, life100: 12, life200: 24, agm100: 28, agm110: 32 };
+      var SOLAR_KG = { none: 0, rigid100: 7.5, rigid200: 14, flex100: 2.2, flex200: 4.2 };
+
+      var DEFAULTS = {
+        units: "metric",
+        mam: 3500,
+        miro: 3050,
+        actualEmpty: "",
+        frontAxle: "",
+        rearAxle: "",
+        driverKg: 75,
+        miroIncludesDriver: true,
+        miroIncludesFuel: true,
+        extraAdults: 1,
+        adultKg: 80,
+        children: 0,
+        childKg: 30,
+        pets: 0,
+        petKg: 12,
+        freshCap: 90,
+        freshFill: 50,
+        greyCap: 70,
+        greyFill: 0,
+        blackCap: 19,
+        blackFill: 0,
+        fuelCap: 90,
+        fuelFill: 90,
+        fuelDensity: 0.84,
+        gas6: 1,
+        gas6Full: 13,
+        gas9: 0,
+        gas9Full: 18.5,
+        gas13: 0,
+        gas13Full: 28,
+        battType: "life100",
+        battQty: 1,
+        battCustomKg: 12,
+        solarType: "none",
+        solarQty: 1,
+        solarCustomKg: 14,
+        inverterKg: 0,
+        elecExtrasKg: 0,
+        awning: false,
+        awningKg: 28,
+        bikes: 0,
+        bikeKg: 14,
+        rackKg: 12,
+        ramps: true,
+        rampsKg: 4.5,
+        furniture: false,
+        furnitureKg: 20,
+        generator: false,
+        generatorKg: 22,
+        toolbox: true,
+        toolboxKg: 10,
+        foodKg: 12,
+        miscKg: 20
+      };
+
+      var TYPICAL = {
+        mam: 3500,
+        miro: 3120,
+        actualEmpty: "",
+        extraAdults: 1,
+        adultKg: 80,
+        children: 0,
+        pets: 0,
+        freshCap: 100,
+        freshFill: 80,
+        greyCap: 80,
+        greyFill: 10,
+        blackCap: 19,
+        blackFill: 20,
+        fuelCap: 90,
+        fuelFill: 90,
+        gas6: 2,
+        gas9: 0,
+        gas13: 0,
+        battType: "life100",
+        battQty: 1,
+        solarType: "rigid200",
+        solarQty: 1,
+        inverterKg: 4.5,
+        elecExtrasKg: 3,
+        awning: true,
+        bikes: 2,
+        ramps: true,
+        furniture: true,
+        generator: false,
+        toolbox: true,
+        foodKg: 18,
+        miscKg: 28
+      };
+
+      var LIGHT = {
+        mam: 3500,
+        miro: 3050,
+        actualEmpty: "",
+        extraAdults: 1,
+        children: 0,
+        pets: 0,
+        freshCap: 90,
+        freshFill: 25,
+        greyCap: 70,
+        greyFill: 0,
+        blackCap: 19,
+        blackFill: 0,
+        fuelCap: 90,
+        fuelFill: 80,
+        gas6: 1,
+        gas9: 0,
+        gas13: 0,
+        battType: "life100",
+        battQty: 1,
+        solarType: "flex100",
+        solarQty: 1,
+        inverterKg: 0,
+        elecExtrasKg: 1.5,
+        awning: false,
+        bikes: 0,
+        ramps: true,
+        furniture: false,
+        generator: false,
+        toolbox: true,
+        foodKg: 8,
+        miscKg: 10
+      };
+
+      var state = loadState();
+      var waterBackup = null;
+      var syncing = false;
+
+      function clone(obj) { return JSON.parse(JSON.stringify(obj)); }
+
+      function loadState() {
+        var merged = clone(DEFAULTS);
+        try {
+          var raw = localStorage.getItem(STORAGE_KEY);
+          if (raw) Object.assign(merged, JSON.parse(raw));
+        } catch (e) { /* private mode */ }
+        return merged;
+      }
+
+      function saveState() {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
+      }
+
+      function num(v) {
+        var n = parseFloat(v);
+        return isFinite(n) ? n : 0;
+      }
+
+      function isImperial() { return state.units === "imperial"; }
+
+      function displayWeight(kg) {
+        return isImperial() ? kg / KG_PER_LB : kg;
+      }
+      function storeWeight(view) {
+        return isImperial() ? num(view) * KG_PER_LB : num(view);
+      }
+      function displayVolume(litres) {
+        return isImperial() ? litres / L_PER_UK_GAL : litres;
+      }
+      function storeVolume(view) {
+        return isImperial() ? num(view) * L_PER_UK_GAL : num(view);
+      }
+
+      function fmt(kg, digits) {
+        var n = displayWeight(kg);
+        var d = digits != null ? digits : (isImperial() ? 0 : 0);
+        return n.toLocaleString("en-GB", { maximumFractionDigits: d, minimumFractionDigits: 0 }) + " " + (isImperial() ? "lb" : "kg");
+      }
+
+      function roundView(value, kind) {
+        if (value === "" || value == null) return "";
+        var n = num(value);
+        if (kind === "weight") n = displayWeight(n);
+        if (kind === "volume") n = displayVolume(n);
+        return String(Math.round(n * 10) / 10);
+      }
+
+      function setUnitLabels() {
+        var w = isImperial() ? "lb" : "kg";
+        var v = isImperial() ? "UK gal" : "litres";
+        document.querySelectorAll(".u-weight").forEach(function (el) { el.textContent = w; });
+        document.querySelectorAll(".u-volume").forEach(function (el) { el.textContent = v; });
+        document.getElementById("unit-metric").checked = !isImperial();
+        document.getElementById("unit-imperial").checked = isImperial();
+      }
+
+      function toggleCustomFields() {
+        document.getElementById("battCustomWrap").style.display = state.battType === "custom" ? "" : "none";
+        document.getElementById("solarCustomWrap").style.display = state.solarType === "custom" ? "" : "none";
+      }
+
+      function fillForm() {
+        syncing = true;
+        document.querySelectorAll("[data-key]").forEach(function (el) {
+          var key = el.getAttribute("data-key");
+          var kind = el.getAttribute("data-kind");
+          var val = state[key];
+          if (el.type === "checkbox") {
+            el.checked = !!val;
+          } else if (kind === "weight" || kind === "volume") {
+            el.value = val === "" || val == null ? "" : roundView(val, kind);
+          } else {
+            el.value = val == null ? "" : val;
+          }
+        });
+        setUnitLabels();
+        toggleCustomFields();
+        syncing = false;
+      }
+
+      function readForm(el) {
+        if (syncing) return;
+        var key = el.getAttribute("data-key");
+        var kind = el.getAttribute("data-kind");
+        if (el.type === "checkbox") {
+          state[key] = el.checked;
+        } else if (kind === "weight") {
+          state[key] = el.value === "" ? "" : storeWeight(el.value);
+        } else if (kind === "volume") {
+          state[key] = el.value === "" ? "" : storeVolume(el.value);
+        } else if (el.tagName === "SELECT") {
+          state[key] = el.value;
+        } else {
+          state[key] = el.value === "" ? "" : num(el.value);
+        }
+        toggleCustomFields();
+        saveState();
+        calculate();
+      }
+
+      function batteryKg() {
+        var each = state.battType === "custom" ? num(state.battCustomKg) : (BATT_KG[state.battType] || 0);
+        return each * num(state.battQty);
+      }
+      function solarKg() {
+        var each = state.solarType === "custom" ? num(state.solarCustomKg) : (SOLAR_KG[state.solarType] || 0);
+        return each * num(state.solarQty);
+      }
+
+      function usingActualEmpty() {
+        return num(state.actualEmpty) > 0;
+      }
+
+      function compute(overrides) {
+        var s = Object.assign({}, state, overrides || {});
+        var mam = num(s.mam);
+        var miro = num(s.miro);
+        var base = usingActualEmpty() ? num(s.actualEmpty) : miro;
+
+        var driver = 0;
+        if (usingActualEmpty()) {
+          driver = num(s.driverKg);
+        } else if (!s.miroIncludesDriver) {
+          driver = num(s.driverKg);
+        }
+        var people = driver + num(s.extraAdults) * num(s.adultKg) + num(s.children) * num(s.childKg) + num(s.pets) * num(s.petKg);
+
+        var fresh = num(s.freshCap) * num(s.freshFill) / 100;
+        var grey = num(s.greyCap) * num(s.greyFill) / 100;
+        var black = num(s.blackCap) * num(s.blackFill) / 100;
+        var fuelActual = num(s.fuelCap) * num(s.fuelFill) / 100 * num(s.fuelDensity);
+        var fuelMiro = num(s.fuelCap) * 0.9 * num(s.fuelDensity);
+        var fuel = 0;
+        if (usingActualEmpty() || !s.miroIncludesFuel) fuel = fuelActual;
+        else fuel = fuelActual - fuelMiro;
+
+        var water = fresh + grey + black;
+        var gas = num(s.gas6) * num(s.gas6Full) + num(s.gas9) * num(s.gas9Full) + num(s.gas13) * num(s.gas13Full);
+
+        var electrical = batteryKg() + solarKg() + num(s.inverterKg) + num(s.elecExtrasKg);
+
+        var bikes = num(s.bikes) * num(s.bikeKg) + (num(s.bikes) > 0 ? num(s.rackKg) : 0);
+        var gear = bikes + num(s.foodKg) + num(s.miscKg);
+        if (s.awning) gear += num(s.awningKg);
+        if (s.ramps) gear += num(s.rampsKg);
+        if (s.furniture) gear += num(s.furnitureKg);
+        if (s.generator) gear += num(s.generatorKg);
+        if (s.toolbox) gear += num(s.toolboxKg);
+
+        var added = people + water + fuel + gas + electrical + gear;
+        var total = base + added;
+        var remaining = mam - total;
+        var plated = mam - miro;
+        var usedPct = plated > 0 ? (mam - remaining - (usingActualEmpty() ? num(s.actualEmpty) : miro)) / (mam - base) * 100 : 0;
+        /* Payload used relative to available from the chosen base */
+        var available = mam - base;
+        usedPct = available > 0 ? (added / available) * 100 : 0;
+
+        return {
+          mam: mam, miro: miro, base: base, people: people, fresh: fresh, grey: grey, black: black,
+          water: water, fuel: fuel, fuelActual: fuelActual, gas: gas, electrical: electrical, gear: gear,
+          added: added, total: total, remaining: remaining, plated: plated, usedPct: usedPct, driver: driver
+        };
+      }
+
+      function statusClass(remaining) {
+        if (remaining < 0) return "over";
+        if (remaining < 50) return "critical";
+        if (remaining < 150) return "tight";
+        return "ok";
+      }
+
+      function barRow(label, kg, max) {
+        var pct = max > 0 ? Math.min(100, (Math.abs(kg) / max) * 100) : 0;
+        var sign = kg < 0 ? "−" : "";
+        return '<div class="bar-row"><header><span>' + label + '</span><span>' + sign + fmt(Math.abs(kg), 0) + '</span></header><div class="bar"><span style="width:' + pct + '%;background:' + (kg < 0 ? "var(--amber)" : "var(--pine)") + '"></span></div></div>';
+      }
+
+      function calculate() {
+        var r = compute();
+        var cls = statusClass(r.remaining);
+        var box = document.getElementById("remainingBox");
+        box.className = "remaining status-" + cls;
+        document.getElementById("remainingLabel").textContent = r.remaining < 0 ? "Over MAM by" : "Remaining payload";
+        document.getElementById("remainingValue").textContent = fmt(Math.abs(r.remaining), 0);
+        document.getElementById("remainingSub").textContent = cls === "ok"
+          ? "Comfortable margin for a 3.5t van"
+          : cls === "tight"
+            ? "Tight — weigh before a long trip"
+            : cls === "critical"
+              ? "Very little margin left"
+              : "Illegal to drive at this estimate";
+
+        document.getElementById("totalWeight").textContent = fmt(r.total, 0);
+        document.getElementById("mamOut").textContent = fmt(r.mam, 0);
+        document.getElementById("platedPayload").textContent = fmt(r.plated, 0);
+        document.getElementById("payloadPct").textContent = Math.max(0, r.usedPct).toLocaleString("en-GB", { maximumFractionDigits: 0 }) + "% of available payload";
+
+        var fill = document.getElementById("meterFill");
+        fill.style.width = Math.min(100, Math.max(0, r.usedPct)) + "%";
+        fill.style.background = cls === "ok" ? "var(--ok)" : cls === "tight" ? "var(--amber)" : "var(--danger)";
+
+        document.getElementById("warnOver").classList.toggle("show", r.remaining < 0);
+        document.getElementById("warnLow").classList.toggle("show", r.remaining >= 0 && r.remaining < 100);
+
+        var maxCat = Math.max(r.people, r.water, Math.abs(r.fuel), r.gas, r.electrical, r.gear, 1);
+        document.getElementById("breakdown").innerHTML =
+          barRow("People & pets", r.people, maxCat) +
+          barRow("Fresh / grey / black water", r.water, maxCat) +
+          barRow(usingActualEmpty() || !state.miroIncludesFuel ? "Fuel" : "Fuel vs MIRO 90%", r.fuel, maxCat) +
+          barRow("Gas bottles", r.gas, maxCat) +
+          barRow("Electrical & solar", r.electrical, maxCat) +
+          barRow("Gear & other", r.gear, maxCat);
+
+        var empty = compute({ freshFill: 0, greyFill: 0, blackFill: 0 });
+        var saved = r.water;
+        document.getElementById("waterWhatIf").textContent = saved > 0.5
+          ? "Emptying fresh, grey and black water would free " + fmt(saved, 0) + " and leave " + fmt(empty.remaining, 0) + " remaining."
+          : "Water tanks are already empty in this estimate.";
+
+        var axle = "";
+        if (num(state.frontAxle) || num(state.rearAxle)) {
+          axle = "Axle limits entered: front " + (num(state.frontAxle) ? fmt(num(state.frontAxle), 0) : "—") +
+            ", rear " + (num(state.rearAxle) ? fmt(num(state.rearAxle), 0) : "—") +
+            ". This calculator cannot split axle loads — confirm both on a weighbridge.";
+        }
+        document.getElementById("axleNote").textContent = axle;
+
+        var dock = document.getElementById("dockValue");
+        dock.textContent = fmt(Math.abs(r.remaining), 0);
+        dock.className = "dock-" + cls;
+
+        document.getElementById("emptyWater").textContent = waterBackup
+          ? "Restore water levels"
+          : "What if I empty the water?";
+
+        var driverNote = usingActualEmpty()
+          ? "Weighed empty is in use, so the driver is added separately."
+          : (state.miroIncludesDriver ? "Driver is already in MIRO — additional adults are passengers only." : "Driver is being added on top of MIRO.");
+        document.getElementById("peopleNote").textContent = driverNote;
+        document.getElementById("driverHint").textContent = usingActualEmpty()
+          ? "Added because you entered a weighed empty van."
+          : "Used only if MIRO does not include the driver, or you enter a weighed empty weight.";
+      }
+
+      function applyPreset(partial) {
+        Object.assign(state, clone(DEFAULTS), partial, { units: state.units });
+        waterBackup = null;
+        fillForm();
+        saveState();
+        calculate();
+        document.getElementById("results").scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      document.querySelectorAll("[data-key]").forEach(function (el) {
+        el.addEventListener("input", function () { readForm(el); });
+        el.addEventListener("change", function () { readForm(el); });
+      });
+
+      document.querySelectorAll("input[name='units']").forEach(function (el) {
+        el.addEventListener("change", function () {
+          state.units = el.value;
+          saveState();
+          fillForm();
+          calculate();
+        });
+      });
+
+      document.getElementById("preset-typical").addEventListener("click", function () { applyPreset(TYPICAL); });
+      document.getElementById("preset-light").addEventListener("click", function () { applyPreset(LIGHT); });
+      document.getElementById("preset-reset").addEventListener("click", function () { applyPreset(clone(DEFAULTS)); });
+
+      document.getElementById("emptyWater").addEventListener("click", function () {
+        if (waterBackup) {
+          state.freshFill = waterBackup.freshFill;
+          state.greyFill = waterBackup.greyFill;
+          state.blackFill = waterBackup.blackFill;
+          waterBackup = null;
+        } else {
+          waterBackup = { freshFill: state.freshFill, greyFill: state.greyFill, blackFill: state.blackFill };
+          state.freshFill = 0;
+          state.greyFill = 0;
+          state.blackFill = 0;
+        }
+        fillForm();
+        saveState();
+        calculate();
+      });
+
+      document.getElementById("printResults").addEventListener("click", function () { window.print(); });
+
+      /* Collapse extra sections on small screens so the first inputs stay reachable. */
+      if (window.matchMedia("(max-width: 979px)").matches) {
+        document.querySelectorAll("details.block").forEach(function (d, i) {
+          if (i > 2) d.removeAttribute("open");
+        });
+      }
+
+      fillForm();
+      calculate();
+    })();
+  </script>
+</body>
+</html>
