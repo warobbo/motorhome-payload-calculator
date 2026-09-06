@@ -10,10 +10,10 @@ The whole app is a single HTML file. There is no backend, no account, and no bui
 - Serve the folder and open it in a browser:
 
 ```bash
-python3 -m http.server 43127
+npm start
 ```
 
-Then visit [http://127.0.0.1:43127](http://127.0.0.1:43127).
+Then visit [http://localhost:4173](http://localhost:4173).
 
 ## What it does
 
