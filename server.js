@@ -6,6 +6,7 @@ const http = require("http");
 const fs = require("fs");
 const path = require("path");
 const handleLookup = require("./api/vehicle-lookup");
+const { writeOgImage } = require("./scripts/write-og-image");
 
 const PORT = Number(process.env.PORT || 4173);
 const ROOT = __dirname;
@@ -82,6 +83,12 @@ const server = http.createServer((req, res) => {
     res.end(data);
   });
 });
+
+try {
+  writeOgImage(ROOT);
+} catch (err) {
+  /* share image is optional for local demo */
+}
 
 server.listen(PORT, "0.0.0.0", () => {
   console.log("Motorhome Payload Calculator ready");

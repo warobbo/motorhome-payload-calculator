@@ -2,7 +2,7 @@ services:
   - type: web
     name: motorhome-payload-calculator
     runtime: node
-    buildCommand: npm install
+    buildCommand: npm install && node scripts/write-og-image.js
     startCommand: npm start
     healthCheckPath: /
     envVars:
