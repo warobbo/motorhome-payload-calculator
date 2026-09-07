@@ -869,20 +869,24 @@
 
     .print-only { display: none; }
 
-    /* Print — payload report only */
+    /* Print — sections 01–06 plus the payload summary */
     @media print {
       .skip,
       .site-header,
       .intro,
       .how-to-use,
-      #calculator-inputs,
+      #presets,
       .faq,
       #explain,
       #about,
       #privacy,
       .dock,
       .site-footer,
-      .result-actions {
+      .result-actions,
+      .stepper-btn,
+      .btn,
+      .tip,
+      .plate-find {
         display: none !important;
       }
       body {
@@ -892,16 +896,32 @@
       .wrap {
         max-width: none;
         margin: 0;
-        padding: 0;
+        padding: 0.4rem 0.6rem;
       }
       .layout {
         display: block;
+      }
+      details.block {
+        break-inside: avoid;
+        box-shadow: none;
+        border: 1px solid #ccc;
+        margin: 0 0 0.65rem;
+      }
+      details.block > summary {
+        cursor: default;
+      }
+      details.block > summary::after {
+        display: none;
+      }
+      .stepper input[type="number"] {
+        text-align: left;
       }
       .results {
         position: static !important;
         box-shadow: none;
         border: 2px solid #222;
-        max-width: 40rem;
+        max-width: none;
+        break-inside: avoid;
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
       }
@@ -969,6 +989,10 @@
     </section>
 
     <div class="layout">
+      <div class="print-only">
+        <strong>Motorhome payload report</strong>
+        <span id="printStamp"></span>
+      </div>
       <div id="calculator-inputs">
         <!-- Vehicle -->
         <details class="block" open>
@@ -1443,10 +1467,6 @@
 
       <!-- Results -->
       <aside class="results" id="results" aria-live="polite">
-        <div class="print-only">
-          <strong>Motorhome payload report</strong>
-          <span id="printStamp"></span>
-        </div>
         <h2>Loaded weight vs MAM</h2>
         <p class="note" id="vehicleSummary" hidden></p>
         <div class="remaining status-ok" id="remainingBox">
@@ -2270,7 +2290,7 @@
         calculate();
       });
 
-      document.getElementById("printResults").addEventListener("click", function () {
+      function preparePrint() {
         var stamp = document.getElementById("printStamp");
         if (stamp) {
           stamp.textContent = "Printed " + new Date().toLocaleString("en-GB", {
@@ -2281,6 +2301,21 @@
             minute: "2-digit"
           });
         }
+        document.querySelectorAll("details.block").forEach(function (d) {
+          d.dataset.wasOpen = d.open ? "1" : "0";
+          d.open = true;
+        });
+      }
+      function restoreAfterPrint() {
+        document.querySelectorAll("details.block").forEach(function (d) {
+          if (d.dataset.wasOpen === "0") d.removeAttribute("open");
+          delete d.dataset.wasOpen;
+        });
+      }
+      window.addEventListener("beforeprint", preparePrint);
+      window.addEventListener("afterprint", restoreAfterPrint);
+      document.getElementById("printResults").addEventListener("click", function () {
+        preparePrint();
         window.print();
       });
 
