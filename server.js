@@ -30,6 +30,8 @@ const MIME = {
   ".png": "image/png",
   ".ico": "image/x-icon",
   ".json": "application/json; charset=utf-8",
+  ".txt": "text/plain; charset=utf-8",
+  ".xml": "application/xml; charset=utf-8",
 };
 
 const server = http.createServer((req, res) => {
@@ -40,7 +42,9 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  const requested = path.normalize(urlPath === "/" ? "/index.html" : urlPath);
+  const requested = path.normalize(
+    (urlPath === "/" ? "index.html" : urlPath).replace(/^\/+/, "")
+  );
   let filePath = path.join(ROOT, requested);
 
   if (!filePath.startsWith(ROOT)) {
@@ -49,23 +53,32 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  const baseName = path.basename(filePath);
+  if (baseName.startsWith(".") && baseName !== ".") {
+    res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
+    res.end("Not found");
+    return;
+  }
+
   fs.readFile(filePath, (err, data) => {
     if (err) {
-      try {
-        data = fs.readFileSync(path.join(ROOT, "index.html"));
-        filePath = path.join(ROOT, "index.html");
-      } catch (readErr) {
-        res.writeHead(404);
-        res.end("Not found");
-        return;
-      }
+      res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
+      res.end("Not found");
+      return;
     }
     const ext = path.extname(filePath);
-    res.writeHead(200, {
+    const headers = {
       "Content-Type": MIME[ext] || "application/octet-stream",
-      "Cache-Control": "no-cache",
       "Access-Control-Allow-Origin": "*",
-    });
+    };
+    if (ext === ".txt" || ext === ".xml") {
+      headers["Cache-Control"] = "public, max-age=300";
+    } else if (ext === ".png") {
+      headers["Cache-Control"] = "public, max-age=86400";
+    } else {
+      headers["Cache-Control"] = "no-cache";
+    }
+    res.writeHead(200, headers);
     res.end(data);
   });
 });

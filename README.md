@@ -70,4 +70,4 @@ This is a Node web service, not a static site.
 
 After adding `DVLA_API_KEY`, wait for the deploy to go live, then hard-refresh the calculator and look up a real plate.
 
-Replace the `https://www.example.com/` canonical, Open Graph and Twitter URLs (and `og:image`) with your real domain before publishing.
+Public URL is [https://motorhomepayload.co.uk](https://motorhomepayload.co.uk) (non-www). `robots.txt`, `sitemap.xml` and `og-image.png` are static files next to `index.html`.
