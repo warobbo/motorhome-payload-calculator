@@ -1341,7 +1341,11 @@
             <div class="item">
               <div class="field">
                 <label for="bikes">Bikes on the back</label>
-                <input id="bikes" type="number" min="0" step="1" data-key="bikes">
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" data-step="-1" aria-label="Fewer bikes">−</button>
+                  <input id="bikes" type="number" min="0" step="1" data-key="bikes">
+                  <button type="button" class="stepper-btn" data-step="1" aria-label="More bikes">+</button>
+                </div>
               </div>
               <div class="field">
                 <label for="bikeKg">Each bike</label>
@@ -1369,15 +1373,24 @@
               <label class="check"><input type="checkbox" id="toolbox" data-key="toolbox"><span>Toolbox / spares</span></label>
               <div class="field"><label for="toolboxKg">Weight</label><input id="toolboxKg" type="number" min="0" step="0.1" data-key="toolboxKg" data-kind="weight"></div>
             </div>
-            <div class="grid-2" style="margin-top:0.6rem">
+            <div class="item" style="margin-top:0.6rem">
               <div class="field">
-                <label for="foodKg">Food &amp; drink</label>
-                <input id="foodKg" type="number" min="0" step="0.1" data-key="foodKg" data-kind="weight">
+                <label for="foodPeople">Food &amp; drink (people)</label>
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" data-step="-1" aria-label="Food for fewer people">−</button>
+                  <input id="foodPeople" type="number" min="0" step="1" data-key="foodPeople">
+                  <button type="button" class="stepper-btn" data-step="1" aria-label="Food for more people">+</button>
+                </div>
+                <span class="hint">12 <span class="u-weight">kg</span> per person is a typical touring allowance</span>
               </div>
               <div class="field">
-                <label for="miscKg">Clothes, bedding &amp; miscellaneous</label>
-                <input id="miscKg" type="number" min="0" step="0.1" data-key="miscKg" data-kind="weight">
+                <label for="foodKgEach">Weight each</label>
+                <input id="foodKgEach" type="number" min="0" step="0.1" data-key="foodKgEach" data-kind="weight">
               </div>
+            </div>
+            <div class="field" style="margin-top:0.6rem">
+              <label for="miscKg">Clothes, bedding &amp; miscellaneous</label>
+              <input id="miscKg" type="number" min="0" step="0.1" data-key="miscKg" data-kind="weight">
             </div>
           </div>
         </details>
@@ -1647,7 +1660,8 @@
         generatorKg: 22,
         toolbox: true,
         toolboxKg: 10,
-        foodKg: 12,
+        foodPeople: 1,
+        foodKgEach: 12,
         miscKg: 20
       };
 
@@ -1682,7 +1696,8 @@
         furniture: true,
         generator: false,
         toolbox: true,
-        foodKg: 18,
+        foodPeople: 2,
+        foodKgEach: 12,
         miscKg: 28
       };
 
@@ -1716,7 +1731,8 @@
         furniture: false,
         generator: false,
         toolbox: true,
-        foodKg: 8,
+        foodPeople: 1,
+        foodKgEach: 12,
         miscKg: 10
       };
 
@@ -1731,6 +1747,13 @@
         try {
           var raw = localStorage.getItem(STORAGE_KEY);
           if (raw) Object.assign(merged, JSON.parse(raw));
+          if (merged.foodPeople == null && merged.foodKg != null) {
+            merged.foodKgEach = merged.foodKgEach != null ? merged.foodKgEach : 12;
+            var oldFood = parseFloat(merged.foodKg);
+            merged.foodPeople = isFinite(oldFood) && oldFood > 0
+              ? Math.max(1, Math.round(oldFood / 12))
+              : 0;
+          }
         } catch (e) { /* private mode */ }
         return merged;
       }
@@ -1900,7 +1923,8 @@
         var electrical = batteryKg() + solarKg() + num(s.inverterKg) + num(s.elecExtrasKg);
 
         var bikes = num(s.bikes) * num(s.bikeKg) + (num(s.bikes) > 0 ? num(s.rackKg) : 0);
-        var gear = bikes + num(s.foodKg) + num(s.miscKg);
+        var food = num(s.foodPeople) * num(s.foodKgEach);
+        var gear = bikes + food + num(s.miscKg);
         if (s.awning) gear += num(s.awningKg);
         if (s.ramps) gear += num(s.rampsKg);
         if (s.furniture) gear += num(s.furnitureKg);
