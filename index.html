@@ -280,7 +280,7 @@
                 </div>
                 <button type="button" class="btn btn-primary" id="lookupBtn">Look up vehicle</button>
               </div>
-              <p class="lookup-status" id="lookupStatus" role="status" aria-live="polite">Look up a UK plate, or type make, model and year. Demo plates: DEMO3500, BOXER35, RELAY35.</p>
+              <p class="lookup-status" id="lookupStatus" role="status" aria-live="polite">Look up a UK plate, or type make, model and year.</p>
               <div class="identity" id="identityCard">
                 <h4 id="identityTitle">Vehicle</h4>
                 <p id="identityMeta"></p>
@@ -324,6 +324,17 @@
               </datalist>
               <div class="presets" style="margin-top:0.65rem">
                 <button type="button" class="btn" id="lookupSpecBtn">Look up make / model / year</button>
+              </div>
+              <div id="setup" class="api-key-box" hidden>
+                <div class="field">
+                  <label for="dvlaApiKey">DVLA Vehicle Enquiry API key</label>
+                  <input id="dvlaApiKey" type="password" autocomplete="off" spellcheck="false" placeholder="Stored only in this browser">
+                  <span class="hint">For every visitor, set <code>DVLA_API_KEY</code> in the host environment (Vercel project settings). This box is a browser-only fallback, shown with <code>?setup=1</code>. Get a key from the <a href="https://developer-portal.driver-vehicle-licensing.api.gov.uk/" target="_blank" rel="noopener">DVLA developer portal</a>.</span>
+                </div>
+                <div class="field" style="margin-top:0.55rem">
+                  <label for="motApiKey">MOT history API key (optional)</label>
+                  <input id="motApiKey" type="password" autocomplete="off" spellcheck="false" placeholder="Fills model when DVLA does not">
+                </div>
               </div>
             </div>
             <div class="grid-2">
