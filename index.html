@@ -867,16 +867,58 @@
       margin-top: 0.12rem;
     }
 
-    /* Print */
+    .print-only { display: none; }
+
+    /* Print — payload report only */
     @media print {
-      .site-header, .presets, .dock, .btn, .units, footer.site-footer .footer-links {
+      .skip,
+      .site-header,
+      .intro,
+      .how-to-use,
+      #calculator-inputs,
+      .faq,
+      #explain,
+      #about,
+      #privacy,
+      .dock,
+      .site-footer,
+      .result-actions {
         display: none !important;
       }
-      body { background: #fff; }
-      .wrap { padding: 0; }
-      .layout { display: block; }
-      .results { box-shadow: none; position: static; border: 2px solid #222; }
-      .block { break-inside: avoid; box-shadow: none; }
+      body {
+        background: #fff !important;
+        color: #111;
+      }
+      .wrap {
+        max-width: none;
+        margin: 0;
+        padding: 0;
+      }
+      .layout {
+        display: block;
+      }
+      .results {
+        position: static !important;
+        box-shadow: none;
+        border: 2px solid #222;
+        max-width: 40rem;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .print-only {
+        display: block;
+        margin: 0 0 0.85rem;
+        padding-bottom: 0.55rem;
+        border-bottom: 1px solid #ccc;
+      }
+      .print-only strong {
+        display: block;
+        font-size: 1.15rem;
+      }
+      .print-only span {
+        color: #444;
+        font-size: 0.88rem;
+      }
       a { text-decoration: none; color: inherit; }
     }
   </style>
@@ -927,7 +969,7 @@
     </section>
 
     <div class="layout">
-      <div>
+      <div id="calculator-inputs">
         <!-- Vehicle -->
         <details class="block" open>
           <summary>
@@ -1401,6 +1443,10 @@
 
       <!-- Results -->
       <aside class="results" id="results" aria-live="polite">
+        <div class="print-only">
+          <strong>Motorhome payload report</strong>
+          <span id="printStamp"></span>
+        </div>
         <h2>Loaded weight vs MAM</h2>
         <p class="note" id="vehicleSummary" hidden></p>
         <div class="remaining status-ok" id="remainingBox">
@@ -2224,7 +2270,19 @@
         calculate();
       });
 
-      document.getElementById("printResults").addEventListener("click", function () { window.print(); });
+      document.getElementById("printResults").addEventListener("click", function () {
+        var stamp = document.getElementById("printStamp");
+        if (stamp) {
+          stamp.textContent = "Printed " + new Date().toLocaleString("en-GB", {
+            day: "numeric",
+            month: "short",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
+          });
+        }
+        window.print();
+      });
 
       document.getElementById("lookupBtn").addEventListener("click", function () { lookupRegistration(); });
       document.getElementById("lookupSpecBtn").addEventListener("click", function () { lookupMakeModelYear(); });
