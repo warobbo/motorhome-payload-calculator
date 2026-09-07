@@ -1401,10 +1401,11 @@
         <section class="block" id="presets" style="padding:1rem 1.05rem">
           <span class="eyebrow">Presets</span>
           <h3 style="margin:0 0 0.55rem">Start from a typical van, not a blank page</h3>
-          <p class="lede">These do not replace your VIN plate. They show how quickly a 3.5 t Ducato or Boxer fills up.</p>
+          <p class="lede">These do not replace your VIN plate. They show how quickly a 3.5 t motorhome fills up.</p>
           <div class="presets">
-            <button type="button" class="btn btn-primary" id="preset-typical">Typical UK 3.5t Ducato/Boxer setup</button>
-            <button type="button" class="btn" id="preset-light">Light weekend setup</button>
+            <button type="button" class="btn btn-primary" id="preset-typical">Typical 3.5t Motorhome setup</button>
+            <button type="button" class="btn" id="preset-light">Light weekend setup based on 2 adults</button>
+            <button type="button" class="btn" id="preset-family">Full week family of 4 — 2 adults and 2 children</button>
             <button type="button" class="btn btn-ghost" id="preset-reset">Reset to defaults</button>
           </div>
         </section>
@@ -1733,9 +1734,46 @@
         furniture: false,
         generator: false,
         toolbox: true,
-        foodPeople: 1,
+        foodPeople: 2,
         foodKgEach: 12,
         miscKg: 10
+      };
+
+      var FAMILY = {
+        mam: 3500,
+        miro: 3120,
+        actualEmpty: "",
+        extraAdults: 1,
+        adultKg: 80,
+        children: 2,
+        childKg: 30,
+        pets: 0,
+        freshCap: 100,
+        freshFill: 90,
+        greyCap: 80,
+        greyFill: 20,
+        blackCap: 19,
+        blackFill: 40,
+        fuelCap: 90,
+        fuelFill: 90,
+        gas6: 2,
+        gas9: 0,
+        gas13: 0,
+        battType: "life100",
+        battQty: 1,
+        solarType: "rigid200",
+        solarQty: 1,
+        inverterKg: 4.5,
+        elecExtrasKg: 3,
+        awning: true,
+        bikes: 2,
+        ramps: true,
+        furniture: true,
+        generator: false,
+        toolbox: true,
+        foodPeople: 4,
+        foodKgEach: 12,
+        miscKg: 45
       };
 
       var state = loadState();
@@ -2207,6 +2245,7 @@
 
       document.getElementById("preset-typical").addEventListener("click", function () { applyPreset(TYPICAL); });
       document.getElementById("preset-light").addEventListener("click", function () { applyPreset(LIGHT); });
+      document.getElementById("preset-family").addEventListener("click", function () { applyPreset(FAMILY); });
       document.getElementById("preset-reset").addEventListener("click", function () { applyPreset(clone(DEFAULTS)); });
 
       document.getElementById("emptyWater").addEventListener("click", function () {
