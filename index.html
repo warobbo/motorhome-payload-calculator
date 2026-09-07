@@ -1584,7 +1584,7 @@
 
   <div class="dock" id="dock">
     <div>
-      <div class="hint">Remaining payload</div>
+      <div class="hint" id="dockHint">Remaining payload</div>
       <strong id="dockValue">—</strong>
     </div>
     <a class="btn btn-primary" href="#results">Full breakdown</a>
@@ -1700,8 +1700,11 @@
         fuelCap: 90,
         fuelFill: 90,
         gas6: 2,
+        gas6Full: 13,
         gas9: 0,
+        gas9Full: 18.5,
         gas13: 0,
+        gas13Full: 28,
         battType: "life100",
         battQty: 1,
         solarType: "rigid200",
@@ -2020,8 +2023,8 @@
         var cls = statusClass(r.remaining);
         var box = document.getElementById("remainingBox");
         box.className = "remaining status-" + cls;
-        document.getElementById("remainingLabel").textContent = r.remaining < 0 ? "Over MAM by" : "Remaining payload";
-        document.getElementById("remainingValue").textContent = fmt(Math.abs(r.remaining), 0);
+        document.getElementById("remainingLabel").textContent = "Remaining payload";
+        document.getElementById("remainingValue").textContent = (r.remaining < 0 ? "−" : "") + fmt(Math.abs(r.remaining), 0);
         document.getElementById("remainingSub").textContent = cls === "ok"
           ? "Comfortable margin for a 3.5t van"
           : cls === "tight"
@@ -2066,8 +2069,9 @@
         document.getElementById("axleNote").textContent = axle;
 
         var dock = document.getElementById("dockValue");
-        dock.textContent = fmt(Math.abs(r.remaining), 0);
+        dock.textContent = (r.remaining < 0 ? "−" : "") + fmt(Math.abs(r.remaining), 0);
         dock.className = "dock-" + cls;
+        document.getElementById("dockHint").textContent = "Remaining payload";
 
         document.getElementById("emptyWater").textContent = waterBackup
           ? "Restore water levels"
