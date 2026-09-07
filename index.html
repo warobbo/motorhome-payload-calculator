@@ -41,136 +41,168 @@
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&amp;family=Outfit:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
 
   <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "WebApplication",
-        "name": "Motorhome Payload Calculator",
-        "alternateName": "UK Campervan Weight Checker",
-        "url": "https://www.example.com/",
-        "description": "Free UK motorhome payload calculator for 3.5t Fiat Ducato and Peugeot Boxer vans. Check MAM, MIRO, water, gas and gear so you stay legal.",
-        "applicationCategory": "UtilitiesApplication",
-        "operatingSystem": "Any",
-        "browserRequirements": "Requires JavaScript. Works in modern mobile and desktop browsers.",
-        "inLanguage": "en-GB",
-        "isAccessibleForFree": true,
-        "offers": {
-          "@type": "Offer",
-          "price": "0",
-          "priceCurrency": "GBP"
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "name": "Motorhome Payload Calculator",
+      "alternateName": "UK Campervan Weight Checker",
+      "url": "https://www.example.com/",
+      "description": "Free UK motorhome payload calculator for 3.5t Fiat Ducato and Peugeot Boxer vans. Check MAM, MIRO, water, gas and gear so you stay legal.",
+      "applicationCategory": "UtilitiesApplication",
+      "operatingSystem": "Any",
+      "browserRequirements": "Requires JavaScript. Works in modern mobile and desktop browsers.",
+      "inLanguage": "en-GB",
+      "isAccessibleForFree": true,
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "GBP"
+      },
+      "featureList": [
+        "Live MAM and remaining payload calculation",
+        "Metric and imperial units",
+        "People, fluids, gas, batteries, solar and gear breakdown",
+        "UK registration lookup for make and plated weight",
+        "Local storage of last vehicle details"
+      ],
+      "audience": {
+        "@type": "Audience",
+        "audienceType": "UK motorhome and campervan owners",
+        "geographicArea": {
+          "@type": "Country",
+          "name": "United Kingdom"
+        }
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is GVW on a motorhome?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "GVW (Gross Vehicle Weight) is the maximum weight your motorhome is legally allowed to be when fully loaded - including passengers, fuel, water, gas, and all your gear. It's set by the manufacturer and shown on the vehicle's VIN plate. Go over it and you're driving illegally, even if the overload isn't obvious."
+          }
         },
-        "featureList": [
-          "Live MAM and remaining payload calculation",
-          "Metric and imperial units",
-          "People, fluids, gas, batteries, solar and gear breakdown",
-          "UK registration lookup for make and plated weight",
-          "Local storage of last vehicle details"
-        ],
-        "audience": {
-          "@type": "Audience",
-          "audienceType": "UK motorhome and campervan owners",
-          "geographicArea": {
-            "@type": "Country",
-            "name": "United Kingdom"
+        {
+          "@type": "Question",
+          "name": "How do I find my motorhome's GVW?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Check the manufacturer's VIN plate (usually in the driver's door frame, engine bay, or chassis), your V5C logbook (look for \"Revenue Weight\"), or the original vehicle handbook. If in doubt, weigh the van at a public weighbridge."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is a C1 licence and do I need one for my motorhome?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A C1 licence lets you drive vehicles between 3,500 kg and 7,500 kg. If you passed your car test before 1 January 1997, you likely already have C1 entitlement on your licence. If you passed after that date, your licence is capped at 3,500 kg and you'll need to pass a separate C1 test to drive a heavier motorhome."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I drive a motorhome over 3,500 kg without a C1 licence?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No - not legally. If your licence only covers category B (up to 3,500 kg) and your motorhome's MAM exceeds that, you must either downplate the vehicle to 3,500 kg (where possible) or take the C1 test before driving it."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is motorhome payload and how do I calculate it?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Payload is how much weight you can safely add to your motorhome before hitting its MAM. Calculate it as: MAM minus MIRO (Mass in Running Order - the van's weight with a full fuel tank, driver, and standard equipment). What's left is your payload for passengers, water, gas, and belongings."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How much payload does my motorhome have?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "It varies by model and can be surprisingly low - often 300–500 kg once passengers and habitation equipment are factored in. Check your handbook for MIRO and MAM figures, or use our calculator above to work it out instantly."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What does MAM mean on a motorhome?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "MAM (Maximum Authorised Mass) is the maximum legal weight of your motorhome when fully loaded. It's the same figure as GVW - manufacturers and official documents just use different terms for it."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the difference between MAM and MTPLM?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "None, practically speaking - they're the same value. MTPLM (Maximum Technically Permissible Laden Mass) is the EU/technical term; MAM is the term used in UK licensing law. Motorhome brochures often list MTPLM, while your licence category depends on MAM."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is MIRO - and does it include fresh water?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "MIRO (Mass in Running Order) is the manufacturer's ready-to-drive weight. Under current European rules it usually includes the driver (75 kg), oils, 90% fuel and standard tools. Fresh water is normally assumed empty on UK motorhomes, so a full tank is extra payload. Always check your handbook, because converters differ."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why do so many 3.5-tonne campers run out of payload?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A typical conversion leaves only 300–500 kg after MIRO. Two adults, a full 90–120 L water tank, gas bottles, a leisure battery, an awning and two bikes can use that allowance before food, clothes or a dog are added. That is why 3.5 t vans feel tight and why a weighbridge visit is worthwhile."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does the driver count towards payload?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "If you are using the manufacturer MIRO figure, the driver is already included (usually at 75 kg). Extra adults, children and pets are additional. If you enter an actual weighbridge empty weight of the van only, add the driver as well as passengers."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How should I treat fuel, gas and water in this calculator?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Water weighs 1 kg per litre. Diesel is about 0.84 kg per litre. A 9 kg propane bottle weighs around 18–19 kg when full because of the steel cylinder. MIRO already assumes about 90% fuel, so this calculator only adds the difference from that assumption unless you are working from a weighed empty van."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is it illegal to drive a motorhome over its MAM?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Exceeding MAM can mean a roadside prohibition, a fine, points, and invalid insurance if you are involved in a collision. Overloaded axles are a separate offence even when the total is under MAM. There is no \"small margin\" in law - stay under the plated figures."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How accurate is this calculator compared with a weighbridge?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "This is an estimate. MIRO figures are often optimistic, converters vary, and household kit is easy to under-count. Use the calculator to see where weight is coming from, then confirm on a calibrated weighbridge - ideally per axle - before a trip. The printed results are not a legal document."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I look up my motorhome by registration?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. A UK plate lookup fills make, model and year, plus the DVLA revenue weight (often the plated MAM). Model is inferred for common van platforms unless MOT history is connected. You can also type make, model and year to apply typical 3.5t MAM and MIRO figures. Always confirm weights on the VIN plate and handbook."
           }
         }
-      },
-      {
-        "@type": "FAQPage",
-        "mainEntity": [
-          {
-            "@type": "Question",
-            "name": "What is MAM, GVM and MTPLM?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "MAM (Maximum Authorised Mass), GVM (Gross Vehicle Mass) and MTPLM (Maximum Technically Permitted Laden Mass) are names for the same legal ceiling: the most the motorhome may weigh on the road, including people, fuel, water, gas and everything you have loaded. For most UK Ducato and Boxer campers this is 3,500 kg. Going over it is illegal."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "What is MIRO — and does it include fresh water?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "MIRO (Mass in Running Order) is the manufacturer’s ready-to-drive weight. Under current European rules it usually includes the driver (75 kg), oils, 90% fuel and standard tools. Fresh water is normally assumed empty on UK motorhomes, so a full tank is extra payload. Always check your handbook, because converters differ."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Why do so many 3.5-tonne Ducato and Boxer campers run out of payload?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "A typical conversion leaves only 300–500 kg after MIRO. Two adults, a full 90–120 L water tank, gas bottles, a leisure battery, an awning and two bikes can use that allowance before food, clothes or a dog are added. That is why 3.5 t vans feel tight and why a weighbridge visit is worthwhile."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Does the driver count towards payload?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "If you are using the manufacturer MIRO figure, the driver is already included (usually at 75 kg). Extra adults, children and pets are additional. If you enter an actual weighbridge empty weight of the van only, add the driver as well as passengers."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "How should I treat fuel, gas and water in this calculator?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Water weighs 1 kg per litre. Diesel is about 0.84 kg per litre. A 9 kg propane bottle weighs around 18–19 kg when full because of the steel cylinder. MIRO already assumes about 90% fuel, so this calculator only adds the difference from that assumption unless you are working from a weighed empty van."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Is it illegal to drive a motorhome over its MAM?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes. Exceeding MAM can mean a roadside prohibition, a fine, points, and invalid insurance if you are involved in a collision. Overloaded axles are a separate offence even when the total is under MAM. There is no ‘small margin’ in law — stay under the plated figures."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "How accurate is this calculator compared with a weighbridge?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "This is an estimate. MIRO figures are often optimistic, converters vary, and household kit is easy to under-count. Use the calculator to see where weight is coming from, then confirm on a calibrated weighbridge — ideally per axle — before a trip. The printed results are not a legal document."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Where do I find the weight plate or VIN plate on a motorhome?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Your motorhome’s weight plate is usually on the driver’s door frame (the most common location), under the bonnet near the engine bay, inside a habitation door on the entry step frame, or listed in the vehicle handbook as MAM, GVW or MTPLM. Look for Maximum Authorised Mass or Gross Vehicle Weight — that is the number you need."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Can I look up my motorhome by registration?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes. A UK plate lookup fills make, model and year, plus the DVLA revenue weight (often the plated MAM). Model is inferred for common van platforms unless MOT history is connected. You can also type make, model and year to apply typical 3.5t MAM and MIRO figures. Always confirm weights on the VIN plate and handbook."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "What is a realistic payload on a typical UK 3.5t conversion?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Many Fiat Ducato and Peugeot Boxer conversions on a 3,500 kg chassis have 350–550 kg of payload. Premium or winterised vans can be lower. A chassis uprate (for example to 3,650 kg or 4,250 kg) only helps if the axles, brakes, tyres and driving licence also allow it."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Do I need a C1 licence for a 3.5t motorhome?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Not if the plated MAM is 3,500 kg or less — a category B car licence covers that. You need C1 if the van is plated over 3,500 kg. Drivers who passed their car test before 1 January 1997 often already have C1 as acquired rights."
-            }
-          }
-        ]
-      }
-    ]
-  }
+      ]
+    }
+  ]
+}
   </script>
 
   <style>
@@ -1082,7 +1114,7 @@
                   <div><strong>Vehicle handbook</strong><span>Listed as MAM, GVW or MTPLM — still confirm on the metal plate.</span></div>
                 </li>
               </ol>
-              <p><a href="#weight-plate">Full weight-plate guide</a></p>
+              <p><a href="#weight-plate">How to find GVW in the FAQ</a></p>
             </details>
           </div>
         </details>
@@ -1444,16 +1476,44 @@
     <section class="prose faq" id="faq">
       <h2>Payload FAQ</h2>
 
-      <details open>
-        <summary>What is MAM, GVM and MTPLM?</summary>
-        <p>MAM (Maximum Authorised Mass), GVM (Gross Vehicle Mass) and MTPLM (Maximum Technically Permitted Laden Mass) are names for the same legal ceiling: the most the motorhome may weigh on the road, including people, fuel, water, gas and everything you have loaded. For most UK Ducato and Boxer campers this is 3,500 kg. Going over it is illegal.</p>
+      <details id="gvw-explained" open>
+        <summary>What is GVW on a motorhome?</summary>
+        <p>GVW (Gross Vehicle Weight) is the maximum weight your motorhome is legally allowed to be when fully loaded — including passengers, fuel, water, gas, and all your gear. It’s set by the manufacturer and shown on the vehicle’s VIN plate. Go over it and you’re driving illegally, even if the overload isn’t obvious.</p>
+      </details>
+      <details id="weight-plate">
+        <summary>How do I find my motorhome’s GVW?</summary>
+        <p>Check the manufacturer’s VIN plate (usually in the driver’s door frame, engine bay, or chassis), your V5C logbook (look for “Revenue Weight”), or the original vehicle handbook. If in doubt, weigh the van at a public weighbridge.</p>
+      </details>
+      <details id="c1-licence">
+        <summary>What is a C1 licence and do I need one for my motorhome?</summary>
+        <p>A C1 licence lets you drive vehicles between 3,500 kg and 7,500 kg. If you passed your car test before 1 January 1997, you likely already have C1 entitlement on your licence. If you passed after that date, your licence is capped at 3,500 kg and you’ll need to pass a separate C1 test to drive a heavier motorhome.</p>
+      </details>
+      <details id="faq-c1-over">
+        <summary>Can I drive a motorhome over 3,500 kg without a C1 licence?</summary>
+        <p>No — not legally. If your licence only covers category B (up to 3,500 kg) and your motorhome’s MAM exceeds that, you must either downplate the vehicle to 3,500 kg (where possible) or take the C1 test before driving it.</p>
+      </details>
+      <details id="payload-explained">
+        <summary>What is motorhome payload and how do I calculate it?</summary>
+        <p>Payload is how much weight you can safely add to your motorhome before hitting its MAM. Calculate it as: MAM minus MIRO (Mass in Running Order — the van’s weight with a full fuel tank, driver, and standard equipment). What’s left is your payload for passengers, water, gas, and belongings.</p>
+      </details>
+      <details id="faq-how-much-payload">
+        <summary>How much payload does my motorhome have?</summary>
+        <p>It varies by model and can be surprisingly low — often 300–500 kg once passengers and habitation equipment are factored in. Check your handbook for MIRO and MAM figures, or use our calculator above to work it out instantly.</p>
+      </details>
+      <details id="mam-explained">
+        <summary>What does MAM mean on a motorhome?</summary>
+        <p>MAM (Maximum Authorised Mass) is the maximum legal weight of your motorhome when fully loaded. It’s the same figure as GVW — manufacturers and official documents just use different terms for it.</p>
+      </details>
+      <details id="faq-mtplm">
+        <summary>What is the difference between MAM and MTPLM?</summary>
+        <p>None, practically speaking — they’re the same value. MTPLM (Maximum Technically Permissible Laden Mass) is the EU/technical term; MAM is the term used in UK licensing law. Motorhome brochures often list MTPLM, while your licence category depends on MAM.</p>
       </details>
       <details>
         <summary>What is MIRO — and does it include fresh water?</summary>
         <p>MIRO (Mass in Running Order) is the manufacturer’s ready-to-drive weight. Under current European rules it usually includes the driver (75 kg), oils, 90% fuel and standard tools. Fresh water is normally assumed empty on UK motorhomes, so a full tank is extra payload. Always check your handbook, because converters differ.</p>
       </details>
       <details>
-        <summary>Why do so many 3.5-tonne Ducato and Boxer campers run out of payload?</summary>
+        <summary>Why do so many 3.5-tonne campers run out of payload?</summary>
         <p>A typical conversion leaves only 300–500 kg after MIRO. Two adults, a full 90–120 L water tank, gas bottles, a leisure battery, an awning and two bikes can use that allowance before food, clothes or a dog are added. That is why 3.5 t vans feel tight and why a weighbridge visit is worthwhile.</p>
       </details>
       <details>
@@ -1473,20 +1533,8 @@
         <p>This is an estimate. MIRO figures are often optimistic, converters vary, and household kit is easy to under-count. Use the calculator to see where weight is coming from, then confirm on a calibrated weighbridge — ideally per axle — before a trip. The printed results are not a legal document.</p>
       </details>
       <details>
-        <summary>Where do I find the weight plate or VIN plate on a motorhome?</summary>
-        <p>Your motorhome’s weight plate is usually found in one of these places: the driver’s door frame (most common), under the bonnet near the engine bay, inside a habitation door on the entry step frame, or in the vehicle handbook listed as MAM, GVW or MTPLM. Look for “Maximum Authorised Mass” or “Gross Vehicle Weight”. This is the number you need.</p>
-      </details>
-      <details>
         <summary>Can I look up my motorhome by registration?</summary>
         <p>Yes. A UK plate lookup fills make, model and year, plus the DVLA revenue weight (often the plated MAM). Model is inferred for common van platforms unless MOT history is connected. You can also type make, model and year to apply typical 3.5t MAM and MIRO figures. Always confirm weights on the VIN plate and handbook.</p>
-      </details>
-      <details>
-        <summary>What is a realistic payload on a typical UK 3.5t conversion?</summary>
-        <p>Many Fiat Ducato and Peugeot Boxer conversions on a 3,500 kg chassis have 350–550 kg of payload. Premium or winterised vans can be lower. A chassis uprate (for example to 3,650 kg or 4,250 kg) only helps if the axles, brakes, tyres and driving licence also allow it.</p>
-      </details>
-      <details>
-        <summary>Do I need a C1 licence for a 3.5t motorhome?</summary>
-        <p>Not if the plated MAM is 3,500 kg or less — a category B car licence covers that. You need C1 if the van is plated over 3,500 kg. Drivers who passed their car test before 1 January 1997 often already have C1 as acquired rights.</p>
       </details>
 
       <div class="explore">
@@ -1501,51 +1549,17 @@
             Understand the numbers
           </p>
           <ul class="explore-links">
-            <li><a href="#gvw-explained"><span class="arrow" aria-hidden="true">→</span> GVW explained</a></li>
+            <li><a href="#gvw-explained"><span class="arrow" aria-hidden="true">→</span> What is GVW on a motorhome?</a></li>
             <li><a href="#c1-licence"><span class="arrow" aria-hidden="true">→</span> C1 licence explained</a></li>
             <li><a href="#payload-explained"><span class="arrow" aria-hidden="true">→</span> Payload explained</a></li>
-            <li><a href="#mam-explained"><span class="arrow" aria-hidden="true">→</span> MAM explained</a></li>
-            <li><a href="#weight-plate"><span class="arrow" aria-hidden="true">→</span> Where to find your weight plate, or VIN plate</a></li>
+            <li><a href="#mam-explained"><span class="arrow" aria-hidden="true">→</span> What does MAM mean?</a></li>
+            <li><a href="#weight-plate"><span class="arrow" aria-hidden="true">→</span> How do I find my motorhome’s GVW?</a></li>
           </ul>
         </div>
       </div>
     </section>
 
     <section class="prose" id="explain">
-      <h2>MAM vs MIRO vs payload</h2>
-      <div class="terms">
-        <article class="term" id="mam-explained">
-          <h3>MAM explained</h3>
-          <p>Maximum Authorised Mass is the legal maximum the motorhome may weigh on the road. It is on the VIN plate, usually 3,500 kg on UK Ducato and Boxer campers.</p>
-        </article>
-        <article class="term" id="gvw-explained">
-          <h3>GVW explained</h3>
-          <p>Gross Vehicle Weight is the same ceiling as MAM. You may also see GVM or MTPLM. Whatever the label, it is the plated maximum — not an empty or typical touring weight.</p>
-        </article>
-        <article class="term" id="payload-explained">
-          <h3>Payload explained</h3>
-          <p>Everything else: extra people, water, waste, gas, food, bikes, dog, aftermarket batteries and solar. Payload = MAM − MIRO, before real-world extras eat it.</p>
-        </article>
-        <article class="term">
-          <h3>MIRO / kerb / running order</h3>
-          <p>The converter’s ready-to-drive weight. Typically driver + 90% fuel. Fresh water is usually empty. Treat brochure MIRO as optimistic until you weigh.</p>
-        </article>
-      </div>
-
-      <h2 id="c1-licence">C1 licence explained</h2>
-      <p>A standard UK category B car licence covers motorhomes up to <strong>3,500 kg MAM</strong>. If the plated weight is higher — a chassis uprate to 3,650 kg, 4,250 kg or 5,000 kg — you normally need category <strong>C1</strong> (vehicles from 3,500 kg to 7,500 kg).</p>
-      <p>If you passed your car test <strong>before 1 January 1997</strong>, C1 is often already on your licence as acquired rights. After that date you usually need a C1 test, medical and the correct entitlement on your photocard. Matching tyres, brakes and speed limiter does not change the licence you need — the plated MAM does.</p>
-
-      <h2 id="weight-plate">Where to find your weight plate, or VIN plate</h2>
-      <p>Your motorhome’s weight plate is usually found in one of these places:</p>
-      <ul>
-        <li><strong>Driver’s door frame</strong> — most common location</li>
-        <li><strong>Under the bonnet</strong>, near the engine bay</li>
-        <li><strong>Inside a habitation door</strong>, on the entry step frame</li>
-        <li><strong>Vehicle handbook</strong>, listed as MAM, GVW, or MTPLM</li>
-      </ul>
-      <p>Look for “Maximum Authorised Mass” or “Gross Vehicle Weight”. This is the number you need. Axle ratings are often on the same plate. A DVLA lookup can suggest the figure, but the plate on the van is what the law uses.</p>
-
       <h2>Typical Fiat Ducato / Peugeot Boxer notes</h2>
       <ul>
         <li>The Sevel van (Ducato, Boxer, Relay) on a 3,500 kg chassis is the UK’s default 3.5 t camper platform.</li>
@@ -2292,6 +2306,18 @@
 
       fillForm();
       calculate();
+
+      function openHashTarget() {
+        var id = (location.hash || "").replace(/^#/, "");
+        if (!id) return;
+        var el = document.getElementById(id);
+        if (!el) return;
+        if (el.tagName === "DETAILS") el.open = true;
+        var nested = el.closest("details");
+        if (nested) nested.open = true;
+      }
+      window.addEventListener("hashchange", openHashTarget);
+      openHashTarget();
     })();
   </script>
 </body>
