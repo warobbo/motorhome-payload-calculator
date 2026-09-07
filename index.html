@@ -1391,10 +1391,10 @@
           <h3 style="margin:0 0 0.55rem">Start from a typical van, not a blank page</h3>
           <p class="lede">These do not replace your VIN plate. They show how quickly a 3.5 t motorhome fills up.</p>
           <div class="presets">
-            <button type="button" class="btn btn-primary" id="preset-typical">Typical 3.5t Motorhome setup</button>
-            <button type="button" class="btn" id="preset-light">Light weekend setup based on 2 adults</button>
-            <button type="button" class="btn" id="preset-family">Full week family of 4 — 2 adults and 2 children</button>
-            <button type="button" class="btn btn-ghost" id="preset-reset">Reset to defaults</button>
+            <button type="button" class="btn preset-btn" id="preset-typical" aria-pressed="false">Typical 3.5t Motorhome setup</button>
+            <button type="button" class="btn preset-btn" id="preset-light" aria-pressed="false">Light weekend setup based on 2 adults</button>
+            <button type="button" class="btn preset-btn" id="preset-family" aria-pressed="false">Full week family of 4 — 2 adults and 2 children</button>
+            <button type="button" class="btn btn-ghost preset-btn" id="preset-reset" aria-pressed="false">Reset to defaults</button>
           </div>
         </section>
       </div>
@@ -2161,13 +2161,23 @@
         }
       }
 
-      function applyPreset(partial) {
+      function applyPreset(partial, presetId) {
         Object.assign(state, clone(DEFAULTS), partial, { units: state.units });
         waterBackup = null;
         fillForm();
         saveState();
         calculate();
+        setActivePreset(presetId);
         document.getElementById("results").scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      function setActivePreset(presetId) {
+        document.querySelectorAll(".preset-btn").forEach(function (btn) {
+          var on = btn.id === presetId;
+          btn.classList.toggle("btn-primary", on);
+          btn.classList.toggle("btn-ghost", btn.id === "preset-reset" && !on);
+          btn.setAttribute("aria-pressed", on ? "true" : "false");
+        });
       }
 
       document.querySelectorAll("[data-key]").forEach(function (el) {
@@ -2192,10 +2202,10 @@
         });
       });
 
-      document.getElementById("preset-typical").addEventListener("click", function () { applyPreset(TYPICAL); });
-      document.getElementById("preset-light").addEventListener("click", function () { applyPreset(LIGHT); });
-      document.getElementById("preset-family").addEventListener("click", function () { applyPreset(FAMILY); });
-      document.getElementById("preset-reset").addEventListener("click", function () { applyPreset(clone(DEFAULTS)); });
+      document.getElementById("preset-typical").addEventListener("click", function () { applyPreset(TYPICAL, "preset-typical"); });
+      document.getElementById("preset-light").addEventListener("click", function () { applyPreset(LIGHT, "preset-light"); });
+      document.getElementById("preset-family").addEventListener("click", function () { applyPreset(FAMILY, "preset-family"); });
+      document.getElementById("preset-reset").addEventListener("click", function () { applyPreset(clone(DEFAULTS), "preset-reset"); });
 
       document.getElementById("emptyWater").addEventListener("click", function () {
         if (waterBackup) {
