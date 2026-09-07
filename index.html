@@ -1278,7 +1278,11 @@
               </div>
               <div class="field">
                 <label for="battQty">Quantity</label>
-                <input id="battQty" type="number" inputmode="numeric" min="0" step="1" data-key="battQty">
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" data-step="-1" aria-label="Fewer leisure batteries">−</button>
+                  <input id="battQty" type="number" inputmode="numeric" min="0" step="1" data-key="battQty">
+                  <button type="button" class="stepper-btn" data-step="1" aria-label="More leisure batteries">+</button>
+                </div>
               </div>
               <div class="field" id="battCustomWrap">
                 <label for="battCustomKg">Custom battery weight each</label>
@@ -1297,7 +1301,11 @@
               </div>
               <div class="field">
                 <label for="solarQty">Panels / arrays</label>
-                <input id="solarQty" type="number" inputmode="numeric" min="0" step="1" data-key="solarQty">
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" data-step="-1" aria-label="Fewer solar panels">−</button>
+                  <input id="solarQty" type="number" inputmode="numeric" min="0" step="1" data-key="solarQty">
+                  <button type="button" class="stepper-btn" data-step="1" aria-label="More solar panels">+</button>
+                </div>
               </div>
               <div class="field" id="solarCustomWrap">
                 <label for="solarCustomKg">Custom solar weight each</label>
