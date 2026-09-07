@@ -62,10 +62,18 @@ async function handleLookup(req, res) {
   }
 
   if (!vrm && !make && !model) {
-    send(res, 200, {
-      ok: true,
-      liveDvla: !!(process.env.DVLA_API_KEY),
-      demoPlates: DEMO_PLATES,
+    if (req.method === "GET") {
+      send(res, 200, {
+        ok: true,
+        liveDvla: !!(process.env.DVLA_API_KEY),
+        demoPlates: DEMO_PLATES,
+      });
+      return;
+    }
+    send(res, 400, {
+      ok: false,
+      error: "missing_query",
+      message: "Enter a UK registration, or make, model and year.",
     });
     return;
   }
