@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: motorhome-payload-calculator
+    runtime: node
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DVLA_API_KEY
+        sync: false
+      - key: MOT_API_KEY
+        sync: false
