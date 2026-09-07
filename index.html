@@ -431,6 +431,46 @@
       box-shadow: var(--focus);
       border-color: var(--pine);
     }
+
+    .stepper {
+      display: flex;
+      align-items: stretch;
+      gap: 0.4rem;
+    }
+    .stepper input[type="number"] {
+      flex: 1;
+      min-width: 0;
+      text-align: center;
+      -moz-appearance: textfield;
+      appearance: textfield;
+    }
+    .stepper input[type="number"]::-webkit-outer-spin-button,
+    .stepper input[type="number"]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    .stepper-btn {
+      flex: 0 0 2.75rem;
+      width: 2.75rem;
+      min-height: 48px;
+      border: 1.5px solid var(--line);
+      border-radius: 12px;
+      background: var(--pine-soft);
+      color: var(--pine);
+      font-size: 1.45rem;
+      font-weight: 600;
+      line-height: 1;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .stepper-btn:hover:not(:disabled) {
+      border-color: var(--pine);
+      background: #d5e8e1;
+    }
+    .stepper-btn:disabled {
+      opacity: 0.38;
+      cursor: not-allowed;
+    }
     .unit-suffix {
       color: var(--muted);
       font-size: 0.8rem;
@@ -1058,7 +1098,11 @@
             <div class="grid-3">
               <div class="field">
                 <label for="extraAdults">Additional adults</label>
-                <input id="extraAdults" type="number" inputmode="numeric" min="0" step="1" data-key="extraAdults">
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" data-step="-1" aria-label="Fewer additional adults">−</button>
+                  <input id="extraAdults" type="number" inputmode="numeric" min="0" step="1" data-key="extraAdults">
+                  <button type="button" class="stepper-btn" data-step="1" aria-label="More additional adults">+</button>
+                </div>
               </div>
               <div class="field">
                 <label for="adultKg">Weight each</label>
@@ -1069,7 +1113,11 @@
               </div>
               <div class="field">
                 <label for="children">Children</label>
-                <input id="children" type="number" inputmode="numeric" min="0" step="1" data-key="children">
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" data-step="-1" aria-label="Fewer children">−</button>
+                  <input id="children" type="number" inputmode="numeric" min="0" step="1" data-key="children">
+                  <button type="button" class="stepper-btn" data-step="1" aria-label="More children">+</button>
+                </div>
               </div>
               <div class="field">
                 <label for="childKg">Weight each</label>
@@ -1078,7 +1126,11 @@
               <div></div>
               <div class="field">
                 <label for="pets">Pets (optional)</label>
-                <input id="pets" type="number" inputmode="numeric" min="0" step="1" data-key="pets">
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" data-step="-1" aria-label="Fewer pets">−</button>
+                  <input id="pets" type="number" inputmode="numeric" min="0" step="1" data-key="pets">
+                  <button type="button" class="stepper-btn" data-step="1" aria-label="More pets">+</button>
+                </div>
               </div>
               <div class="field">
                 <label for="petKg">Weight each</label>
@@ -1731,6 +1783,7 @@
         });
         setUnitLabels();
         toggleCustomFields();
+        syncSteppers();
         syncing = false;
       }
 
@@ -1752,8 +1805,37 @@
           state[key] = el.value === "" ? "" : num(el.value);
         }
         toggleCustomFields();
+        syncSteppers();
         saveState();
         calculate();
+      }
+
+      function syncSteppers() {
+        document.querySelectorAll(".stepper").forEach(function (wrap) {
+          var input = wrap.querySelector("input");
+          var minus = wrap.querySelector('[data-step="-1"]');
+          var plus = wrap.querySelector('[data-step="1"]');
+          if (!input) return;
+          var min = input.min === "" ? -Infinity : Number(input.min);
+          var max = input.max === "" ? Infinity : Number(input.max);
+          var current = input.value === "" ? 0 : Number(input.value);
+          if (!isFinite(current)) current = 0;
+          if (minus) minus.disabled = current <= min;
+          if (plus) plus.disabled = isFinite(max) && current >= max;
+        });
+      }
+
+      function stepValue(input, delta) {
+        var min = input.min === "" ? 0 : Number(input.min);
+        var max = input.max === "" ? Infinity : Number(input.max);
+        var step = Number(input.step) || 1;
+        var current = input.value === "" ? 0 : Number(input.value);
+        if (!isFinite(current)) current = 0;
+        var next = Math.round((current + delta * step) / step) * step;
+        if (next < min) next = min;
+        if (next > max) next = max;
+        input.value = String(next);
+        input.dispatchEvent(new Event("input", { bubbles: true }));
       }
 
       function batteryKg() {
@@ -2058,6 +2140,14 @@
       document.querySelectorAll("[data-key]").forEach(function (el) {
         el.addEventListener("input", function () { readForm(el); });
         el.addEventListener("change", function () { readForm(el); });
+      });
+
+      document.querySelectorAll(".stepper [data-step]").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          var input = btn.closest(".stepper").querySelector("input");
+          if (!input) return;
+          stepValue(input, Number(btn.getAttribute("data-step")));
+        });
       });
 
       document.querySelectorAll("input[name='units']").forEach(function (el) {
