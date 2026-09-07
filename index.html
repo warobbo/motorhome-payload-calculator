@@ -426,6 +426,15 @@
       background: #fff;
       color: var(--ink);
     }
+    input[type="number"] {
+      -moz-appearance: textfield;
+      appearance: textfield;
+    }
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
     input:focus, select:focus, button:focus-visible {
       outline: none;
       box-shadow: var(--focus);
@@ -441,13 +450,6 @@
       flex: 1;
       min-width: 0;
       text-align: center;
-      -moz-appearance: textfield;
-      appearance: textfield;
-    }
-    .stepper input[type="number"]::-webkit-outer-spin-button,
-    .stepper input[type="number"]::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
     }
     .stepper-btn {
       flex: 0 0 2.75rem;
