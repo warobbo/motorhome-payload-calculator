@@ -240,7 +240,7 @@ label, .lbl {
   font-weight: 600;
 }
 .hint { color: var(--muted); font-size: 0.78rem; font-weight: 400; }
-input[type="number"], input[type="text"], select {
+input[type="number"], input[type="text"], input[type="password"], select {
   width: 100%;
   min-height: 48px;
   border: 1.5px solid var(--line);
@@ -613,6 +613,20 @@ footer.site-footer {
 .identity.show { display: block; }
 .identity h4 { margin: 0 0 0.35rem; font-size: 1.02rem; }
 .identity p { margin: 0; color: var(--muted); font-size: 0.86rem; }
+.api-key-box {
+  margin-top: 0.65rem;
+  padding-top: 0.75rem;
+  border-top: 1px dashed #b7cfc6;
+}
+.api-key-box summary {
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 650;
+  color: var(--pine);
+}
+.api-key-box .hint code {
+  font-size: 0.84em;
+}
 
 .plate-find {
   margin-top: 0.9rem;
@@ -676,7 +690,8 @@ footer.site-footer {
   .stepper-btn,
   .btn,
   .tip,
-  .plate-find {
+  .plate-find,
+  .api-key-box {
     display: none !important;
   }
   body {
