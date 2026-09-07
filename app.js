@@ -6,6 +6,8 @@
   "use strict";
 
   var STORAGE_KEY = "mh-payload-calc-v1";
+  var DVLA_KEY_STORAGE = "mh-payload-dvla-key";
+  var MOT_KEY_STORAGE = "mh-payload-mot-key";
   var KG_PER_LB = 0.45359237;
   var L_PER_UK_GAL = 4.54609;
 
@@ -406,7 +408,7 @@
 
   function barRow(label, kg, max) {
     var pct = max > 0 ? Math.min(100, (Math.abs(kg) / max) * 100) : 0;
-    var sign = kg < 0 ? "−" : "";
+    var sign = kg < 0 ? "\u2212" : "";
     return '<div class="bar-row"><header><span>' + label + '</span><span>' + sign + fmt(Math.abs(kg), 0) + '</span></header><div class="bar"><span style="width:' + pct + '%;background:' + (kg < 0 ? "var(--amber)" : "var(--pine)") + '"></span></div></div>';
   }
 
@@ -416,11 +418,11 @@
     var box = document.getElementById("remainingBox");
     box.className = "remaining status-" + cls;
     document.getElementById("remainingLabel").textContent = "Remaining payload";
-    document.getElementById("remainingValue").textContent = (r.remaining < 0 ? "−" : "") + fmt(Math.abs(r.remaining), 0);
+    document.getElementById("remainingValue").textContent = (r.remaining < 0 ? "\u2212" : "") + fmt(Math.abs(r.remaining), 0);
     document.getElementById("remainingSub").textContent = cls === "ok"
       ? "Comfortable margin for a 3.5t van"
       : cls === "tight"
-        ? "Tight — weigh before a long trip"
+        ? "Tight \u2014 weigh before a long trip"
         : cls === "critical"
           ? "Very little margin left"
           : "Illegal to drive at this estimate";
@@ -454,14 +456,14 @@
 
     var axle = "";
     if (num(state.frontAxle) || num(state.rearAxle)) {
-      axle = "Axle limits entered: front " + (num(state.frontAxle) ? fmt(num(state.frontAxle), 0) : "—") +
-        ", rear " + (num(state.rearAxle) ? fmt(num(state.rearAxle), 0) : "—") +
-        ". This calculator cannot split axle loads — confirm both on a weighbridge.";
+      axle = "Axle limits entered: front " + (num(state.frontAxle) ? fmt(num(state.frontAxle), 0) : "\u2014") +
+        ", rear " + (num(state.rearAxle) ? fmt(num(state.rearAxle), 0) : "\u2014") +
+        ". This calculator cannot split axle loads \u2014 confirm both on a weighbridge.";
     }
     document.getElementById("axleNote").textContent = axle;
 
     var dock = document.getElementById("dockValue");
-    dock.textContent = (r.remaining < 0 ? "−" : "") + fmt(Math.abs(r.remaining), 0);
+    dock.textContent = (r.remaining < 0 ? "\u2212" : "") + fmt(Math.abs(r.remaining), 0);
     dock.className = "dock-" + cls;
     document.getElementById("dockHint").textContent = "Remaining payload";
 
@@ -471,7 +473,7 @@
 
     var driverNote = usingActualEmpty()
       ? "Weighed empty is in use, so the driver is added separately."
-      : (state.miroIncludesDriver ? "Driver is already in MIRO — additional adults are passengers only." : "Driver is being added on top of MIRO.");
+      : (state.miroIncludesDriver ? "Driver is already in MIRO \u2014 additional adults are passengers only." : "Driver is being added on top of MIRO.");
     document.getElementById("peopleNote").textContent = driverNote;
     document.getElementById("driverHint").textContent = usingActualEmpty()
       ? "Added because you entered a weighed empty van."
@@ -504,11 +506,11 @@
     title.textContent = name
       ? (name + (state.yearOfManufacture ? " (" + state.yearOfManufacture + ")" : ""))
       : (state.vrm || "Looked-up vehicle");
-    meta.textContent = bits.join(" · ");
+    meta.textContent = bits.join(" \u00b7 ");
     card.classList.add("show");
     summary.hidden = !name;
     summary.textContent = name
-      ? (name + (state.yearOfManufacture ? " " + state.yearOfManufacture : "") + (state.vrm ? " · " + state.vrm : ""))
+      ? (name + (state.yearOfManufacture ? " " + state.yearOfManufacture : "") + (state.vrm ? " \u00b7 " + state.vrm : ""))
       : "";
   }
 
@@ -516,6 +518,57 @@
     var el = document.getElementById("lookupStatus");
     el.textContent = message;
     el.className = "lookup-status" + (kind ? " " + kind : "");
+  }
+
+  function readStored(key) {
+    try { return localStorage.getItem(key) || ""; } catch (e) { return ""; }
+  }
+  function writeStored(key, value) {
+    try { localStorage.setItem(key, value); } catch (e) {}
+  }
+  function lookupKeys() {
+    var apiKey = (readStored(DVLA_KEY_STORAGE) || "").trim();
+    var motApiKey = (readStored(MOT_KEY_STORAGE) || "").trim();
+    var dvlaEl = document.getElementById("dvlaApiKey");
+    var motEl = document.getElementById("motApiKey");
+    if (dvlaEl && dvlaEl.value.trim()) apiKey = dvlaEl.value.trim();
+    if (motEl && motEl.value.trim()) motApiKey = motEl.value.trim();
+    return { apiKey: apiKey, motApiKey: motApiKey };
+  }
+  function setupVisible() {
+    var params = new URLSearchParams(location.search);
+    return params.get("setup") === "1" || location.hash === "#setup";
+  }
+  function showSetupIfRequested() {
+    var box = document.getElementById("setup");
+    if (!box || !setupVisible()) return;
+    box.hidden = false;
+    var parent = box.closest("details");
+    if (parent) parent.open = true;
+  }
+  var lookupLiveDvla = false;
+  function defaultLookupHint() {
+    if (lookupLiveDvla || (readStored(DVLA_KEY_STORAGE) || "").trim()) {
+      return "Look up a UK plate for make and plated weight, or type make, model and year.";
+    }
+    return "Look up a UK plate, or type make, model and year.";
+  }
+  function applyDefaultLookupHint() {
+    var el = document.getElementById("lookupStatus");
+    if (el && !el.classList.contains("ok") && !el.classList.contains("err")) {
+      setLookupStatus(defaultLookupHint());
+    }
+  }
+  function probeLookupStatus() {
+    fetch("/api/vehicle-lookup")
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        if (data && data.ok && data.liveDvla) lookupLiveDvla = true;
+        applyDefaultLookupHint();
+      })
+      .catch(function () {
+        applyDefaultLookupHint();
+      });
   }
 
   async function lookupRegistration() {
@@ -526,30 +579,32 @@
       return;
     }
     btn.disabled = true;
-    setLookupStatus("Looking up " + vrm.toUpperCase().replace(/\s+/g, "") + "…");
+    setLookupStatus("Looking up " + vrm.toUpperCase().replace(/\s+/g, "") + "\u2026");
+    var keys = lookupKeys();
+    var payload = { registrationNumber: vrm };
+    if (keys.apiKey) payload.apiKey = keys.apiKey;
+    if (keys.motApiKey) payload.motApiKey = keys.motApiKey;
     try {
       var res = await fetch("/api/vehicle-lookup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ registrationNumber: vrm })
+        body: JSON.stringify(payload)
       });
       var data = await res.json();
       if (!data.ok || !data.vehicle) {
-        var extra = data.demoPlates && data.demoPlates.length
-          ? " Demo plates: " + data.demoPlates.join(", ") + "."
-          : "";
+        var extra = "";
         if (data.yearFromPlate) {
           state.yearOfManufacture = data.yearFromPlate;
           fillForm();
           saveState();
-          extra += " Year " + data.yearFromPlate + " taken from the UK plate age identifier.";
+          extra = " Year " + data.yearFromPlate + " taken from the UK plate age identifier.";
         }
-        setLookupStatus((data.message || "Lookup failed.") + extra, "err");
+        setLookupStatus((data.message || "Couldn't look up that plate.") + extra, "err");
         return;
       }
       applyLookup(data.vehicle);
     } catch (err) {
-      setLookupStatus("Lookup needs the site running over http (npm start). Demo plates still work on the server.", "err");
+      setLookupStatus("Lookup needs the site running over http (npm start).", "err");
     } finally {
       btn.disabled = false;
     }
@@ -569,7 +624,7 @@
       state.mam = vehicle.revenueWeight;
       notes.push("Revenue weight " + vehicle.revenueWeight + " kg applied as MAM.");
     } else if (vehicle.revenueWeight) {
-      notes.push("DVLA revenue weight is " + vehicle.revenueWeight + " kg — check the VIN plate before using it as MAM.");
+      notes.push("DVLA revenue weight is " + vehicle.revenueWeight + " kg \u2014 check the VIN plate before using it as MAM.");
     } else if (vehicle.typicalMam) {
       state.mam = vehicle.typicalMam;
       notes.push("Typical MAM " + vehicle.typicalMam + " kg applied.");
@@ -580,10 +635,10 @@
       state.miro = vehicle.typicalMiro;
       notes.push("Typical MIRO " + vehicle.typicalMiro + " kg applied" + (vehicle.typicalLabel ? " for " + vehicle.typicalLabel : "") + ". Replace with the handbook figure if you have it.");
     } else {
-      notes.push("DVLA does not supply MIRO — keep the handbook or weighbridge figure.");
+      notes.push("DVLA does not supply MIRO \u2014 keep the handbook or weighbridge figure.");
     }
     if (vehicle.modelInferred) notes.push("Model is inferred from make for this van platform; edit it if the conversion badge is different.");
-    if (vehicle.source === "demo") notes.push("Demo record — not a live DVLA result.");
+    if (vehicle.source === "demo") notes.push("Demo record \u2014 not a live DVLA result.");
     fillForm();
     saveState();
     calculate();
@@ -600,7 +655,7 @@
       return;
     }
     btn.disabled = true;
-    setLookupStatus("Looking up typical weights for " + make + " " + model + (year ? " (" + year + ")" : "") + "…");
+    setLookupStatus("Looking up typical weights for " + make + " " + model + (year ? " (" + year + ")" : "") + "\u2026");
     try {
       var res = await fetch("/api/vehicle-lookup", {
         method: "POST",
@@ -721,6 +776,25 @@
     }
   });
 
+  (function initLookupSetup() {
+    var dvlaEl = document.getElementById("dvlaApiKey");
+    var motEl = document.getElementById("motApiKey");
+    if (dvlaEl) dvlaEl.value = readStored(DVLA_KEY_STORAGE);
+    if (motEl) motEl.value = readStored(MOT_KEY_STORAGE);
+    showSetupIfRequested();
+    if (dvlaEl) {
+      dvlaEl.addEventListener("change", function () {
+        writeStored(DVLA_KEY_STORAGE, dvlaEl.value.trim());
+        applyDefaultLookupHint();
+      });
+    }
+    if (motEl) {
+      motEl.addEventListener("change", function () {
+        writeStored(MOT_KEY_STORAGE, motEl.value.trim());
+      });
+    }
+  })();
+
   /* Collapse extra sections on small screens so the first inputs stay reachable. */
   if (window.matchMedia("(max-width: 979px)").matches) {
     document.querySelectorAll("details.block").forEach(function (d, i) {
@@ -730,6 +804,7 @@
 
   fillForm();
   calculate();
+  probeLookupStatus();
 
   function openHashTarget() {
     var id = (location.hash || "").replace(/^#/, "");
@@ -740,6 +815,9 @@
     var nested = el.closest("details");
     if (nested) nested.open = true;
   }
-  window.addEventListener("hashchange", openHashTarget);
+  window.addEventListener("hashchange", function () {
+    showSetupIfRequested();
+    openHashTarget();
+  });
   openHashTarget();
 })();
