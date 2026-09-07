@@ -2,7 +2,7 @@
 
 A free, mobile-first **UK motorhome / campervan payload calculator** for checking whether a loaded van stays under its legal MAM (especially 3.5-tonne Fiat Ducato and Peugeot Boxer conversions).
 
-The calculator is a single HTML page. Registration lookup uses a tiny `/api/vehicle-lookup` proxy so DVLA keys never sit in the browser.
+The calculator is a single HTML page plus a tiny Node server. Registration lookup is proxied through `/api/vehicle-lookup` so the DVLA key stays on the host (Render), not in the public page.
 
 ## Open it
 
@@ -42,17 +42,32 @@ This is an **estimate**. Confirm on a calibrated weighbridge before you treat th
 
 The official DVLA Vehicle Enquiry API returns **make** and **year**, plus **revenue weight** (kg). **Model** is not on the DVLA record, so the calculator infers it for common van platforms (Ducato, Boxer, Relay, Sprinter, and others). You can also type make, model and year and press **Look up make / model / year** to apply typical 3.5t MAM and MIRO figures.
 
-Without an API key, these demo plates work:
+Without an API key, these demo plates work locally:
 
 - `DEMO3500` — Fiat Ducato 3,500 kg
 - `BOXER35` — Peugeot Boxer 3,500 kg
 - `RELAY35` — Citroën Relay 3,500 kg
 - `SPRINT35` — Mercedes-Benz Sprinter 3,500 kg
 
-For live lookups, copy `.env.example` to `.env` and add a free key from the [DVLA developer portal](https://developer-portal.driver-vehicle-licensing.api.gov.uk/), or paste the key in the lookup panel. Restart `npm start` after changing `.env`.
+Live UK plates need a free [DVLA Vehicle Enquiry](https://developer-portal.driver-vehicle-licensing.api.gov.uk/) key.
 
-Optional `MOT_API_KEY` (DVSA MOT history trade API) fills the model when DVLA does not.
+**On Render (production):** Dashboard → the web service → **Environment** → add `DVLA_API_KEY` → Save. Render restarts the service. Optional `MOT_API_KEY` (DVSA MOT history trade API) fills the model when DVLA does not. `render.yaml` declares both keys with `sync: false` so the values stay in the dashboard, not the repo.
 
-## Hosting
+**On this machine:** copy `.env.example` to `.env`, paste the key, restart `npm start`.
 
-Copy the project to any host that can run the Node server or Vercel’s `/api/vehicle-lookup` function. Replace the `https://www.example.com/` canonical, Open Graph and Twitter URLs (and `og:image`) with your real domain before publishing.
+A browser-only fallback exists at `/?setup=1` (not linked from the public page). A key saved there is sent with lookups from that browser only.
+
+## Hosting on Render
+
+This is a Node web service, not a static site.
+
+| Setting | Value |
+| --- | --- |
+| Runtime | Node |
+| Build command | `npm install` |
+| Start command | `npm start` |
+| Instance | Binds `0.0.0.0` and uses Render’s `PORT` |
+
+After adding `DVLA_API_KEY`, wait for the deploy to go live, then hard-refresh the calculator and look up a real plate.
+
+Replace the `https://www.example.com/` canonical, Open Graph and Twitter URLs (and `og:image`) with your real domain before publishing.

@@ -1,13 +1,13 @@
 "use strict";
 
-const { lookupVehicle, lookupByMakeModelYear } = require("../lib/vehicle-lookup");
+const { lookupVehicle, lookupByMakeModelYear, DEMO_PLATES } = require("../lib/vehicle-lookup");
 
 function send(res, status, body) {
   res.statusCode = status;
   res.setHeader("Content-Type", "application/json; charset=utf-8");
   res.setHeader("Cache-Control", "no-store");
   res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, x-api-key");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, x-api-key, x-mot-api-key");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   res.end(JSON.stringify(body));
 }
@@ -16,7 +16,7 @@ async function handleLookup(req, res) {
   if (req.method === "OPTIONS") {
     res.statusCode = 204;
     res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type, x-api-key");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, x-api-key, x-mot-api-key");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
     res.end();
     return;
@@ -61,12 +61,19 @@ async function handleLookup(req, res) {
     return;
   }
 
+  if (!vrm && !make && !model) {
+    send(res, 200, {
+      ok: true,
+      liveDvla: !!(process.env.DVLA_API_KEY),
+      demoPlates: DEMO_PLATES,
+    });
+    return;
+  }
+
   try {
     const result = vrm
       ? await lookupVehicle({ vrm, apiKey, motApiKey })
-      : (make || model)
-        ? await lookupByMakeModelYear({ make, model, year })
-        : { ok: false, status: 400, error: "missing_query", message: "Enter a UK registration, or make, model and year." };
+      : await lookupByMakeModelYear({ make, model, year });
     send(res, result.status || (result.ok ? 200 : 400), result);
   } catch (err) {
     send(res, 500, {

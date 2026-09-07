@@ -74,4 +74,5 @@ server.listen(PORT, "0.0.0.0", () => {
   console.log("Motorhome Payload Calculator ready");
   console.log("  Local:   http://localhost:" + PORT + "/");
   console.log("  Lookup:  POST /api/vehicle-lookup");
+  console.log("  DVLA:    " + (process.env.DVLA_API_KEY ? "live key present" : "not configured"));
 });
