@@ -2,7 +2,7 @@
 
 A free, mobile-first **UK motorhome / campervan payload calculator** for checking whether a loaded van stays under its legal MAM (especially 3.5-tonne Fiat Ducato and Peugeot Boxer conversions).
 
-The calculator is a single HTML page. Registration lookup uses a tiny `/api/vehicle-lookup` proxy so DVLA keys never sit in the public page.
+The calculator is a single HTML page plus a tiny Node server. Registration lookup is proxied through `/api/vehicle-lookup` so the DVLA key stays on Render, not in the public page.
 
 ## Open it
 
@@ -51,14 +51,23 @@ Without an API key, these demo plates still work:
 
 Live UK plates need a free [DVLA Vehicle Enquiry](https://developer-portal.driver-vehicle-licensing.api.gov.uk/) key. Do not put the key in client JavaScript or commit `.env`.
 
-**On Vercel (or any host):** add `DVLA_API_KEY` in the project environment — on Vercel that is **Project Settings → Environment Variables** — then redeploy. Optional `MOT_API_KEY` (DVSA MOT history trade API) fills the model when DVLA does not.
+**On Render (production):** Dashboard → the web service → **Environment** → add `DVLA_API_KEY` → Save. Render restarts the service. Optional `MOT_API_KEY` (DVSA MOT history trade API) fills the model when DVLA does not. `render.yaml` declares both keys with `sync: false` so the values stay in the dashboard, not the repo.
 
 **Browser fallback:** open `/?setup=1` (not linked from the public page) and paste a Vehicle Enquiry key. It is stored in this browser only (`localStorage`) and sent with lookups from that device. A key you saved earlier is still sent even when the setup form is hidden.
 
 **On this machine:** copy `.env.example` to `.env`, paste the key, restart `npm start`.
 
-## Hosting
+## Hosting on Render
 
-Copy the project to any host that can run the Node server (`npm start`) or Vercel’s `/api/vehicle-lookup` function. `vercel.json` includes `lib/**` with that function. Other Node hosts (including Render) should set the same `DVLA_API_KEY` / `MOT_API_KEY` environment variables.
+This is a Node web service, not a static site.
+
+| Setting | Value |
+| --- | --- |
+| Runtime | Node |
+| Build command | `npm install` |
+| Start command | `npm start` |
+| Instance | Binds `0.0.0.0` and uses Render’s `PORT` |
+
+After adding `DVLA_API_KEY`, wait for the deploy to go live, then hard-refresh the calculator and look up a real plate.
 
 Replace the `https://www.example.com/` canonical, Open Graph and Twitter URLs (and `og:image`) with your real domain before publishing.
