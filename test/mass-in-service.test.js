@@ -54,5 +54,28 @@ describe("browser global", function () {
     );
     assert.equal(typeof sandbox.globalThis.MassInService.isMissing, "function");
     assert.equal(sandbox.globalThis.MassInService.isMissing("", "3430", ""), false);
+
+    const frozen = { module: { exports: {} }, exports: {} };
+    Object.defineProperty(frozen.module, "exports", { value: {}, writable: false });
+    frozen.globalThis = frozen;
+    vm.runInNewContext(
+      fs.readFileSync(path.join(__dirname, "../lib/mass-in-service.js"), "utf8"),
+      frozen
+    );
+    assert.equal(typeof frozen.globalThis.MassInService.parseWeightInput, "function");
+  });
+
+  it("loads FuelPayload, DriverPayload and MassInService in one page realm", function () {
+    const sandbox = {};
+    sandbox.globalThis = sandbox;
+    ["fuel-payload.js", "driver-payload.js", "mass-in-service.js"].forEach(function (file) {
+      vm.runInNewContext(
+        fs.readFileSync(path.join(__dirname, "../lib", file), "utf8"),
+        sandbox
+      );
+    });
+    assert.equal(typeof sandbox.FuelPayload.fuelPayloadKg, "function");
+    assert.equal(typeof sandbox.DriverPayload.driverPayloadKg, "function");
+    assert.equal(typeof sandbox.MassInService.isMissing, "function");
   });
 });
