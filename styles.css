@@ -310,6 +310,11 @@ input:focus, select:focus, button:focus-visible {
   font-size: 0.9rem;
   margin: 0.55rem 0;
 }
+.assumption {
+  margin: 0.45rem 0 0;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
 .check input {
   width: 1.15rem;
   height: 1.15rem;

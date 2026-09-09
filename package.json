@@ -4,7 +4,8 @@
   "description": "Free UK motorhome / campervan payload calculator for 3.5t Ducato and Boxer vans.",
   "scripts": {
     "start": "node server.js",
-    "postinstall": "node scripts/write-og-image.js"
+    "postinstall": "node scripts/write-og-image.js",
+    "test": "node --test"
   },
   "engines": {
     "node": ">=22 <23"

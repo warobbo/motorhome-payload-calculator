@@ -262,8 +262,27 @@
     document.getElementById("solarCustomWrap").style.display = state.solarType === "custom" ? "" : "none";
   }
 
+  function ensureModelOption(value) {
+    var sel = document.getElementById("model");
+    if (!sel || sel.tagName !== "SELECT" || !value) return;
+    var exists = Array.prototype.some.call(sel.options, function (opt) {
+      return opt.value === value;
+    });
+    if (!exists) {
+      var opt = document.createElement("option");
+      opt.value = value;
+      opt.textContent = value;
+      sel.appendChild(opt);
+    }
+  }
+
+  function miroMissing() {
+    return !usingActualEmpty() && (state.miro === "" || state.miro == null);
+  }
+
   function fillForm() {
     syncing = true;
+    ensureModelOption(state.model);
     document.querySelectorAll("[data-key]").forEach(function (el) {
       var key = el.getAttribute("data-key");
       var kind = el.getAttribute("data-kind");
@@ -279,6 +298,7 @@
     setUnitLabels();
     toggleCustomFields();
     syncSteppers();
+    syncWeighedEmptyUi();
     syncing = false;
   }
 
@@ -346,28 +366,34 @@
     return num(state.actualEmpty) > 0;
   }
 
+  function syncWeighedEmptyUi() {
+    var emptyNote = document.getElementById("weighedEmptyNote");
+    if (emptyNote) emptyNote.hidden = !usingActualEmpty();
+  }
+
   function compute(overrides) {
     var s = Object.assign({}, state, overrides || {});
     var mam = num(s.mam);
     var miro = num(s.miro);
     var base = usingActualEmpty() ? num(s.actualEmpty) : miro;
 
-    var driver = 0;
-    if (usingActualEmpty()) {
-      driver = num(s.driverKg);
-    } else if (!s.miroIncludesDriver) {
-      driver = num(s.driverKg);
-    }
+    var driver = DriverPayload.driverPayloadKg({
+      driverKg: s.driverKg,
+      actualEmpty: s.actualEmpty
+    });
     var people = driver + num(s.extraAdults) * num(s.adultKg) + num(s.children) * num(s.childKg) + num(s.pets) * num(s.petKg);
 
     var fresh = num(s.freshCap) * num(s.freshFill) / 100;
     var grey = num(s.greyCap) * num(s.greyFill) / 100;
     var black = num(s.blackCap) * num(s.blackFill) / 100;
-    var fuelActual = num(s.fuelCap) * num(s.fuelFill) / 100 * num(s.fuelDensity);
-    var fuelMiro = num(s.fuelCap) * 0.9 * num(s.fuelDensity);
-    var fuel = 0;
-    if (usingActualEmpty() || !s.miroIncludesFuel) fuel = fuelActual;
-    else fuel = fuelActual - fuelMiro;
+    var fuelOpts = {
+      fuelCap: s.fuelCap,
+      fuelFill: s.fuelFill,
+      fuelDensity: s.fuelDensity,
+      actualEmpty: s.actualEmpty
+    };
+    var fuelActual = FuelPayload.fuelActualKg(fuelOpts);
+    var fuel = FuelPayload.fuelPayloadKg(fuelOpts);
 
     var water = fresh + grey + black;
     var gas = num(s.gas6) * num(s.gas6Full) + num(s.gas9) * num(s.gas9Full) + num(s.gas13) * num(s.gas13Full);
@@ -413,6 +439,35 @@
   }
 
   function calculate() {
+    if (miroMissing()) {
+      var boxEmpty = document.getElementById("remainingBox");
+      boxEmpty.className = "remaining status-tight";
+      document.getElementById("remainingLabel").textContent = "Remaining payload";
+      document.getElementById("remainingValue").textContent = "\u2014";
+      document.getElementById("remainingSub").textContent = "Enter Mass in Service from the V5 or a weighbridge ticket.";
+      document.getElementById("totalWeight").textContent = "\u2014";
+      document.getElementById("mamOut").textContent = fmt(num(state.mam), 0);
+      document.getElementById("platedPayload").textContent = "\u2014";
+      document.getElementById("payloadPct").textContent = "Mass in Service needed";
+      document.getElementById("meterFill").style.width = "0%";
+      document.getElementById("warnOver").classList.remove("show");
+      document.getElementById("warnLow").classList.remove("show");
+      document.getElementById("breakdown").innerHTML = "";
+      document.getElementById("waterWhatIf").textContent = "Enter Mass in Service to see how water and kit use the remaining payload.";
+      document.getElementById("axleNote").textContent = "";
+      var dockEmpty = document.getElementById("dockValue");
+      dockEmpty.textContent = "\u2014";
+      dockEmpty.className = "dock-tight";
+      document.getElementById("dockHint").textContent = "Enter Mass in Service to calculate";
+      document.getElementById("emptyWater").textContent = waterBackup
+        ? "Restore water levels"
+        : "What if I empty the water?";
+      document.getElementById("peopleNote").textContent = "Mass in Service is blank after the plate lookup \u2014 the V5 figure is not guessed.";
+      syncWeighedEmptyUi();
+      updateIdentityCard();
+      return;
+    }
+
     var r = compute();
     var cls = statusClass(r.remaining);
     var box = document.getElementById("remainingBox");
@@ -420,12 +475,12 @@
     document.getElementById("remainingLabel").textContent = "Remaining payload";
     document.getElementById("remainingValue").textContent = (r.remaining < 0 ? "\u2212" : "") + fmt(Math.abs(r.remaining), 0);
     document.getElementById("remainingSub").textContent = cls === "ok"
-      ? "Comfortable margin for a 3.5t van"
+      ? "Comfortable margin under " + fmt(r.mam, 0) + " MAM"
       : cls === "tight"
         ? "Tight \u2014 weigh before a long trip"
         : cls === "critical"
           ? "Very little margin left"
-          : "Illegal to drive at this estimate";
+          : "Over MAM";
 
     document.getElementById("totalWeight").textContent = fmt(r.total, 0);
     document.getElementById("mamOut").textContent = fmt(r.mam, 0);
@@ -443,7 +498,9 @@
     document.getElementById("breakdown").innerHTML =
       barRow("People & pets", r.people, maxCat) +
       barRow("Fresh / grey / black water", r.water, maxCat) +
-      barRow(usingActualEmpty() || !state.miroIncludesFuel ? "Fuel" : "Fuel vs MIRO 90%", r.fuel, maxCat) +
+      barRow(FuelPayload.fuelBreakdownLabel({
+        actualEmpty: state.actualEmpty
+      }), r.fuel, maxCat) +
       barRow("Gas bottles", r.gas, maxCat) +
       barRow("Electrical & solar", r.electrical, maxCat) +
       barRow("Gear & other", r.gear, maxCat);
@@ -471,13 +528,10 @@
       ? "Restore water levels"
       : "What if I empty the water?";
 
-    var driverNote = usingActualEmpty()
-      ? "Weighed empty is in use, so the driver is added separately."
-      : (state.miroIncludesDriver ? "Driver is already in MIRO \u2014 additional adults are passengers only." : "Driver is being added on top of MIRO.");
-    document.getElementById("peopleNote").textContent = driverNote;
-    document.getElementById("driverHint").textContent = usingActualEmpty()
-      ? "Added because you entered a weighed empty van."
-      : "Used only if MIRO does not include the driver, or you enter a weighed empty weight.";
+    document.getElementById("peopleNote").textContent = usingActualEmpty()
+      ? "Weighed empty is the van only \u2014 the full driver weight is added."
+      : "Mass in Service assumes a 75 kg driver \u2014 only any extra is added. Additional adults are passengers only.";
+    syncWeighedEmptyUi();
     updateIdentityCard();
   }
 
@@ -611,9 +665,12 @@
   }
 
   function applyLookup(vehicle) {
+    var plateLookup = vehicle.source === "dvla";
     state.vrm = vehicle.registrationNumber || state.vrm;
     state.make = titleCase(vehicle.make || "");
-    state.model = vehicle.model || "";
+    var exactModel = vehicle.model && !vehicle.modelInferred ? vehicle.model : "";
+    state.model = plateLookup ? exactModel : (vehicle.model || "");
+    ensureModelOption(state.model);
     state.yearOfManufacture = vehicle.yearOfManufacture || "";
     state.colour = titleCase(vehicle.colour || "");
     state.fuelType = vehicle.fuelType || "";
@@ -625,19 +682,24 @@
       notes.push("Revenue weight " + vehicle.revenueWeight + " kg applied as MAM.");
     } else if (vehicle.revenueWeight) {
       notes.push("DVLA revenue weight is " + vehicle.revenueWeight + " kg \u2014 check the VIN plate before using it as MAM.");
-    } else if (vehicle.typicalMam) {
+    } else if (!plateLookup && vehicle.typicalMam) {
       state.mam = vehicle.typicalMam;
       notes.push("Typical MAM " + vehicle.typicalMam + " kg applied.");
     } else {
       notes.push("No plated weight on the DVLA record. Enter MAM from the VIN plate.");
     }
-    if (vehicle.miroAvailable && vehicle.typicalMiro) {
+    if (plateLookup) {
+      state.miro = "";
+      notes.push("DVLA does not supply Mass in Service \u2014 enter it from the V5 or a weighbridge figure.");
+    } else if (vehicle.miroAvailable && vehicle.typicalMiro) {
       state.miro = vehicle.typicalMiro;
-      notes.push("Typical MIRO " + vehicle.typicalMiro + " kg applied" + (vehicle.typicalLabel ? " for " + vehicle.typicalLabel : "") + ". Replace with the handbook figure if you have it.");
+      notes.push("Typical Mass in Service " + vehicle.typicalMiro + " kg applied" + (vehicle.typicalLabel ? " for " + vehicle.typicalLabel : "") + ". Replace with the V5 or handbook figure if you have it.");
     } else {
-      notes.push("DVLA does not supply MIRO \u2014 keep the handbook or weighbridge figure.");
+      notes.push("DVLA does not supply Mass in Service \u2014 enter it from the V5 or a weighbridge figure.");
     }
-    if (vehicle.modelInferred) notes.push("Model is inferred from make for this van platform; edit it if the conversion badge is different.");
+    if (plateLookup && !state.model) {
+      notes.push("Model was not on the DVLA record \u2014 pick the van platform if you know it.");
+    }
     if (vehicle.source === "demo") notes.push("Demo record \u2014 not a live DVLA result.");
     fillForm();
     saveState();
@@ -805,6 +867,23 @@
   fillForm();
   calculate();
   probeLookupStatus();
+
+  /* Hidden check for converter-brand DVLA shape (no API key required). */
+  if (location.hash === "#qa-hymer-dvla") {
+    applyLookup({
+      source: "dvla",
+      registrationNumber: "Y3WAR",
+      make: "HYMER",
+      model: "",
+      modelInferred: false,
+      yearOfManufacture: 2024,
+      colour: "Grey",
+      fuelType: "DIESEL",
+      revenueWeight: 4430,
+      applyAsMam: true,
+      miroAvailable: false
+    });
+  }
 
   function openHashTarget() {
     var id = (location.hash || "").replace(/^#/, "");
