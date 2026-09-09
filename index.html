@@ -379,14 +379,9 @@
                 <input id="rearAxle" type="number" inputmode="decimal" min="0" step="1" data-key="rearAxle" data-kind="weight">
               </div>
             </div>
-            <label class="check">
-              <input type="checkbox" id="miroIncludesDriver" data-key="miroIncludesDriver">
-              <span>Mass in Service already includes the driver (usual for V5 / handbook figures)</span>
-            </label>
-            <label class="check">
-              <input type="checkbox" id="miroIncludesFuel" data-key="miroIncludesFuel">
-              <span>Mass in Service already includes 90% fuel (usual). Only the top-up above 90% is added.</span>
-            </label>
+            <p class="assumption">Mass in Service already includes the driver (usual for handbook / V5 figures)</p>
+            <p class="assumption">Mass in Service already includes 90% fuel (usual). Only the difference from 90% is added.</p>
+            <p class="hint" id="weighedEmptyNote" hidden>Weighed empty is the van only — the driver and the full fuel tank from Fluids are added on top.</p>
             <details class="plate-find" id="plate-find">
               <summary>Where to find your weight plate, or VIN plate</summary>
               <p>Your motorhome’s weight plate is usually found in one of these places. Look for “Maximum Authorised Mass” or “Gross Vehicle Weight” — this is the number you need.</p>

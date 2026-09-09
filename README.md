@@ -32,7 +32,7 @@ Then visit [http://localhost:4173](http://localhost:4173).
 Internal maths is always metric.
 
 - **Base weight** is the optional weighed-empty figure, otherwise Mass in Service (the V5 empty-van figure; handbooks often call this MIRO).
-- **Mass in Service** is assumed to include the driver and 90% fuel unless you untick those options. Fresh water is treated as extra. A full diesel tank only adds the top-up above 90% (about 8 kg on 90 L at 100%), not the whole tank.
+- **Mass in Service** always includes the driver and 90% fuel (not optional). Fresh water is treated as extra. A full diesel tank only adds the top-up above 90% (about 8 kg on 90 L at 100%), not the whole tank. A weighed-empty ticket adds the driver and the full tank on top.
 - **Water** is 1 kg per litre. **Diesel** defaults to 0.84 kg/L.
 - Gas “6 / 9 / 13 kg” labels are the gas only; full-bottle defaults include the steel cylinder (a full 9 kg bottle is about 18.5 kg).
 

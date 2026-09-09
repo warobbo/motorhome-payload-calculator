@@ -371,12 +371,7 @@
     var miro = num(s.miro);
     var base = usingActualEmpty() ? num(s.actualEmpty) : miro;
 
-    var driver = 0;
-    if (usingActualEmpty()) {
-      driver = num(s.driverKg);
-    } else if (!s.miroIncludesDriver) {
-      driver = num(s.driverKg);
-    }
+    var driver = usingActualEmpty() ? num(s.driverKg) : 0;
     var people = driver + num(s.extraAdults) * num(s.adultKg) + num(s.children) * num(s.childKg) + num(s.pets) * num(s.petKg);
 
     var fresh = num(s.freshCap) * num(s.freshFill) / 100;
@@ -386,7 +381,6 @@
       fuelCap: s.fuelCap,
       fuelFill: s.fuelFill,
       fuelDensity: s.fuelDensity,
-      miroIncludesFuel: s.miroIncludesFuel,
       actualEmpty: s.actualEmpty
     };
     var fuelActual = FuelPayload.fuelActualKg(fuelOpts);
@@ -462,7 +456,9 @@
       document.getElementById("peopleNote").textContent = "Mass in Service is blank after the plate lookup \u2014 the V5 figure is not guessed.";
       document.getElementById("driverHint").textContent = usingActualEmpty()
         ? "Added because you entered a weighed empty van."
-        : "Used only if Mass in Service does not include the driver, or you enter a weighed empty weight.";
+        : "Mass in Service already includes the driver.";
+      var emptyNoteMissing = document.getElementById("weighedEmptyNote");
+      if (emptyNoteMissing) emptyNoteMissing.hidden = !usingActualEmpty();
       updateIdentityCard();
       return;
     }
@@ -498,7 +494,6 @@
       barRow("People & pets", r.people, maxCat) +
       barRow("Fresh / grey / black water", r.water, maxCat) +
       barRow(FuelPayload.fuelBreakdownLabel({
-        miroIncludesFuel: state.miroIncludesFuel,
         actualEmpty: state.actualEmpty
       }), r.fuel, maxCat) +
       barRow("Gas bottles", r.gas, maxCat) +
@@ -530,11 +525,13 @@
 
     var driverNote = usingActualEmpty()
       ? "Weighed empty is in use, so the driver is added separately."
-      : (state.miroIncludesDriver ? "Driver is already in Mass in Service \u2014 additional adults are passengers only." : "Driver is being added on top of Mass in Service.");
+      : "Driver is already in Mass in Service \u2014 additional adults are passengers only.";
     document.getElementById("peopleNote").textContent = driverNote;
     document.getElementById("driverHint").textContent = usingActualEmpty()
       ? "Added because you entered a weighed empty van."
-      : "Used only if Mass in Service does not include the driver, or you enter a weighed empty weight.";
+      : "Mass in Service already includes the driver.";
+    var emptyNote = document.getElementById("weighedEmptyNote");
+    if (emptyNote) emptyNote.hidden = !usingActualEmpty();
     updateIdentityCard();
   }
 
