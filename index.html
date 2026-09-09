@@ -207,7 +207,7 @@
           "name": "What about tyre pressure if I change away from the original tyres?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "The door-sticker pressure is for the tyres the van was designed around. A different size or load index can need a different pressure. Use the Tyres tool on this hub as a notepad and sidewall decoder — it will not invent a recommended pressure. Check new tyres with a fitter."
+            "text": "The door-sticker pressure is for the original tyres. If you fitted a different size, use the Tyres tool with your axle loads and the new load index. It estimates cold front and rear pressure from an ETRTO-style chart. The tyre maker and a fitter still win."
           }
         }
       ]
@@ -217,7 +217,7 @@
   </script>
 
   <!-- ASSET_VERSION=20260909t — bump this query on CSS/JS below to force-refresh cached assets. -->
-  <link rel="stylesheet" href="styles.css?v=20260909t">
+  <link rel="stylesheet" href="styles.css?v=20260910a">
 
 </head>
 <body>
@@ -840,7 +840,7 @@
       </details>
       <details id="faq-tyres">
         <summary>What about tyre pressure if I change away from the original tyres?</summary>
-        <p>The door-sticker pressure is for the tyres the van was designed around. A different size or load index can need a different pressure and may not carry the same load. The <a href="tyres.html">Tyres tool</a> is a notepad and sidewall decoder — it will not invent a recommended pressure. Copy the sticker or handbook, then check the new tyre with a fitter.</p>
+        <p>The door sticker is for the original tyres. If you fitted a different size, use the <a href="tyres.html">Tyres tool</a> with your front and rear axle loads and the new sidewall. It estimates cold bar and PSI from an ETRTO-style load/pressure chart — not a copy of the old sticker. The tyre maker and a fitter still win.</p>
       </details>
     </section>
 
@@ -851,7 +851,7 @@
         <li>A converted panel van often leaves <strong>350–550 kg</strong> of payload. Coachbuilts and winterised vans can be tighter still.</li>
         <li>Front axle ratings are commonly around 1,850–2,100 kg and the rear around 2,000–2,400 kg — overloaded rear axles from bikes, tanks and boot kit are a frequent MOT and roadside issue.</li>
         <li>A 90 L diesel tank full is about 76 kg of fuel. Mass in Service already assumes most of that, so topping right up adds only a little; water tanks are the bigger swing.</li>
-        <li>Chassis uprates exist, but tyres, brakes, speed limiter and your licence (B vs C1) must match. This calculator does not change the plated MAM for you. For sticker pressures and sidewall codes, use the <a href="tyres.html">Tyres tool</a>.</li>
+        <li>Chassis uprates exist, but tyres, brakes, speed limiter and your licence (B vs C1) must match. This calculator does not change the plated MAM for you. For a non-OEM tyre size, use the <a href="tyres.html">Tyres tool</a> with your axle loads.</li>
       </ul>
     </section>
 
@@ -862,7 +862,7 @@
 
     <section class="prose" id="more-tools">
       <h2>Also on this hub</h2>
-      <p>Need the door-sticker pressures in bar and PSI, or a plain-English read of a sidewall code such as <code>215/70 R15C 109/107 Q</code>? That lives next to this calculator.</p>
+      <p>Fitted a different tyre size? The <strong>Tyres</strong> tool turns front and rear axle loads plus the new sidewall into a cold bar and PSI estimate. Converter and sidewall decoder are still there as helpers.</p>
       <p><a class="btn btn-primary" href="tyres.html">Open the Tyres tool</a></p>
     </section>
 
@@ -896,9 +896,9 @@
     </div>
   </footer>
 
-  <script src="lib/fuel-payload.js?v=20260909t"></script>
-  <script src="lib/driver-payload.js?v=20260909t"></script>
-  <script src="lib/mass-in-service.js?v=20260909t"></script>
-  <script src="app.js?v=20260909t"></script>
+  <script src="lib/fuel-payload.js?v=20260910a"></script>
+  <script src="lib/driver-payload.js?v=20260910a"></script>
+  <script src="lib/mass-in-service.js?v=20260910a"></script>
+  <script src="app.js?v=20260910a"></script>
 </body>
 </html>

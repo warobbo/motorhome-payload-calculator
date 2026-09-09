@@ -1,32 +1,36 @@
 /* =========================================================================
-   Tyres tool UI — notepad, converters, sidewall decode, optional axle check.
-   Figures stay in this browser only. Never invents a recommended pressure.
+   Tyres tool UI — axle load + fitted tyre → cold front/rear pressure.
+   Converter and notepad are helpers. Never invents an OEM sticker pressure.
    ========================================================================= */
 (function () {
   "use strict";
 
-  var STORAGE_KEY = "mh-tyres-v1";
+  var STORAGE_KEY = "mh-tyres-v2";
   var T = window.TyreCalc;
   if (!T) return;
 
   var DEFAULTS = {
-    convBar: "",
-    convPsi: "",
-    frontBar: "",
-    rearBar: "",
-    spareBar: "",
+    frontAxleKg: "",
+    rearAxleKg: "",
+    totalKg: "",
+    frontPct: 45,
     sidewall: "",
-    axleLoadKg: "",
     loadIndex: "",
     dualLoadIndex: "",
-    tyresOnAxle: 2
+    tyresOnAxle: 2,
+    chartId: "c375",
+    sidewallMaxBar: "",
+    rearDifferent: false,
+    rearSidewall: "",
+    rearLoadIndex: "",
+    rearDualLoadIndex: "",
+    rearTyresOnAxle: 2,
+    rearChartId: "c375",
+    convBar: "",
+    convPsi: "",
+    noteFrontBar: "",
+    noteRearBar: ""
   };
-
-  var AXLES = [
-    { key: "front", barId: "frontBar", psiId: "frontPsi" },
-    { key: "rear", barId: "rearBar", psiId: "rearPsi" },
-    { key: "spare", barId: "spareBar", psiId: "sparePsi" }
-  ];
 
   function $(id) {
     return document.getElementById(id);
@@ -41,24 +45,32 @@
       Object.keys(DEFAULTS).forEach(function (key) {
         if (saved[key] !== undefined && saved[key] !== null) state[key] = saved[key];
       });
-    } catch (err) {
-      /* ignore broken storage */
-    }
+    } catch (err) { /* ignore */ }
     return state;
   }
 
   function collectState() {
     return {
-      convBar: $("convBar").value,
-      convPsi: $("convPsi").value,
-      frontBar: $("frontBar").value,
-      rearBar: $("rearBar").value,
-      spareBar: $("spareBar").value,
+      frontAxleKg: $("frontAxleKg").value,
+      rearAxleKg: $("rearAxleKg").value,
+      totalKg: $("totalKg").value,
+      frontPct: $("frontPct").value,
       sidewall: $("sidewall").value,
-      axleLoadKg: $("axleLoadKg").value,
       loadIndex: $("loadIndex").value,
       dualLoadIndex: $("dualLoadIndex").value,
-      tyresOnAxle: $("tyresOnAxle").value
+      tyresOnAxle: $("tyresOnAxle").value,
+      chartId: $("chartId").value,
+      sidewallMaxBar: $("sidewallMaxBar").value,
+      rearDifferent: $("rearDifferent").checked,
+      rearSidewall: $("rearSidewall").value,
+      rearLoadIndex: $("rearLoadIndex").value,
+      rearDualLoadIndex: $("rearDualLoadIndex").value,
+      rearTyresOnAxle: $("rearTyresOnAxle").value,
+      rearChartId: $("rearChartId").value,
+      convBar: $("convBar").value,
+      convPsi: $("convPsi").value,
+      noteFrontBar: $("noteFrontBar").value,
+      noteRearBar: $("noteRearBar").value
     };
   }
 
@@ -87,77 +99,32 @@
     psiInput.value = psi == null ? "" : String(T.roundPsi(psi));
   }
 
-  function setPairFromPsi(barInput, psiInput, psiValue) {
-    if (psiValue === "" || psiValue == null) {
-      barInput.value = "";
-      psiInput.value = "";
-      return;
-    }
-    var bar = T.psiToBar(psiValue);
-    psiInput.value = String(psiValue);
-    barInput.value = bar == null ? "" : String(T.roundBar(bar));
-  }
-
   function fillFromState(state) {
-    setPairFromBar($("convBar"), $("convPsi"), state.convBar);
-    if (!state.convBar && state.convPsi) {
-      setPairFromPsi($("convBar"), $("convPsi"), state.convPsi);
-    }
-    setPairFromBar($("frontBar"), $("frontPsi"), state.frontBar);
-    setPairFromBar($("rearBar"), $("rearPsi"), state.rearBar);
-    setPairFromBar($("spareBar"), $("sparePsi"), state.spareBar);
+    $("frontAxleKg").value = state.frontAxleKg;
+    $("rearAxleKg").value = state.rearAxleKg;
+    $("totalKg").value = state.totalKg;
+    $("frontPct").value = state.frontPct || 45;
     $("sidewall").value = state.sidewall;
-    $("axleLoadKg").value = state.axleLoadKg;
     $("loadIndex").value = state.loadIndex;
     $("dualLoadIndex").value = state.dualLoadIndex;
     $("tyresOnAxle").value = state.tyresOnAxle || 2;
-  }
-
-  function decodeSidewall(opts) {
-    var raw = $("sidewall").value;
-    var out = $("decodeOut");
-    var parsed = T.parseSidewall(raw);
-    if (!String(raw).trim()) {
-      out.hidden = true;
-      out.innerHTML = "";
-      return null;
+    $("chartId").value = state.chartId || "c375";
+    $("sidewallMaxBar").value = state.sidewallMaxBar;
+    $("rearDifferent").checked = !!state.rearDifferent;
+    $("rearSidewall").value = state.rearSidewall;
+    $("rearLoadIndex").value = state.rearLoadIndex;
+    $("rearDualLoadIndex").value = state.rearDualLoadIndex;
+    $("rearTyresOnAxle").value = state.rearTyresOnAxle || 2;
+    $("rearChartId").value = state.rearChartId || "c375";
+    setPairFromBar($("convBar"), $("convPsi"), state.convBar);
+    if (!state.convBar && state.convPsi) {
+      var bar = T.psiToBar(state.convPsi);
+      $("convPsi").value = state.convPsi;
+      $("convBar").value = bar == null ? "" : String(T.roundBar(bar));
     }
-    if (!parsed.ok) {
-      out.hidden = false;
-      out.className = "decode-out is-err";
-      var err = "That does not look like a sidewall size code.";
-      if (parsed.error === "unknown-load-index") {
-        err = "Size read OK, but that load index is not in the public table this page uses.";
-      } else if (parsed.error === "unknown-speed") {
-        err = "Size read OK, but that speed letter is not one this page explains.";
-      }
-      out.innerHTML = "<p>" + err + " Try something like <code>215/70 R15C 109/107 Q</code>.</p>";
-      return null;
-    }
-
-    var text = T.describeSidewall(parsed);
-    var rows = [];
-    rows.push(row("Size", text.size));
-    rows.push(row("C / CP mark", text.service));
-    if (text.extraLoad) rows.push(row("Reinforced", text.extraLoad));
-    if (text.load) rows.push(row("Load index", text.load));
-    else rows.push(row("Load index", "Not on this code — look for a number such as 109, or 109/107."));
-    if (text.speed) rows.push(row("Speed rating", text.speed));
-    else rows.push(row("Speed rating", "Not on this code — a letter such as Q, R or T usually follows the load index."));
-
-    out.hidden = false;
-    out.className = "decode-out";
-    out.innerHTML = rows.join("");
-
-    if (opts && opts.syncCheck) {
-      if (parsed.loadIndex != null) $("loadIndex").value = String(parsed.loadIndex);
-      if (parsed.dualLoadIndex != null) $("dualLoadIndex").value = String(parsed.dualLoadIndex);
-    }
-    return parsed;
-  }
-
-  function row(label, body) {
-    return "<div class=\"stat-row\"><span>" + escapeHtml(label) + "</span><b>" + escapeHtml(body) + "</b></div>";
+    setPairFromBar($("noteFrontBar"), $("noteFrontPsi"), state.noteFrontBar);
+    setPairFromBar($("noteRearBar"), $("noteRearPsi"), state.noteRearBar);
+    $("rearTyreWrap").hidden = !$("rearDifferent").checked;
   }
 
   function escapeHtml(value) {
@@ -168,82 +135,171 @@
       .replace(/"/g, "&quot;");
   }
 
-  function renderCheck() {
-    var box = $("checkOut");
-    var result = T.checkAxleCapacity({
-      axleLoadKg: $("axleLoadKg").value,
-      loadIndex: $("loadIndex").value,
-      dualLoadIndex: $("dualLoadIndex").value,
-      tyresOnAxle: $("tyresOnAxle").value
-    });
+  function row(label, body) {
+    return "<div class=\"stat-row\"><span>" + escapeHtml(label) + "</span><b>" + escapeHtml(body) + "</b></div>";
+  }
 
-    if (!result.ok) {
-      box.hidden = false;
-      box.className = "remaining status-tight";
-      var msg = "Enter a load index and how many tyres sit on that axle.";
-      if (result.error === "unknown-load-index") {
-        msg = "That load index is not in the public table this page uses, so it will not guess a kg figure.";
-      } else if (result.error === "tyres") {
-        msg = "Number of tyres on the axle needs to be a whole number such as 2 or 4.";
+  function decodeInto(inputId, opts) {
+    var raw = $(inputId).value;
+    var parsed = T.parseSidewall(raw);
+    if (inputId === "sidewall") {
+      var out = $("decodeOut");
+      if (!String(raw).trim()) {
+        out.hidden = true;
+        out.innerHTML = "";
+        return parsed;
       }
-      box.innerHTML =
-        "<div class=\"label\">Axle check</div>" +
-        "<div class=\"sub\">" + escapeHtml(msg) + "</div>";
-      return;
+      if (!parsed.ok) {
+        out.hidden = false;
+        out.className = "decode-out is-err";
+        var err = "That does not look like a sidewall size code.";
+        if (parsed.error === "unknown-load-index") {
+          err = "Size read OK, but that load index is not in the public table.";
+        } else if (parsed.error === "unknown-speed") {
+          err = "Size read OK, but that speed letter is not one this page explains.";
+        }
+        out.innerHTML = "<p>" + err + " Try <code>215/70 R15C 109/107 Q</code>.</p>";
+        return parsed;
+      }
+      var text = T.describeSidewall(parsed);
+      var rows = [];
+      rows.push(row("Size", text.size));
+      rows.push(row("C / CP mark", text.service));
+      if (text.extraLoad) rows.push(row("Reinforced", text.extraLoad));
+      if (text.load) rows.push(row("Load index", text.load));
+      if (text.speed) rows.push(row("Speed rating", text.speed));
+      out.hidden = false;
+      out.className = "decode-out";
+      out.innerHTML = rows.join("");
     }
-
-    var statusClass = "status-ok";
-    var label = "Looks enough on this estimate";
-    var sub = result.capacityKg + " kg from " + result.tyresOnAxle +
-      " × load index " + result.usedIndex + " (" + result.kgEach + " kg each).";
-    if (result.useDual) {
-      sub += " Dual-wheel figure used.";
-    } else if (result.dualFallback) {
-      sub += " No dual figure typed, so the single load index was used for all four tyres.";
+    if (opts && opts.sync && parsed && parsed.ok) {
+      if (inputId === "sidewall") {
+        if (parsed.loadIndex != null) $("loadIndex").value = String(parsed.loadIndex);
+        if (parsed.dualLoadIndex != null) $("dualLoadIndex").value = String(parsed.dualLoadIndex);
+        $("chartId").value = T.suggestChartId(parsed);
+      } else if (inputId === "rearSidewall") {
+        if (parsed.loadIndex != null) $("rearLoadIndex").value = String(parsed.loadIndex);
+        if (parsed.dualLoadIndex != null) $("rearDualLoadIndex").value = String(parsed.dualLoadIndex);
+        $("rearChartId").value = T.suggestChartId(parsed);
+      }
     }
+    return parsed;
+  }
 
-    if (result.status === "need-load") {
-      statusClass = "status-tight";
-      label = "Capacity only — add an axle load";
-      sub += " Type the axle load from a weighbridge or a careful estimate.";
-    } else if (result.status === "over") {
-      statusClass = "status-over";
-      label = "Estimate looks short";
-      sub += " Axle load " + result.axleLoadKg + " kg is " + Math.abs(result.marginKg) +
-        " kg over this tyre-marking estimate.";
-    } else if (result.status === "tight") {
-      statusClass = "status-tight";
-      label = "Little or no spare";
-      sub += " Axle load " + result.axleLoadKg + " kg, spare about " + result.marginKg + " kg.";
+  function axleOpts(which) {
+    var rear = which === "rear" && $("rearDifferent").checked;
+    return {
+      axleLoadKg: which === "front" ? $("frontAxleKg").value : $("rearAxleKg").value,
+      tyresOnAxle: rear ? $("rearTyresOnAxle").value : $("tyresOnAxle").value,
+      loadIndex: rear ? $("rearLoadIndex").value : $("loadIndex").value,
+      dualLoadIndex: rear ? $("rearDualLoadIndex").value : $("dualLoadIndex").value,
+      chartId: rear ? $("rearChartId").value : $("chartId").value,
+      sidewallMaxBar: $("sidewallMaxBar").value
+    };
+  }
+
+  function formatValue(result) {
+    if (!result || !result.ok) return "—";
+    if (result.status === "over-capacity" || result.status === "over-pressure") return "Fail";
+    if (result.bar == null) return "—";
+    return result.bar + " bar · " + result.psi + " PSI";
+  }
+
+  function formatNote(result, axleName) {
+    if (!result) return "Add " + axleName + " axle load and the fitted tyre.";
+    if (!result.ok) {
+      if (result.error === "need-load") return "Type the " + axleName + " axle load in kg.";
+      if (result.error === "load-index" || result.error === "dual-load-index") {
+        return "Need a load index for the " + axleName + " tyre — paste the sidewall or type it.";
+      }
+      if (result.error === "unknown-load-index") {
+        return "That load index is not in the public table, so this page will not invent a pressure.";
+      }
+      if (result.error === "unknown-chart") return "Pick a load/pressure chart.";
+      if (result.error === "tyres") return "Tyres on the axle must be 2 or 4.";
+      return "Not enough to calculate the " + axleName + ".";
+    }
+    if (result.status === "over-capacity") {
+      return "Over load-index capacity (" + Math.round(result.loadKg) + " kg on each tyre; index " +
+        result.usedIndex + " is " + result.lref + " kg). No safe pressure from this chart.";
+    }
+    if (result.status === "over-pressure") {
+      return "Would need more than the chart maximum (" + result.pmaxBar +
+        " bar) to carry this load. No pressure suggested.";
+    }
+    var bits = [];
+    bits.push(Math.round(result.loadKg) + " kg on each of " + result.tyresOnAxle + " tyres");
+    bits.push("index " + result.usedIndex + " = " + result.lref + " kg");
+    if (result.useDual) bits.push("dual-wheel figure");
+    if (result.dualFallback) bits.push("no dual index typed, so the single index was used");
+    if (result.status === "min-pressure") bits.push("raised to the chart minimum cold pressure");
+    return bits.join(" · ") + ".";
+  }
+
+  function resultClass(result) {
+    if (!result || !result.ok) return "";
+    if (result.status === "over-capacity" || result.status === "over-pressure") return "is-fail";
+    if (result.status === "min-pressure") return "is-tight";
+    return "is-ok";
+  }
+
+  var lastFront = null;
+  var lastRear = null;
+
+  function renderAnswers() {
+    lastFront = T.coldPressureForAxle(axleOpts("front"));
+    lastRear = T.coldPressureForAxle(axleOpts("rear"));
+
+    $("frontValue").textContent = formatValue(lastFront);
+    $("frontSub").textContent = formatNote(lastFront, "front");
+    $("rearValue").textContent = formatValue(lastRear);
+    $("rearSub").textContent = formatNote(lastRear, "rear");
+    $("frontResult").className = "axle-result " + resultClass(lastFront);
+    $("rearResult").className = "axle-result " + resultClass(lastRear);
+
+    var chart = T.getChart($("chartId").value);
+    $("chartNote").textContent = chart
+      ? ("Chart: " + chart.label + " " + chart.source)
+      : "";
+
+    var extras = [];
+    if ($("rearDifferent").checked) extras.push("Front and rear tyres are set separately.");
+    var parsed = T.parseSidewall($("sidewall").value);
+    if (parsed && parsed.ok && parsed.service === "CP") {
+      extras.push("CP camping tyre: this is a driving cold-pressure estimate. Use the maker’s camping table for parked / site load.");
+    }
+    $("answerNotes").textContent = extras.join(" ");
+
+    if (lastFront && lastFront.bar != null && lastRear && lastRear.bar != null) {
+      $("dockValue").textContent = lastFront.bar + " / " + lastRear.bar + " bar";
+      $("dockHint").textContent = "Cold front / rear";
+      $("dock").className = "dock dock-ok";
+    } else if ((lastFront && (lastFront.status === "over-capacity" || lastFront.status === "over-pressure")) ||
+               (lastRear && (lastRear.status === "over-capacity" || lastRear.status === "over-pressure"))) {
+      $("dockValue").textContent = "Fail";
+      $("dockHint").textContent = "Over load or over max pressure";
+      $("dock").className = "dock dock-over";
     } else {
-      sub += " Axle load " + result.axleLoadKg + " kg, spare about " + result.marginKg + " kg.";
+      $("dockValue").textContent = "—";
+      $("dockHint").textContent = "Cold front / rear";
+      $("dock").className = "dock";
     }
-
-    box.hidden = false;
-    box.className = "remaining " + statusClass;
-    box.innerHTML =
-      "<div class=\"label\">" + escapeHtml(label) + "</div>" +
-      "<div class=\"value\">" + escapeHtml(String(result.capacityKg)) + "<span class=\"unit-suffix\"> kg</span></div>" +
-      "<div class=\"sub\">" + escapeHtml(sub) + "</div>" +
-      "<p class=\"note\">The vehicle plate, the tyre maker’s tables and a fitter win over this estimate. It is not a legal check.</p>";
   }
 
   function bindPair(barId, psiId) {
     var barInput = $(barId);
     var psiInput = $(psiId);
     barInput.addEventListener("input", function () {
-      if (barInput.value === "") {
-        psiInput.value = "";
-      } else {
+      if (barInput.value === "") psiInput.value = "";
+      else {
         var psi = T.barToPsi(barInput.value);
         psiInput.value = psi == null ? "" : String(T.roundPsi(psi));
       }
       afterChange();
     });
     psiInput.addEventListener("input", function () {
-      if (psiInput.value === "") {
-        barInput.value = "";
-      } else {
+      if (psiInput.value === "") barInput.value = "";
+      else {
         var bar = T.psiToBar(psiInput.value);
         barInput.value = bar == null ? "" : String(T.roundBar(bar));
       }
@@ -251,42 +307,76 @@
     });
   }
 
-  function afterChange(fromSidewall) {
-    decodeSidewall({ syncCheck: !!fromSidewall });
-    renderCheck();
+  function afterChange() {
+    $("rearTyreWrap").hidden = !$("rearDifferent").checked;
+    decodeInto("sidewall");
+    renderAnswers();
     saveState();
+  }
+
+  function applySplit() {
+    var split = T.splitAxleLoads($("totalKg").value, $("frontPct").value);
+    if (!split.ok) return;
+    $("frontAxleKg").value = String(split.frontKg);
+    $("rearAxleKg").value = String(split.rearKg);
+    afterChange();
+  }
+
+  function copyAnswers() {
+    if (lastFront && lastFront.bar != null) {
+      setPairFromBar($("noteFrontBar"), $("noteFrontPsi"), lastFront.bar);
+    }
+    if (lastRear && lastRear.bar != null) {
+      setPairFromBar($("noteRearBar"), $("noteRearPsi"), lastRear.bar);
+    }
+    saveState();
+    setSaveNote("Copied the calculated cold pressures onto this phone.");
   }
 
   function clearSaved() {
     fillFromState(DEFAULTS);
+    decodeInto("sidewall");
+    renderAnswers();
     try { localStorage.removeItem(STORAGE_KEY); } catch (err) { /* ignore */ }
-    decodeSidewall();
-    renderCheck();
     setSaveNote("Cleared on this device.");
   }
 
   var year = $("yearNow");
   if (year) year.textContent = String(new Date().getFullYear());
 
-  var state = loadState();
-  fillFromState(state);
+  fillFromState(loadState());
   bindPair("convBar", "convPsi");
-  AXLES.forEach(function (axle) {
-    bindPair(axle.barId, axle.psiId);
-  });
+  bindPair("noteFrontBar", "noteFrontPsi");
+  bindPair("noteRearBar", "noteRearPsi");
 
-  $("sidewall").addEventListener("input", function () { afterChange(true); });
-  ["axleLoadKg", "loadIndex", "dualLoadIndex", "tyresOnAxle"].forEach(function (id) {
+  [
+    "frontAxleKg", "rearAxleKg", "totalKg", "frontPct",
+    "loadIndex", "dualLoadIndex", "tyresOnAxle", "chartId", "sidewallMaxBar",
+    "rearLoadIndex", "rearDualLoadIndex", "rearTyresOnAxle", "rearChartId"
+  ].forEach(function (id) {
     $(id).addEventListener("input", afterChange);
     $(id).addEventListener("change", afterChange);
   });
 
+  $("sidewall").addEventListener("input", function () {
+    decodeInto("sidewall", { sync: true });
+    renderAnswers();
+    saveState();
+  });
+  $("rearSidewall").addEventListener("input", function () {
+    decodeInto("rearSidewall", { sync: true });
+    renderAnswers();
+    saveState();
+  });
+  $("rearDifferent").addEventListener("change", afterChange);
+  $("applySplit").addEventListener("click", applySplit);
+  $("copyAnswers").addEventListener("click", copyAnswers);
   $("clearTyres").addEventListener("click", clearSaved);
 
-  decodeSidewall({ syncCheck: true });
-  renderCheck();
+  decodeInto("sidewall");
+  renderAnswers();
   try {
-    setSaveNote(localStorage.getItem(STORAGE_KEY) ? "Saved on this device only." : "Nothing saved yet — figures stay on this phone.");
+    setSaveNote(localStorage.getItem(STORAGE_KEY) ? "Saved on this device only." : "Nothing saved yet.");
   } catch (err) {
     setSaveNote("Figures stay on this phone if storage is available.");
   }

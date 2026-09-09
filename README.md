@@ -26,7 +26,7 @@ Then visit [http://localhost:4173](http://localhost:4173) (payload) or [http://l
 - Typical 3.5t Ducato/Boxer and light-weekend presets
 - “What if I empty the water?” comparison
 - Printable results and a weighbridge disclaimer
-- **Tyres tool** (`tyres.html`): cold-pressure notepad (bar ↔ PSI, saved on-device), sidewall decoder, optional axle load-index check. Never invents a recommended pressure.
+- **Tyres tool** (`tyres.html`): cold front and rear pressure from axle loads and the fitted tyre (ETRTO/ISO-style load–pressure chart). Sidewall decoder, bar ↔ PSI converter, and an optional notepad are helpers. Refuses a number if the tyre is outside the table or overloaded.
 
 ## How the numbers work
 

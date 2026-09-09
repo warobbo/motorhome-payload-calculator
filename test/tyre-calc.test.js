@@ -12,7 +12,15 @@ const {
   speedRatingInfo,
   parseSidewall,
   describeSidewall,
-  checkAxleCapacity
+  checkAxleCapacity,
+  PRESSURE_CHARTS,
+  PRESSURE_EXPONENT,
+  getChart,
+  suggestChartId,
+  splitAxleLoads,
+  roundUpBar,
+  coldPressureForLoad,
+  coldPressureForAxle
 } = require("../lib/tyre-calc");
 
 describe("bar ↔ PSI", function () {
@@ -237,5 +245,152 @@ describe("checkAxleCapacity", function () {
     assert.equal(checkAxleCapacity({ axleLoadKg: 1800, loadIndex: 109, tyresOnAxle: 0 }).error, "tyres");
     assert.equal(checkAxleCapacity({ axleLoadKg: 1800, loadIndex: 109, tyresOnAxle: 1.5 }).error, "tyres");
     assert.equal(checkAxleCapacity({ axleLoadKg: 1800, loadIndex: 109, tyresOnAxle: -2 }).error, "tyres");
+  });
+});
+
+describe("suggestChartId", function () {
+  it("picks the ETRTO C-type 3.75 bar chart for C, CP and LT", function () {
+    assert.equal(suggestChartId(parseSidewall("215/70 R15C 109/107 Q")), "c375");
+    assert.equal(suggestChartId(parseSidewall("225/70 R15CP 115/113 Q")), "c375");
+    assert.equal(suggestChartId({ ok: true, service: "LT", extraLoad: false }), "c375");
+  });
+
+  it("picks passenger or XL from the marking", function () {
+    assert.equal(suggestChartId(parseSidewall("205/65 R16 95H")), "passenger");
+    assert.equal(suggestChartId({ ok: true, service: "", extraLoad: true }), "xl");
+  });
+});
+
+describe("splitAxleLoads", function () {
+  it("splits a total weight by front percent", function () {
+    const r = splitAxleLoads(3500, 40);
+    assert.equal(r.ok, true);
+    assert.equal(r.estimate, true);
+    assert.equal(r.frontKg, 1400);
+    assert.equal(r.rearKg, 2100);
+  });
+
+  it("rejects junk without inventing a split", function () {
+    assert.equal(splitAxleLoads("", 40).ok, false);
+    assert.equal(splitAxleLoads(3500, 140).ok, false);
+  });
+});
+
+describe("coldPressureForLoad", function () {
+  it("returns the reference pressure at the full load index", function () {
+    const r = coldPressureForLoad({ loadPerTyreKg: 1030, loadIndex: 109, chartId: "c375" });
+    assert.equal(r.ok, true);
+    assert.equal(r.status, "ok");
+    assert.equal(r.bar, 3.75);
+    assert.equal(getChart("c375").prefBar, 3.75);
+    assert.equal(PRESSURE_EXPONENT, 1.25);
+    assert.ok(PRESSURE_CHARTS.c375);
+  });
+
+  it("uses the 0.8-power ETRTO interpolation and never rounds down", function () {
+    const loadKg = 800;
+    const raw = 3.75 * Math.pow(800 / 1030, 1.25);
+    const r = coldPressureForLoad({ loadPerTyreKg: loadKg, loadIndex: 109, chartId: "c375" });
+    assert.equal(r.status, "ok");
+    assert.ok(r.bar >= raw - 1e-9);
+    assert.equal(r.bar, roundUpBar(raw));
+    assert.equal(r.psi, Math.round(r.bar * (14.503773773) * 10) / 10);
+  });
+
+  it("uses the C 4.50 bar chart when that table is selected", function () {
+    const full = coldPressureForLoad({ loadPerTyreKg: 1030, loadIndex: 109, chartId: "c450" });
+    assert.equal(full.bar, 4.5);
+    const part = coldPressureForLoad({ loadPerTyreKg: 800, loadIndex: 109, chartId: "c450" });
+    const c375 = coldPressureForLoad({ loadPerTyreKg: 800, loadIndex: 109, chartId: "c375" });
+    assert.ok(part.bar > c375.bar);
+  });
+
+  it("raises a light load to the chart minimum instead of inventing a lower figure", function () {
+    const r = coldPressureForLoad({ loadPerTyreKg: 400, loadIndex: 109, chartId: "c375" });
+    assert.equal(r.status, "min-pressure");
+    assert.equal(r.bar, 2.25);
+  });
+
+  it("refuses a pressure when the tyre is over its load index", function () {
+    const r = coldPressureForLoad({ loadPerTyreKg: 1100, loadIndex: 109, chartId: "c375" });
+    assert.equal(r.status, "over-capacity");
+    assert.equal(r.bar, null);
+    assert.equal(r.psi, null);
+  });
+
+  it("refuses a pressure when the required inflation exceeds the chart max", function () {
+    const r = coldPressureForLoad({
+      loadPerTyreKg: 1000,
+      loadIndex: 109,
+      chartId: "c375",
+      sidewallMaxBar: 2.5
+    });
+    assert.equal(r.status, "over-pressure");
+    assert.equal(r.bar, null);
+  });
+
+  it("does not invent a number for a missing table or load index", function () {
+    assert.equal(coldPressureForLoad({ loadPerTyreKg: 800, loadIndex: 109, chartId: "nope" }).error, "unknown-chart");
+    assert.equal(coldPressureForLoad({ loadPerTyreKg: 800, loadIndex: 12, chartId: "c375" }).error, "unknown-load-index");
+    assert.equal(coldPressureForLoad({ loadIndex: 109, chartId: "c375" }).error, "need-load");
+  });
+});
+
+describe("coldPressureForAxle", function () {
+  it("uses half the axle load on a two-tyre axle", function () {
+    const r = coldPressureForAxle({
+      axleLoadKg: 1600,
+      tyresOnAxle: 2,
+      loadIndex: 109,
+      chartId: "c375"
+    });
+    const one = coldPressureForLoad({ loadPerTyreKg: 800, loadIndex: 109, chartId: "c375" });
+    assert.equal(r.status, "ok");
+    assert.equal(r.useDual, false);
+    assert.equal(r.bar, one.bar);
+    assert.equal(r.loadKg, 800);
+  });
+
+  it("uses the dual load index only on a four-tyre axle", function () {
+    const dual = coldPressureForAxle({
+      axleLoadKg: 3600,
+      tyresOnAxle: 4,
+      loadIndex: 109,
+      dualLoadIndex: 107,
+      chartId: "c375"
+    });
+    assert.equal(dual.useDual, true);
+    assert.equal(dual.usedIndex, 107);
+    assert.equal(dual.loadKg, 900);
+    assert.equal(dual.lref, 975);
+    assert.equal(dual.status, "ok");
+
+    const single = coldPressureForAxle({
+      axleLoadKg: 1600,
+      tyresOnAxle: 2,
+      loadIndex: 109,
+      dualLoadIndex: 107,
+      chartId: "c375"
+    });
+    assert.equal(single.useDual, false);
+    assert.equal(single.usedIndex, 109);
+  });
+
+  it("fails a dual axle that is over the dual load index", function () {
+    const r = coldPressureForAxle({
+      axleLoadKg: 4000,
+      tyresOnAxle: 4,
+      loadIndex: 109,
+      dualLoadIndex: 107,
+      chartId: "c375"
+    });
+    assert.equal(r.status, "over-capacity");
+    assert.equal(r.bar, null);
+  });
+
+  it("refuses to invent a pressure without a load index or axle load", function () {
+    assert.equal(coldPressureForAxle({ axleLoadKg: 1600, tyresOnAxle: 2, chartId: "c375" }).error, "load-index");
+    assert.equal(coldPressureForAxle({ tyresOnAxle: 2, loadIndex: 109, chartId: "c375" }).error, "need-load");
+    assert.equal(coldPressureForAxle({ axleLoadKg: 1600, tyresOnAxle: 0, loadIndex: 109, chartId: "c375" }).error, "tyres");
   });
 });
