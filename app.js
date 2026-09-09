@@ -437,28 +437,28 @@
       boxEmpty.className = "remaining status-tight";
       document.getElementById("remainingLabel").textContent = "Remaining payload";
       document.getElementById("remainingValue").textContent = "\u2014";
-      document.getElementById("remainingSub").textContent = "Enter MIRO from the handbook or a weighbridge ticket.";
+      document.getElementById("remainingSub").textContent = "Enter Mass in Service from the V5 or a weighbridge ticket.";
       document.getElementById("totalWeight").textContent = "\u2014";
       document.getElementById("mamOut").textContent = fmt(num(state.mam), 0);
       document.getElementById("platedPayload").textContent = "\u2014";
-      document.getElementById("payloadPct").textContent = "MIRO needed";
+      document.getElementById("payloadPct").textContent = "Mass in Service needed";
       document.getElementById("meterFill").style.width = "0%";
       document.getElementById("warnOver").classList.remove("show");
       document.getElementById("warnLow").classList.remove("show");
       document.getElementById("breakdown").innerHTML = "";
-      document.getElementById("waterWhatIf").textContent = "Enter MIRO to see how water and kit use the remaining payload.";
+      document.getElementById("waterWhatIf").textContent = "Enter Mass in Service to see how water and kit use the remaining payload.";
       document.getElementById("axleNote").textContent = "";
       var dockEmpty = document.getElementById("dockValue");
       dockEmpty.textContent = "\u2014";
       dockEmpty.className = "dock-tight";
-      document.getElementById("dockHint").textContent = "Enter MIRO to calculate";
+      document.getElementById("dockHint").textContent = "Enter Mass in Service to calculate";
       document.getElementById("emptyWater").textContent = waterBackup
         ? "Restore water levels"
         : "What if I empty the water?";
-      document.getElementById("peopleNote").textContent = "MIRO is blank after the plate lookup \u2014 the handbook figure is not guessed.";
+      document.getElementById("peopleNote").textContent = "Mass in Service is blank after the plate lookup \u2014 the V5 figure is not guessed.";
       document.getElementById("driverHint").textContent = usingActualEmpty()
         ? "Added because you entered a weighed empty van."
-        : "Used only if MIRO does not include the driver, or you enter a weighed empty weight.";
+        : "Used only if Mass in Service does not include the driver, or you enter a weighed empty weight.";
       updateIdentityCard();
       return;
     }
@@ -470,12 +470,12 @@
     document.getElementById("remainingLabel").textContent = "Remaining payload";
     document.getElementById("remainingValue").textContent = (r.remaining < 0 ? "\u2212" : "") + fmt(Math.abs(r.remaining), 0);
     document.getElementById("remainingSub").textContent = cls === "ok"
-      ? "Comfortable margin for a 3.5t van"
+      ? "Comfortable margin under " + fmt(r.mam, 0) + " MAM"
       : cls === "tight"
         ? "Tight \u2014 weigh before a long trip"
         : cls === "critical"
           ? "Very little margin left"
-          : "Illegal to drive at this estimate";
+          : "Over MAM";
 
     document.getElementById("totalWeight").textContent = fmt(r.total, 0);
     document.getElementById("mamOut").textContent = fmt(r.mam, 0);
@@ -493,7 +493,7 @@
     document.getElementById("breakdown").innerHTML =
       barRow("People & pets", r.people, maxCat) +
       barRow("Fresh / grey / black water", r.water, maxCat) +
-      barRow(usingActualEmpty() || !state.miroIncludesFuel ? "Fuel" : "Fuel vs MIRO 90%", r.fuel, maxCat) +
+      barRow(usingActualEmpty() || !state.miroIncludesFuel ? "Fuel" : "Fuel vs Mass in Service 90%", r.fuel, maxCat) +
       barRow("Gas bottles", r.gas, maxCat) +
       barRow("Electrical & solar", r.electrical, maxCat) +
       barRow("Gear & other", r.gear, maxCat);
@@ -523,11 +523,11 @@
 
     var driverNote = usingActualEmpty()
       ? "Weighed empty is in use, so the driver is added separately."
-      : (state.miroIncludesDriver ? "Driver is already in MIRO \u2014 additional adults are passengers only." : "Driver is being added on top of MIRO.");
+      : (state.miroIncludesDriver ? "Driver is already in Mass in Service \u2014 additional adults are passengers only." : "Driver is being added on top of Mass in Service.");
     document.getElementById("peopleNote").textContent = driverNote;
     document.getElementById("driverHint").textContent = usingActualEmpty()
       ? "Added because you entered a weighed empty van."
-      : "Used only if MIRO does not include the driver, or you enter a weighed empty weight.";
+      : "Used only if Mass in Service does not include the driver, or you enter a weighed empty weight.";
     updateIdentityCard();
   }
 
@@ -686,12 +686,12 @@
     }
     if (plateLookup) {
       state.miro = "";
-      notes.push("DVLA does not supply MIRO \u2014 keep the handbook or weighbridge figure.");
+      notes.push("DVLA does not supply Mass in Service \u2014 enter it from the V5 or a weighbridge figure.");
     } else if (vehicle.miroAvailable && vehicle.typicalMiro) {
       state.miro = vehicle.typicalMiro;
-      notes.push("Typical MIRO " + vehicle.typicalMiro + " kg applied" + (vehicle.typicalLabel ? " for " + vehicle.typicalLabel : "") + ". Replace with the handbook figure if you have it.");
+      notes.push("Typical Mass in Service " + vehicle.typicalMiro + " kg applied" + (vehicle.typicalLabel ? " for " + vehicle.typicalLabel : "") + ". Replace with the V5 or handbook figure if you have it.");
     } else {
-      notes.push("DVLA does not supply MIRO \u2014 keep the handbook or weighbridge figure.");
+      notes.push("DVLA does not supply Mass in Service \u2014 enter it from the V5 or a weighbridge figure.");
     }
     if (plateLookup && !state.model) {
       notes.push("Model was not on the DVLA record \u2014 pick the van platform if you know it.");
