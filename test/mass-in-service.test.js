@@ -58,8 +58,9 @@ describe("visibleOrStored", function () {
 
 describe("browser global", function () {
   it("sets MassInService even when a CommonJS module object exists", function () {
-    const sandbox = { module: { exports: {} }, exports: {} };
+    const sandbox = { module: { exports: {} }, exports: {}, window: {} };
     sandbox.globalThis = sandbox;
+    sandbox.window = sandbox;
     vm.runInNewContext(
       fs.readFileSync(path.join(__dirname, "../lib/mass-in-service.js"), "utf8"),
       sandbox

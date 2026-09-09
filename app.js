@@ -407,21 +407,27 @@
     return num(state.actualEmpty) > 0;
   }
 
+  var usedHelperFallback = false;
+
   function helpersReady() {
-    return !!(globalThis.MassInService
-      && globalThis.FuelPayload
-      && globalThis.DriverPayload
-      && typeof MassInService.isMissing === "function"
-      && typeof FuelPayload.fuelPayloadKg === "function"
-      && typeof FuelPayload.fuelActualKg === "function"
-      && typeof FuelPayload.fuelBreakdownLabel === "function"
-      && typeof DriverPayload.driverPayloadKg === "function");
+    var mass = globalThis.MassInService;
+    var fuel = globalThis.FuelPayload;
+    var driver = globalThis.DriverPayload;
+    return !!(mass && fuel && driver
+      && typeof mass.isMissing === "function"
+      && typeof mass.parseWeightInput === "function"
+      && typeof fuel.fuelPayloadKg === "function"
+      && typeof fuel.fuelActualKg === "function"
+      && typeof fuel.fuelBreakdownLabel === "function"
+      && typeof driver.driverPayloadKg === "function");
   }
 
   function driverPayloadSafe(opts) {
-    if (globalThis.DriverPayload && typeof DriverPayload.driverPayloadKg === "function") {
-      return DriverPayload.driverPayloadKg(opts);
+    var driver = globalThis.DriverPayload;
+    if (driver && typeof driver.driverPayloadKg === "function") {
+      return driver.driverPayloadKg(opts);
     }
+    usedHelperFallback = true;
     var kg = Number(opts && opts.driverKg);
     var actual = isFinite(kg) && kg > 0 ? kg : 0;
     if (Number(opts && opts.actualEmpty) > 0) return actual;
@@ -430,9 +436,11 @@
   }
 
   function fuelActualSafe(opts) {
-    if (globalThis.FuelPayload && typeof FuelPayload.fuelActualKg === "function") {
-      return FuelPayload.fuelActualKg(opts);
+    var fuel = globalThis.FuelPayload;
+    if (fuel && typeof fuel.fuelActualKg === "function") {
+      return fuel.fuelActualKg(opts);
     }
+    usedHelperFallback = true;
     var cap = Number(opts && opts.fuelCap);
     var fillPct = Number(opts && opts.fuelFill);
     var density = Number(opts && opts.fuelDensity);
@@ -441,9 +449,11 @@
   }
 
   function fuelPayloadSafe(opts) {
-    if (globalThis.FuelPayload && typeof FuelPayload.fuelPayloadKg === "function") {
-      return FuelPayload.fuelPayloadKg(opts);
+    var fuel = globalThis.FuelPayload;
+    if (fuel && typeof fuel.fuelPayloadKg === "function") {
+      return fuel.fuelPayloadKg(opts);
     }
+    usedHelperFallback = true;
     var actual = fuelActualSafe(opts);
     if (Number(opts && opts.actualEmpty) > 0) return actual;
     var cap = Number(opts && opts.fuelCap) || 0;
@@ -453,9 +463,11 @@
   }
 
   function fuelLabelSafe(opts) {
-    if (globalThis.FuelPayload && typeof FuelPayload.fuelBreakdownLabel === "function") {
-      return FuelPayload.fuelBreakdownLabel(opts);
+    var fuel = globalThis.FuelPayload;
+    if (fuel && typeof fuel.fuelBreakdownLabel === "function") {
+      return fuel.fuelBreakdownLabel(opts);
     }
+    usedHelperFallback = true;
     return Number(opts && opts.actualEmpty) > 0
       ? "Fuel (full tank — not in weighed empty)"
       : "Fuel (above Mass in Service)";
@@ -565,6 +577,7 @@
   }
 
   function renderCalculation() {
+    usedHelperFallback = false;
     if (miroMissing()) {
       var boxEmpty = document.getElementById("remainingBox");
       boxEmpty.className = "remaining status-tight";
@@ -659,9 +672,9 @@
       : "Mass in Service assumes a 75 kg driver \u2014 only any extra is added. Additional adults are passengers only.";
     syncWeighedEmptyUi();
     updateIdentityCard();
-    if (!helpersReady()) {
+    if (usedHelperFallback || !helpersReady()) {
       var breakdownEl = document.getElementById("breakdown");
-      if (breakdownEl) {
+      if (breakdownEl && usedHelperFallback) {
         breakdownEl.insertAdjacentHTML(
           "afterbegin",
           '<p class="calc-error">Some calculator scripts did not load. Figures may be incomplete — hard-refresh the page.</p>'
