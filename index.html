@@ -166,7 +166,7 @@
           "name": "Does the driver count towards payload?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "If you are using Mass in Service from the V5 (or the handbook MIRO figure), the driver is already included (usually at 75 kg). Extra adults, children and pets are additional. If you enter an actual weighbridge empty weight of the van only, add the driver as well as passengers."
+            "text": "Mass in Service from the V5 usually assumes a 75 kg driver. Enter your real weight — only the extra kilograms above 75 are added. Extra adults, children and pets are additional. If you enter a weighbridge empty weight of the van only, the full driver weight is added."
           }
         },
         {
@@ -365,10 +365,10 @@
                 </span>
                 <input id="actualEmpty" type="number" inputmode="decimal" min="0" step="1" data-key="actualEmpty" data-kind="weight" placeholder="Leave blank to use Mass in Service">
               </div>
-              <div class="field" id="driverWeightField" hidden>
+              <div class="field" id="driverWeightField">
                 <label for="driverKg">Driver weight</label>
                 <input id="driverKg" type="number" inputmode="decimal" min="0" step="1" data-key="driverKg" data-kind="weight">
-                <span class="hint" id="driverHint">The weighbridge ticket is the van only — add the driver here.</span>
+                <span class="hint" id="driverHint">Mass in Service usually assumes a 75 kg driver. Enter your real weight — only the difference is added.</span>
               </div>
               <div class="field">
                 <label for="frontAxle">Front axle rating (optional)</label>
@@ -379,7 +379,7 @@
                 <input id="rearAxle" type="number" inputmode="decimal" min="0" step="1" data-key="rearAxle" data-kind="weight">
               </div>
             </div>
-            <p class="assumption">Mass in Service already includes the driver (usual for handbook / V5 figures)</p>
+            <p class="assumption">Mass in Service usually assumes a 75 kg driver</p>
             <p class="assumption">Mass in Service already includes 90% fuel (usual). Only the difference from 90% is added.</p>
             <p class="hint" id="weighedEmptyNote" hidden>Weighed empty is the van only — the driver and the full fuel tank from Fluids are added on top.</p>
             <details class="plate-find" id="plate-find">
@@ -807,7 +807,7 @@
       </details>
       <details>
         <summary>Does the driver count towards payload?</summary>
-        <p>If you are using Mass in Service from the V5 (or the handbook MIRO figure), the driver is already included (usually at 75 kg). Extra adults, children and pets are additional. If you enter an actual weighbridge empty weight of the van only, add the driver as well as passengers.</p>
+        <p>Mass in Service from the V5 usually assumes a 75 kg driver. Enter your real weight — only the extra kilograms above 75 are added. Extra adults, children and pets are additional. If you enter a weighbridge empty weight of the van only, the full driver weight is added.</p>
       </details>
       <details>
         <summary>How should I treat fuel, gas and water in this calculator?</summary>
@@ -872,6 +872,7 @@
   </footer>
 
   <script src="lib/fuel-payload.js"></script>
+  <script src="lib/driver-payload.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

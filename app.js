@@ -367,17 +367,8 @@
   }
 
   function syncWeighedEmptyUi() {
-    var on = usingActualEmpty();
-    var driverField = document.getElementById("driverWeightField");
-    if (driverField) driverField.hidden = !on;
     var emptyNote = document.getElementById("weighedEmptyNote");
-    if (emptyNote) emptyNote.hidden = !on;
-    var driverHint = document.getElementById("driverHint");
-    if (driverHint) {
-      driverHint.textContent = on
-        ? "The weighbridge ticket is the van only \u2014 add the driver here."
-        : "";
-    }
+    if (emptyNote) emptyNote.hidden = !usingActualEmpty();
   }
 
   function compute(overrides) {
@@ -386,7 +377,10 @@
     var miro = num(s.miro);
     var base = usingActualEmpty() ? num(s.actualEmpty) : miro;
 
-    var driver = usingActualEmpty() ? num(s.driverKg) : 0;
+    var driver = DriverPayload.driverPayloadKg({
+      driverKg: s.driverKg,
+      actualEmpty: s.actualEmpty
+    });
     var people = driver + num(s.extraAdults) * num(s.adultKg) + num(s.children) * num(s.childKg) + num(s.pets) * num(s.petKg);
 
     var fresh = num(s.freshCap) * num(s.freshFill) / 100;
@@ -535,8 +529,8 @@
       : "What if I empty the water?";
 
     document.getElementById("peopleNote").textContent = usingActualEmpty()
-      ? "Weighed empty is in use, so the driver is added separately."
-      : "Driver is already in Mass in Service \u2014 additional adults are passengers only.";
+      ? "Weighed empty is the van only \u2014 the full driver weight is added."
+      : "Mass in Service assumes a 75 kg driver \u2014 only any extra is added. Additional adults are passengers only.";
     syncWeighedEmptyUi();
     updateIdentityCard();
   }
