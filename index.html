@@ -67,7 +67,8 @@
         "Metric and imperial units",
         "People, fluids, gas, batteries, solar and gear breakdown",
         "UK registration lookup for make and plated weight",
-        "Local storage of last vehicle details"
+        "Local storage of last vehicle details",
+        "Tyre pressure notepad and sidewall decoder"
       ],
       "audience": {
         "@type": "Audience",
@@ -200,6 +201,14 @@
             "@type": "Answer",
             "text": "Yes. A UK plate lookup fills make and year, plus the DVLA revenue weight (often the plated MAM). DVLA does not supply model or Mass in Service. Model stays blank unless MOT history gives an exact van-maker model — coachbuilts such as Hymer are not filled with Ducato. Pick the platform from the list, and enter Mass in Service from the V5 or a weighbridge ticket. You can also choose make, model and year to apply typical 3.5t figures."
           }
+        },
+        {
+          "@type": "Question",
+          "name": "What about tyre pressure if I change away from the original tyres?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The door-sticker pressure is for the tyres the van was designed around. A different size or load index can need a different pressure. Use the Tyres tool on this hub as a notepad and sidewall decoder — it will not invent a recommended pressure. Check new tyres with a fitter."
+          }
         }
       ]
     }
@@ -207,7 +216,8 @@
 }
   </script>
 
-  <link rel="stylesheet" href="styles.css">
+  <!-- ASSET_VERSION=20260909t — bump this query on CSS/JS below to force-refresh cached assets. -->
+  <link rel="stylesheet" href="styles.css?v=20260909t">
 
 </head>
 <body>
@@ -236,6 +246,10 @@
         <label for="unit-imperial">Imperial</label>
       </div>
     </div>
+    <nav class="hub-nav" aria-label="Hub tools">
+      <a href="index.html" aria-current="page">Payload</a>
+      <a href="tyres.html">Tyres</a>
+    </nav>
   </header>
 
   <main class="wrap" id="calculator">
@@ -824,6 +838,10 @@
         <summary>Can I look up my motorhome by registration?</summary>
         <p>Yes. A UK plate lookup fills make and year, plus the DVLA revenue weight (often the plated MAM). DVLA does not supply model or Mass in Service. Model stays blank unless MOT history gives an exact van-maker model — coachbuilts such as Hymer are not filled with Ducato. Pick the platform from the list, and enter Mass in Service from the V5 or a weighbridge ticket. You can also choose make, model and year to apply typical 3.5t figures. Always confirm weights on the VIN plate and handbook.</p>
       </details>
+      <details id="faq-tyres">
+        <summary>What about tyre pressure if I change away from the original tyres?</summary>
+        <p>The door-sticker pressure is for the tyres the van was designed around. A different size or load index can need a different pressure and may not carry the same load. The <a href="tyres.html">Tyres tool</a> is a notepad and sidewall decoder — it will not invent a recommended pressure. Copy the sticker or handbook, then check the new tyre with a fitter.</p>
+      </details>
     </section>
 
     <section class="prose" id="explain">
@@ -833,13 +851,19 @@
         <li>A converted panel van often leaves <strong>350–550 kg</strong> of payload. Coachbuilts and winterised vans can be tighter still.</li>
         <li>Front axle ratings are commonly around 1,850–2,100 kg and the rear around 2,000–2,400 kg — overloaded rear axles from bikes, tanks and boot kit are a frequent MOT and roadside issue.</li>
         <li>A 90 L diesel tank full is about 76 kg of fuel. Mass in Service already assumes most of that, so topping right up adds only a little; water tanks are the bigger swing.</li>
-        <li>Chassis uprates exist, but tyres, brakes, speed limiter and your licence (B vs C1) must match. This calculator does not change the plated MAM for you.</li>
+        <li>Chassis uprates exist, but tyres, brakes, speed limiter and your licence (B vs C1) must match. This calculator does not change the plated MAM for you. For sticker pressures and sidewall codes, use the <a href="tyres.html">Tyres tool</a>.</li>
       </ul>
     </section>
 
     <section class="prose" id="about">
       <h2>About</h2>
       <p>This free calculator is for UK motorhome owners — especially anyone on a 3.5-tonne Fiat Ducato or Peugeot Boxer — who wants a clear picture of payload before a trip. It runs entirely in your browser. The last figures you type are stored on this device only.</p>
+    </section>
+
+    <section class="prose" id="more-tools">
+      <h2>Also on this hub</h2>
+      <p>Need the door-sticker pressures in bar and PSI, or a plain-English read of a sidewall code such as <code>215/70 R15C 109/107 Q</code>? That lives next to this calculator.</p>
+      <p><a class="btn btn-primary" href="tyres.html">Open the Tyres tool</a></p>
     </section>
 
     <section class="prose" id="privacy">
@@ -860,6 +884,8 @@
     <div class="footer-inner">
       <p class="disclaimer"><strong>Disclaimer:</strong> This is an estimate only. Always verify with a calibrated weighbridge for legal compliance.</p>
       <nav class="footer-links" aria-label="Footer">
+        <a href="index.html">Payload</a>
+        <a href="tyres.html">Tyres</a>
         <a href="#how-to-use">How to use</a>
         <a href="#faq">FAQ</a>
         <a href="#weight-plate">Weight plate</a>
@@ -870,9 +896,9 @@
     </div>
   </footer>
 
-  <script src="lib/fuel-payload.js"></script>
-  <script src="lib/driver-payload.js"></script>
-  <script src="lib/mass-in-service.js"></script>
-  <script src="app.js"></script>
+  <script src="lib/fuel-payload.js?v=20260909t"></script>
+  <script src="lib/driver-payload.js?v=20260909t"></script>
+  <script src="lib/mass-in-service.js?v=20260909t"></script>
+  <script src="app.js?v=20260909t"></script>
 </body>
 </html>
