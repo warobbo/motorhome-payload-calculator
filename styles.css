@@ -315,6 +315,10 @@ input:focus, select:focus, button:focus-visible {
   font-size: 0.9rem;
   color: var(--muted);
 }
+.grid-2 > .assumption-fuel {
+  grid-column: 1 / -1;
+  margin: 0;
+}
 .check input {
   width: 1.15rem;
   height: 1.15rem;
