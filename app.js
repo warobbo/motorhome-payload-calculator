@@ -276,8 +276,29 @@
     }
   }
 
+  function visibleMiroValue() {
+    var el = document.getElementById("miro");
+    return el ? el.value : "";
+  }
+
+  /* Plate lookup clears state.miro. If the box still shows a number (typed,
+     autofilled, or kept while the model dropdown changes), copy it in. */
+  function adoptVisibleMiro() {
+    if (syncing) return;
+    var el = document.getElementById("miro");
+    if (!el) return;
+    var parsed = MassInService.parseWeightInput(el.value);
+    if (parsed == null) return;
+    var kg = isImperial() ? parsed * KG_PER_LB : parsed;
+    if (state.miro !== kg) {
+      state.miro = kg;
+      saveState();
+    }
+  }
+
   function miroMissing() {
-    return !usingActualEmpty() && (state.miro === "" || state.miro == null);
+    adoptVisibleMiro();
+    return MassInService.isMissing(state.miro, visibleMiroValue(), state.actualEmpty);
   }
 
   function fillForm() {
@@ -756,9 +777,30 @@
     });
   }
 
+  function fieldFromEvent(event) {
+    var t = event.target;
+    if (!t || !t.closest) return null;
+    return t.closest("[data-key]");
+  }
+
   document.querySelectorAll("[data-key]").forEach(function (el) {
     el.addEventListener("input", function () { readForm(el); });
     el.addEventListener("change", function () { readForm(el); });
+    el.addEventListener("blur", function () { readForm(el); });
+  });
+
+  var inputsRoot = document.getElementById("calculator-inputs") || document;
+  inputsRoot.addEventListener("input", function (event) {
+    var el = fieldFromEvent(event);
+    if (el) readForm(el);
+  });
+  inputsRoot.addEventListener("change", function (event) {
+    var el = fieldFromEvent(event);
+    if (el) readForm(el);
+  });
+  inputsRoot.addEventListener("focusout", function (event) {
+    var el = fieldFromEvent(event);
+    if (el) readForm(el);
   });
 
   document.querySelectorAll(".stepper [data-step]").forEach(function (btn) {
