@@ -574,6 +574,50 @@ input:focus, select:focus, button:focus-visible {
   margin-left: 0.2rem;
 }
 
+.pressure-hero {
+  margin: 0 0 1.1rem;
+}
+.pressure-hero h2 { margin: 0 0 0.65rem; }
+.pressure-grid {
+  display: grid;
+  gap: 0.7rem;
+}
+@media (min-width: 640px) {
+  .pressure-grid { grid-template-columns: 1fr 1fr; }
+}
+.axle-result {
+  background: var(--bg);
+  border-radius: 16px;
+  padding: 0.85rem 0.9rem 0.95rem;
+  text-align: center;
+}
+.axle-result .label {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.axle-result .value {
+  font-family: var(--display);
+  font-size: clamp(1.45rem, 5vw, 2rem);
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  margin: 0.25rem 0 0.35rem;
+}
+.axle-result .sub {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+.axle-result.is-ok { background: var(--ok-bg); }
+.axle-result.is-ok .value { color: var(--ok); }
+.axle-result.is-tight { background: var(--amber-bg); }
+.axle-result.is-tight .value { color: var(--amber); }
+.axle-result.is-fail { background: var(--danger-bg); }
+.axle-result.is-fail .value { color: var(--danger); }
+
 .breakdown { margin-top: 0.85rem; }
 .breakdown h3 { margin: 0 0 0.45rem; font-size: 0.92rem; }
 .bar-row { margin: 0.4rem 0 0.65rem; }
@@ -783,6 +827,7 @@ footer.site-footer {
   #about,
   #privacy,
   #more-tools,
+  #splitHelper,
   .dock,
   .site-footer,
   .result-actions,

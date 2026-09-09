@@ -11,27 +11,27 @@
   <meta name="apple-mobile-web-app-title" content="Tyre Pressure">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
 
-  <title>Motorhome Tyre Pressure Notepad | Bar, PSI &amp; Sidewall Decoder</title>
-  <meta name="description" content="Free UK motorhome tyre tool: save cold pressures from your door sticker in bar and PSI, convert both ways, and decode a sidewall code such as 215/70 R15C 109/107 Q.">
-  <meta name="keywords" content="motorhome tyre pressure, campervan tyre pressure bar PSI, sidewall decoder, C-rated tyre, load index, UK motorhome tyres">
+  <title>Motorhome Tyre Pressure | Cold Front &amp; Rear from Axle Load</title>
+  <meta name="description" content="Work out cold front and rear motorhome tyre pressure from your axle loads and the tyre you fitted. For non-OEM sizes. Planner only — tyre maker chart and a fitter win.">
+  <meta name="keywords" content="motorhome tyre pressure, non-OEM tyre pressure, axle load tyre pressure, C-rated tyre, cold inflation bar PSI, UK motorhome tyres">
   <meta name="author" content="Motorhome Payload Calculator">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://motorhomepayload.co.uk/tyres.html">
 
-  <meta property="og:title" content="Motorhome Tyre Pressure Notepad | Bar, PSI &amp; Sidewall Decoder">
-  <meta property="og:description" content="Copy cold pressures from the door sticker, convert bar and PSI, and read a sidewall code in plain English. Planner only — not a recommended-pressure chart.">
+  <meta property="og:title" content="Motorhome Tyre Pressure | Cold Front &amp; Rear from Axle Load">
+  <meta property="og:description" content="New tyre size plus front and rear axle loads → cold bar and PSI. ETRTO-style load/pressure chart. Planner only.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://motorhomepayload.co.uk/tyres.html">
   <meta property="og:image" content="https://motorhomepayload.co.uk/og-image.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Motorhome payload hub tyre pressure notepad">
+  <meta property="og:image:alt" content="Motorhome tyre pressure from axle load">
   <meta property="og:locale" content="en_GB">
   <meta property="og:site_name" content="Motorhome Payload Calculator">
 
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Motorhome Tyre Pressure Notepad">
-  <meta name="twitter:description" content="Save sticker pressures in bar and PSI, convert both ways, and decode C-rated sidewall codes.">
+  <meta name="twitter:title" content="Motorhome Tyre Pressure from axle load">
+  <meta name="twitter:description" content="Cold front and rear pressure for a non-OEM tyre, from your axle loads.">
   <meta name="twitter:image" content="https://motorhomepayload.co.uk/og-image.png">
 
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231e4f43'/%3E%3Cpath fill='%23f4ead8' d='M6 20h20v3H6zm2-7h16l3 7H5l3-7zm3 0V9h8v4'/%3E%3Ccircle cx='10' cy='24' r='2' fill='%23c4622d'/%3E%3Ccircle cx='22' cy='24' r='2' fill='%23c4622d'/%3E%3C/svg%3E">
@@ -46,12 +46,11 @@
   "@graph": [
     {
       "@type": "WebApplication",
-      "name": "Motorhome Tyre Pressure Notepad",
+      "name": "Motorhome Tyre Pressure",
       "url": "https://motorhomepayload.co.uk/tyres.html",
-      "description": "Save cold motorhome tyre pressures from the door sticker, convert bar and PSI, and decode a sidewall code. Planner only.",
+      "description": "Estimate cold front and rear motorhome tyre pressure from axle loads and the fitted tyre’s load index, using an ETRTO/ISO-style load–pressure chart.",
       "applicationCategory": "UtilitiesApplication",
       "operatingSystem": "Any",
-      "browserRequirements": "Requires JavaScript. Works in modern mobile and desktop browsers.",
       "inLanguage": "en-GB",
       "isAccessibleForFree": true,
       "offers": { "@type": "Offer", "price": "0", "priceCurrency": "GBP" },
@@ -66,10 +65,18 @@
       "mainEntity": [
         {
           "@type": "Question",
+          "name": "Where do these cold pressures come from?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "From the public ETRTO/ISO load-index table (kilograms for each load index) and the standard load–pressure relationship used to build ETRTO inflation charts: load over reference load equals pressure over reference pressure to the power of 0.8. C-type commercial tyres use a 3.75 bar reference unless you switch to the 4.50 bar van table. This is not a named maker’s fitment chart for one tyre model."
+          }
+        },
+        {
+          "@type": "Question",
           "name": "Should I set motorhome tyre pressure when the tyres are cold or hot?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Use the cold figure from the door or pillar sticker, or the handbook. Cold means the van has been parked for a few hours, not just off a motorway. Pressure rises as tyres warm up — do not bleed air from a hot tyre to match the sticker."
+            "text": "These figures are cold only. Cold means the van has been parked for a few hours, not just off a motorway. Pressure rises as tyres warm up. Do not let air out of a hot tyre to match this page."
           }
         },
         {
@@ -77,23 +84,15 @@
           "name": "Why does changing away from the original tyres matter?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "The sticker pressure is for the tyres the van was designed around. A different size, C-rating or load index can need a different pressure and may not carry the same load. Use the new tyre maker’s table and a fitter, not a guess."
+            "text": "The door sticker is for the OEM size. A different size or load index needs a pressure from that tyre’s load/pressure table at your actual axle loads — not a copy of the old sticker."
           }
         },
         {
           "@type": "Question",
-          "name": "What does 109/107 mean on a tyre sidewall?",
+          "name": "Is this a substitute for the tyre maker or a fitter?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Those are load indexes. The first number is for a single tyre on that corner. The second is for dual wheels (two tyres on one side). Most UK motorhomes use two tyres per axle, so the first figure is the one you usually want."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Is this page a substitute for the door sticker or handbook?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "No. It is planning help only. It never invents a recommended pressure for your van. Copy pressures from the sticker or handbook, and treat the load check as a rough comparison against the industry-standard load-index table."
+            "text": "No. It is a planning estimate. The tyre maker’s chart, the vehicle plate and a fitter always win. If the size or load index is outside the table, this page will not invent a number."
           }
         }
       ]
@@ -102,8 +101,8 @@
 }
   </script>
 
-  <!-- ASSET_VERSION=20260909t — bump this query on CSS/JS below to force-refresh cached assets. -->
-  <link rel="stylesheet" href="styles.css?v=20260909t">
+  <!-- ASSET_VERSION=20260910a — bump this query on CSS/JS below to force-refresh cached assets. -->
+  <link rel="stylesheet" href="styles.css?v=20260910a">
 </head>
 <body>
   <a class="skip" href="#tyres">Skip to tyre tool</a>
@@ -120,7 +119,7 @@
         </span>
         <span>
           <h1>Motorhome Tyre Pressure</h1>
-          <p>Copy the sticker — never guess a pressure</p>
+          <p>Cold front and rear from your axle loads</p>
         </span>
       </a>
     </div>
@@ -132,22 +131,41 @@
 
   <main class="wrap" id="tyres">
     <div class="intro">
-      <h2>Keep the door-sticker pressures handy, and read a sidewall in plain English.</h2>
-      <p>Built for UK motorhomes — especially when you have changed away from the original tyres. This page does not invent a “recommended” pressure for your van.</p>
+      <h2>New tyre size + axle loads → cold front and rear pressure.</h2>
+      <p>For UK motorhomes that have changed away from the original tyres. This is <strong>not</strong> the OEM door-sticker figure, and it is not a blank notepad.</p>
     </div>
 
     <div class="warn warn-over show banner-disclaimer" role="note">
-      <strong>Planner only — not a substitute for the sticker, handbook or a tyre fitter.</strong>
-      Wrong pressure or an overloaded tyre can be dangerous. Always use the manufacturer pressures and the tyre maker’s load tables. The vehicle plate and a fitter win over anything on this page.
+      <strong>Planning estimate only — cold pressures.</strong>
+      Wrong pressure or an overloaded tyre can be dangerous. The tyre maker’s chart, the vehicle plate and a fitter always win. This page will not invent an OEM sticker pressure for a different size, and it will not invent a number if your tyre is outside the table.
     </div>
+
+    <section class="results pressure-hero" id="answers" aria-live="polite">
+      <p class="eyebrow">Headline answer</p>
+      <h2>Cold inflation</h2>
+      <div class="pressure-grid">
+        <article class="axle-result" id="frontResult">
+          <p class="label">Front</p>
+          <p class="value" id="frontValue">—</p>
+          <p class="sub" id="frontSub">Add a front axle load and the fitted tyre</p>
+        </article>
+        <article class="axle-result" id="rearResult">
+          <p class="label">Rear</p>
+          <p class="value" id="rearValue">—</p>
+          <p class="sub" id="rearSub">Add a rear axle load and the fitted tyre</p>
+        </article>
+      </div>
+      <p class="note" id="chartNote"></p>
+      <p class="note" id="answerNotes"></p>
+    </section>
 
     <section class="prose how-to-use" id="how-to-use">
       <h2>How to use</h2>
       <ol>
-        <li>Copy the <strong>cold</strong> front and rear figures from the driver’s door or pillar sticker, or the handbook. Do not copy a number from a forum or from this page.</li>
-        <li>Type them in bar or PSI — the other unit fills in. The spare is optional.</li>
-        <li>Paste a sidewall code such as <code>215/70 R15C 109/107 Q</code> to see size, C-rating, load index and speed rating.</li>
-        <li>Optional: add an axle load (kg) and the load index to see whether the marking looks enough. Treat that as a rough check only.</li>
+        <li>Enter <strong>front and rear axle loads</strong> in kg. A weighbridge ticket is best.</li>
+        <li>Paste the <strong>sidewall</strong> of the tyre you fitted, or type the load index. Default is the same size on both axles.</li>
+        <li>Check the <strong>load/pressure chart</strong> (C-type at 3.75 bar is the ETRTO commercial default). Switch to 4.50 bar if that is what the sidewall says.</li>
+        <li>Read the cold front and rear figures above. If the tyre cannot carry the load, this page shows a fail — it will not suggest an unsafe pressure.</li>
       </ol>
     </section>
 
@@ -155,21 +173,41 @@
       <summary>
         <span>
           <span class="eyebrow">01</span>
-          <h3>Bar ↔ PSI converter</h3>
+          <h3>Axle loads</h3>
         </span>
       </summary>
       <div class="body">
-        <p class="lede">Type either box. The other updates at once. This is a unit converter only — it is not a recommended pressure.</p>
+        <p class="lede">Prefer a weighbridge (each axle). These kilograms drive the pressures above — they are not a payload calculator.</p>
         <div class="grid-2">
           <div class="field">
-            <label for="convBar">Bar</label>
-            <input id="convBar" type="number" inputmode="decimal" min="0" step="0.01" placeholder="e.g. 4.5">
+            <label for="frontAxleKg">Front axle load</label>
+            <input id="frontAxleKg" type="number" inputmode="decimal" min="0" step="1" placeholder="kg">
+            <span class="hint">kg on the front axle</span>
           </div>
           <div class="field">
-            <label for="convPsi">PSI</label>
-            <input id="convPsi" type="number" inputmode="decimal" min="0" step="0.1" placeholder="e.g. 65">
+            <label for="rearAxleKg">Rear axle load</label>
+            <input id="rearAxleKg" type="number" inputmode="decimal" min="0" step="1" placeholder="kg">
+            <span class="hint">kg on the rear axle</span>
           </div>
         </div>
+        <details class="plate-find" id="splitHelper">
+          <summary>Estimate from total weight + split (not a weighbridge)</summary>
+          <p>Use this only if you do not have per-axle weights. It is a rough split, clearly an estimate.</p>
+          <div class="grid-2">
+            <div class="field">
+              <label for="totalKg">Total loaded weight</label>
+              <input id="totalKg" type="number" inputmode="decimal" min="0" step="1" placeholder="e.g. 3400">
+            </div>
+            <div class="field">
+              <label for="frontPct">Front share</label>
+              <input id="frontPct" type="number" inputmode="decimal" min="20" max="80" step="1" value="45">
+              <span class="hint">% on the front — rear is the rest</span>
+            </div>
+          </div>
+          <div class="result-actions">
+            <button type="button" class="btn" id="applySplit">Fill axle boxes from this estimate</button>
+          </div>
+        </details>
       </div>
     </details>
 
@@ -177,95 +215,18 @@
       <summary>
         <span>
           <span class="eyebrow">02</span>
-          <h3>Cold pressure notepad</h3>
+          <h3>Tyre you fitted</h3>
         </span>
       </summary>
       <div class="body">
-        <p class="lede">Write down <em>your</em> sticker or handbook figures. Saved on this phone only — nothing is sent to a server.</p>
-        <div class="plate-find" style="margin-top:0">
-          <strong>Where to copy from</strong>
-          <p>Driver’s door frame or B-pillar sticker, sometimes the fuel-flap, or the vehicle handbook. Front and rear are often different. If you have changed tyre size or brand, ask the tyre maker or a fitter — do not reuse an old sticker blindly.</p>
-        </div>
-        <h4 class="field-heading">Front</h4>
-        <div class="grid-2">
-          <div class="field">
-            <label for="frontBar">Front (bar)</label>
-            <input id="frontBar" type="number" inputmode="decimal" min="0" step="0.01" placeholder="From the sticker">
-          </div>
-          <div class="field">
-            <label for="frontPsi">Front (PSI)</label>
-            <input id="frontPsi" type="number" inputmode="decimal" min="0" step="0.1">
-          </div>
-        </div>
-        <h4 class="field-heading">Rear</h4>
-        <div class="grid-2">
-          <div class="field">
-            <label for="rearBar">Rear (bar)</label>
-            <input id="rearBar" type="number" inputmode="decimal" min="0" step="0.01" placeholder="From the sticker">
-          </div>
-          <div class="field">
-            <label for="rearPsi">Rear (PSI)</label>
-            <input id="rearPsi" type="number" inputmode="decimal" min="0" step="0.1">
-          </div>
-        </div>
-        <h4 class="field-heading">Spare <span class="hint">(optional)</span></h4>
-        <div class="grid-2">
-          <div class="field">
-            <label for="spareBar">Spare (bar)</label>
-            <input id="spareBar" type="number" inputmode="decimal" min="0" step="0.01">
-          </div>
-          <div class="field">
-            <label for="sparePsi">Spare (PSI)</label>
-            <input id="sparePsi" type="number" inputmode="decimal" min="0" step="0.1">
-          </div>
-        </div>
-        <div class="result-actions">
-          <button type="button" class="btn btn-ghost" id="clearTyres">Clear saved figures</button>
-          <span class="hint" id="saveNote">Nothing saved yet — figures stay on this phone.</span>
-        </div>
-      </div>
-    </details>
-
-    <details class="block" open>
-      <summary>
-        <span>
-          <span class="eyebrow">03</span>
-          <h3>Sidewall decoder</h3>
-        </span>
-      </summary>
-      <div class="body">
-        <p class="lede">Paste or type the size code from the tyre wall. This explains the marking — it does not say the tyre is right for your van.</p>
+        <p class="lede">Paste the sidewall of the <em>new</em> tyre. This page does not copy the old OEM sticker.</p>
         <div class="field">
           <label for="sidewall">Sidewall code</label>
           <input id="sidewall" type="text" spellcheck="false" autocomplete="off" autocapitalize="characters" placeholder="215/70 R15C 109/107 Q">
-          <span class="hint">Common on Ducato / Boxer campers: a C after the rim size, then two load numbers and a speed letter.</span>
+          <span class="hint">Fills load index and suggests a chart. Example: <code>215/70 R15C 109/107 Q</code></span>
         </div>
         <div id="decodeOut" class="decode-out" hidden></div>
-      </div>
-    </details>
-
-    <details class="block">
-      <summary>
-        <span>
-          <span class="eyebrow">04</span>
-          <h3>Optional light check</h3>
-        </span>
-      </summary>
-      <div class="body">
-        <p class="lede">If you know an axle load (weighbridge is best) and the load index on the tyre, this compares them. The vehicle plate, the tyre maker’s tables and a fitter win over this estimate.</p>
-        <div class="grid-2">
-          <div class="field">
-            <label for="axleLoadKg">Axle load</label>
-            <input id="axleLoadKg" type="number" inputmode="decimal" min="0" step="1" placeholder="kg on that axle">
-            <span class="hint">kg — from a weighbridge ticket if you have one</span>
-          </div>
-          <div class="field">
-            <label for="tyresOnAxle">Tyres on this axle</label>
-            <select id="tyresOnAxle">
-              <option value="2">2 (usual motorhome axle)</option>
-              <option value="4">4 (dual wheels)</option>
-            </select>
-          </div>
+        <div class="grid-2" style="margin-top:0.85rem">
           <div class="field">
             <label for="loadIndex">Load index (single)</label>
             <input id="loadIndex" type="number" inputmode="numeric" min="70" max="150" step="1" placeholder="e.g. 109">
@@ -273,55 +234,192 @@
           <div class="field">
             <label for="dualLoadIndex">Dual load index (if shown)</label>
             <input id="dualLoadIndex" type="number" inputmode="numeric" min="70" max="150" step="1" placeholder="e.g. 107">
-            <span class="hint">The second number on 109/107 — used only for dual wheels</span>
+            <span class="hint">Second number on 109/107 — used only for dual wheels</span>
+          </div>
+          <div class="field">
+            <label for="tyresOnAxle">Tyres on each axle</label>
+            <select id="tyresOnAxle">
+              <option value="2">2 (usual motorhome axle)</option>
+              <option value="4">4 (dual wheels)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="chartId">Load / pressure chart</label>
+            <select id="chartId">
+              <option value="c375">C-type — load index at 3.75 bar (ETRTO)</option>
+              <option value="c450">C-type / van — load index at 4.50 bar</option>
+              <option value="passenger">Passenger — load index at 2.50 bar</option>
+              <option value="xl">XL / extra load — load index at 2.90 bar</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="sidewallMaxBar">Sidewall max (optional)</label>
+            <input id="sidewallMaxBar" type="number" inputmode="decimal" min="0" step="0.05" placeholder="bar, if marked">
+            <span class="hint">If marked, this caps the chart. Leave blank to use the chart maximum.</span>
           </div>
         </div>
-        <div id="checkOut" class="remaining" hidden></div>
+        <label class="check">
+          <input type="checkbox" id="rearDifferent">
+          <span>Rear axle uses a different tyre</span>
+        </label>
+        <div id="rearTyreWrap" hidden>
+          <h4 class="field-heading">Rear tyre</h4>
+          <div class="grid-2">
+            <div class="field">
+              <label for="rearSidewall">Rear sidewall</label>
+              <input id="rearSidewall" type="text" spellcheck="false" autocomplete="off" autocapitalize="characters" placeholder="If different">
+            </div>
+            <div class="field">
+              <label for="rearLoadIndex">Rear load index</label>
+              <input id="rearLoadIndex" type="number" inputmode="numeric" min="70" max="150" step="1">
+            </div>
+            <div class="field">
+              <label for="rearDualLoadIndex">Rear dual index</label>
+              <input id="rearDualLoadIndex" type="number" inputmode="numeric" min="70" max="150" step="1">
+            </div>
+            <div class="field">
+              <label for="rearTyresOnAxle">Rear tyres on axle</label>
+              <select id="rearTyresOnAxle">
+                <option value="2">2</option>
+                <option value="4">4 (dual wheels)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="rearChartId">Rear chart</label>
+              <select id="rearChartId">
+                <option value="c375">C-type — 3.75 bar</option>
+                <option value="c450">C-type / van — 4.50 bar</option>
+                <option value="passenger">Passenger — 2.50 bar</option>
+                <option value="xl">XL — 2.90 bar</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <details class="block">
+      <summary>
+        <span>
+          <span class="eyebrow">Helper</span>
+          <h3>Bar ↔ PSI converter</h3>
+        </span>
+      </summary>
+      <div class="body">
+        <p class="lede">Unit converter only — it does not recommend a pressure.</p>
+        <div class="grid-2">
+          <div class="field">
+            <label for="convBar">Bar</label>
+            <input id="convBar" type="number" inputmode="decimal" min="0" step="0.01">
+          </div>
+          <div class="field">
+            <label for="convPsi">PSI</label>
+            <input id="convPsi" type="number" inputmode="decimal" min="0" step="0.1">
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <details class="block">
+      <summary>
+        <span>
+          <span class="eyebrow">Helper</span>
+          <h3>Save these figures</h3>
+        </span>
+      </summary>
+      <div class="body">
+        <p class="lede">Optional notepad for the <em>calculated</em> cold pressures, or a sticker figure you already trust. Saved on this phone only.</p>
+        <div class="result-actions">
+          <button type="button" class="btn btn-primary" id="copyAnswers">Copy the calculated pressures here</button>
+        </div>
+        <h4 class="field-heading">Front</h4>
+        <div class="grid-2">
+          <div class="field">
+            <label for="noteFrontBar">Front (bar)</label>
+            <input id="noteFrontBar" type="number" inputmode="decimal" min="0" step="0.01">
+          </div>
+          <div class="field">
+            <label for="noteFrontPsi">Front (PSI)</label>
+            <input id="noteFrontPsi" type="number" inputmode="decimal" min="0" step="0.1">
+          </div>
+        </div>
+        <h4 class="field-heading">Rear</h4>
+        <div class="grid-2">
+          <div class="field">
+            <label for="noteRearBar">Rear (bar)</label>
+            <input id="noteRearBar" type="number" inputmode="decimal" min="0" step="0.01">
+          </div>
+          <div class="field">
+            <label for="noteRearPsi">Rear (PSI)</label>
+            <input id="noteRearPsi" type="number" inputmode="decimal" min="0" step="0.1">
+          </div>
+        </div>
+        <div class="result-actions">
+          <button type="button" class="btn btn-ghost" id="clearTyres">Clear saved figures</button>
+          <span class="hint" id="saveNote">Nothing saved yet.</span>
+        </div>
       </div>
     </details>
 
     <section class="prose faq" id="faq">
       <h2>Tyres FAQ</h2>
       <details open>
-        <summary>Cold vs hot pressure — which should I use?</summary>
-        <p>Use the <strong>cold</strong> figure from the door or pillar sticker, or the handbook. Cold means the van has been parked for a few hours, not just off a motorway. Pressure rises as tyres warm up. Do not let air out of a hot tyre to “match” the sticker.</p>
+        <summary>Where do these cold pressures come from?</summary>
+        <p>Two public industry sources, not a scraped maker catalogue:</p>
+        <ul>
+          <li>The <strong>ETRTO / ISO load-index table</strong> (for example load index 109 = 1,030 kg).</li>
+          <li>The <strong>ETRTO / ISO load–pressure relationship</strong> used to build inflation charts: load ÷ reference load = (pressure ÷ reference pressure)<sup>0.8</sup>. Rearranged, pressure = reference pressure × (your load ÷ load-index kg)<sup>1.25</sup>.</li>
+        </ul>
+        <p>Reference pressures: <strong>2.50 bar</strong> passenger standard load, <strong>2.90 bar</strong> XL, <strong>3.75 bar</strong> ETRTO C-type commercial (375 kPa), and an optional <strong>4.50 bar</strong> van/LT table when the sidewall says the load index is at 65 PSI. This is not a named Continental, Michelin or OEM fitment table for one model.</p>
       </details>
       <details>
-        <summary>Why does changing away from the original tyres matter?</summary>
-        <p>The sticker is written for the tyres the van was designed around. A different size, C-rating or load index can need a different pressure and may not carry the same load. Ask the new tyre’s maker or a fitter — this page will not invent a pressure for the new rubber.</p>
+        <summary>Cold vs hot — which should I use?</summary>
+        <p>These figures are <strong>cold</strong> only. Cold means the van has been parked for a few hours, not just off a motorway. Pressure rises as tyres warm up. Do not let air out of a hot tyre to “match” this page — that is the hot-pressure trap.</p>
       </details>
       <details>
-        <summary>What does a dual load index such as 109/107 mean?</summary>
-        <p>The first number is for a <strong>single</strong> tyre on that corner (the usual UK motorhome layout: two tyres on the axle). The second is for <strong>dual</strong> wheels — two tyres on one side, four on the axle. Dual figures are lower per tyre because they share the load. Most campers only need the first number.</p>
+        <summary>Why does a non-OEM size need a new pressure?</summary>
+        <p>The door sticker is written for the original tyres. A different size or load index needs the new tyre’s load/pressure table at <em>your</em> axle loads. Copying the old sticker can under- or over-inflate the new rubber.</p>
       </details>
       <details>
-        <summary>Where do the kilograms for a load index come from?</summary>
-        <p>From the industry-standard load-index table used across ETRTO / ISO tyre markings (for example load index 109 = 1,030 kg). It is a public index-to-kg map, not a full commercial pressure chart and not an approval for your van. Real capacity also depends on pressure, speed and the maker’s table.</p>
+        <summary>What if the tyre cannot carry the axle load?</summary>
+        <p>This page shows a clear fail and will <strong>not</strong> suggest a pressure above the chart maximum or above the load index. Fit a higher load-index tyre, or lose weight. A fitter and the vehicle plate win.</p>
       </details>
       <details>
-        <summary>Is this a substitute for the sticker or handbook?</summary>
-        <p>No. It is planning help: a notepad, a converter and a decoder. Copy pressures from the vehicle, and treat the optional axle check as a rough comparison only. Wrong pressure or load can be dangerous.</p>
+        <summary>What does 109/107 mean?</summary>
+        <p>Load indexes. The first number is one tyre on that corner (usual UK motorhome: two tyres on the axle). The second is for dual wheels. Most campers only need the first number.</p>
+      </details>
+      <details>
+        <summary>Is this a substitute for the maker or a fitter?</summary>
+        <p>No. Planning estimate only. If the size or load index is outside the table, this page refuses to invent a number. Confirm with the tyre maker’s published chart and a fitter.</p>
       </details>
       <details>
         <summary>How does this sit with the payload calculator?</summary>
-        <p>Payload is about the van’s legal weight. Tyres are about the rubber that has to carry that weight. Use the <a href="index.html">payload calculator</a> for MAM and kit, then this page to keep sticker pressures and read a new sidewall.</p>
+        <p>Use the <a href="index.html">payload calculator</a> for MAM and kit. Use this page once you know (or estimate) axle loads and have fitted a different tyre.</p>
       </details>
     </section>
 
     <section class="prose" id="about">
       <h2>About</h2>
-      <p>This is the Tyres tool on the Motorhome Payload hub. It runs in your browser. The last figures you type are stored on this device only. It does not scrape or ship a maker-by-maker pressure table.</p>
+      <p>Tyres tool on the Motorhome Payload hub. Figures stay on this device. It uses a published industry load–pressure relationship, not a fabricated model-by-model table.</p>
     </section>
 
     <section class="prose" id="privacy">
       <h2>Privacy</h2>
-      <p>No account and no advertising cookies. Notepad figures stay in this browser’s local storage. Nothing you type here is sent to the payload lookup server.</p>
+      <p>No account and no advertising cookies. Numbers stay in this browser’s local storage. Nothing you type here is sent to the payload lookup server.</p>
     </section>
   </main>
 
+  <div class="dock" id="dock">
+    <div>
+      <div class="hint" id="dockHint">Cold front / rear</div>
+      <strong id="dockValue">—</strong>
+    </div>
+    <a class="btn btn-primary" href="#answers">Full answer</a>
+  </div>
+
   <footer class="site-footer">
     <div class="footer-inner">
-      <p class="disclaimer"><strong>Disclaimer:</strong> Estimate / planner only. Use manufacturer pressures and load tables. Wrong pressure or load can be dangerous. The vehicle plate, the tyre maker and a fitter always win.</p>
+      <p class="disclaimer"><strong>Disclaimer:</strong> Planning estimate only. Cold pressures from an ETRTO/ISO-style chart at the axle loads you typed. Tyre maker, vehicle plate and a fitter always win. Wrong pressure or load can be dangerous.</p>
       <nav class="footer-links" aria-label="Footer">
         <a href="index.html">Payload calculator</a>
         <a href="tyres.html">Tyres</a>
@@ -329,11 +427,11 @@
         <a href="#faq">FAQ</a>
         <a href="#privacy">Privacy</a>
       </nav>
-      <p class="fine">Not affiliated with Fiat, Peugeot, Citroën or any tyre maker. Sticker and handbook figures always take priority. © <span id="yearNow"></span></p>
+      <p class="fine">Not affiliated with Fiat, Peugeot, Citroën or any tyre maker. © <span id="yearNow"></span></p>
     </div>
   </footer>
 
-  <script src="lib/tyre-calc.js?v=20260909t"></script>
-  <script src="tyres-app.js?v=20260909t"></script>
+  <script src="lib/tyre-calc.js?v=20260910a"></script>
+  <script src="tyres-app.js?v=20260910a"></script>
 </body>
 </html>
