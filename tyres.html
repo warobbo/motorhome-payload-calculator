@@ -101,8 +101,8 @@
 }
   </script>
 
-  <!-- ASSET_VERSION=20260910lt — bump this query on CSS/JS below to force-refresh cached assets. -->
-  <link rel="stylesheet" href="styles.css?v=20260910lt">
+  <!-- ASSET_VERSION=20260910lt2 — bump this query on CSS/JS below to force-refresh cached assets. -->
+  <link rel="stylesheet" href="styles.css?v=20260910lt2">
 </head>
 <body>
   <a class="skip" href="#tyres">Skip to tyre tool</a>
@@ -140,16 +140,6 @@
       Wrong pressure or an overloaded tyre can be dangerous. The tyre maker’s own chart and a fitter always win. This page will not invent a number outside the table.
     </div>
 
-    <section class="prose how-to-use" id="how-to-use">
-      <h2>How to use</h2>
-      <ol>
-        <li>Paste the <strong>sidewall</strong> (example already filled: <code>LT265/65R17 120/117S</code>). The page detects LT vs C vs P-metric.</li>
-        <li>Enter <strong>front and rear axle loads in kg</strong> from a weighbridge. Or use the clearly labelled estimate from total laden weight + front/rear split % — that still becomes axle loads, not “payload remaining”.</li>
-        <li>Read the headline: <strong>Front cold</strong> and <strong>Rear cold</strong> in PSI and bar. Results update as you type.</li>
-        <li>If the tyre cannot carry the load at the chart maximum, you get a clear <strong>Fail</strong> — no invented unsafe pressure.</li>
-      </ol>
-    </section>
-
     <section class="results pressure-hero" id="answers" aria-live="polite">
       <p class="eyebrow">Headline answer</p>
       <h2>Cold inflation</h2>
@@ -170,6 +160,16 @@
       </div>
       <p class="source-cite" id="chartNote"></p>
       <p class="note" id="answerNotes"></p>
+    </section>
+
+    <section class="prose how-to-use" id="how-to-use">
+      <h2>How to use</h2>
+      <ol>
+        <li>This is for <strong>non-OEM sizes</strong>. The door sticker is for the old size.</li>
+        <li>Paste the <strong>sidewall</strong> (example already filled: <code>LT265/65R17 120/117S</code>). The page detects LT vs C vs P-metric.</li>
+        <li>Enter <strong>front and rear axle loads in kg</strong> from a weighbridge. Or use the clearly labelled estimate from total laden weight + front/rear split % — that still becomes axle loads, not “payload remaining”.</li>
+        <li>Read the headline: <strong>Front cold</strong> and <strong>Rear cold</strong> in PSI and bar. Results update as you type. Over the chart maximum → <strong>Fail</strong>.</li>
+      </ol>
     </section>
 
     <details class="block" open>
@@ -438,7 +438,7 @@
     </div>
   </footer>
 
-  <script src="lib/tyre-calc.js?v=20260910lt"></script>
-  <script src="tyres-app.js?v=20260910lt"></script>
+  <script src="lib/tyre-calc.js?v=20260910lt2"></script>
+  <script src="tyres-app.js?v=20260910lt2"></script>
 </body>
 </html>

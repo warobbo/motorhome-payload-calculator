@@ -235,6 +235,11 @@
     return Number.isInteger(psi) ? String(psi) : String(T.roundPsi(psi));
   }
 
+  function formatBar(bar) {
+    if (bar == null) return "";
+    return Number(T.roundBar(bar)).toFixed(2);
+  }
+
   function paintValue(result, valueEl, altEl) {
     if (!result || !result.ok) {
       valueEl.textContent = "—";
@@ -255,10 +260,10 @@
     }
     if (result.path === "lt-tra" && result.psi != null) {
       valueEl.textContent = formatPsi(result.psi) + " PSI";
-      altEl.textContent = result.bar + " bar";
+      altEl.textContent = formatBar(result.bar) + " bar";
       return;
     }
-    valueEl.textContent = result.bar + " bar";
+    valueEl.textContent = formatBar(result.bar) + " bar";
     altEl.textContent = formatPsi(result.psi) + " PSI";
   }
 
