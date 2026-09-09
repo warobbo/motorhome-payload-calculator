@@ -276,6 +276,24 @@
     }
   }
 
+  var massInService = (typeof MassInService !== "undefined" && MassInService)
+    || (typeof globalThis !== "undefined" && globalThis.MassInService)
+    || {
+      parseWeightInput: function (value) {
+        if (value === "" || value == null) return null;
+        var cleaned = String(value).trim().replace(/,/g, "");
+        if (cleaned === "") return null;
+        var n = parseFloat(cleaned);
+        return isFinite(n) && n > 0 ? n : null;
+      },
+      isMissing: function (stateMiro, fieldValue, actualEmpty) {
+        if (num(actualEmpty) > 0) return false;
+        if (this.parseWeightInput(fieldValue) != null) return false;
+        if (this.parseWeightInput(stateMiro) != null) return false;
+        return true;
+      }
+    };
+
   function visibleMiroValue() {
     var el = document.getElementById("miro");
     return el ? el.value : "";
@@ -287,7 +305,7 @@
     if (syncing) return;
     var el = document.getElementById("miro");
     if (!el) return;
-    var parsed = MassInService.parseWeightInput(el.value);
+    var parsed = massInService.parseWeightInput(el.value);
     if (parsed == null) return;
     var kg = isImperial() ? parsed * KG_PER_LB : parsed;
     if (state.miro !== kg) {
@@ -298,7 +316,7 @@
 
   function miroMissing() {
     adoptVisibleMiro();
-    return MassInService.isMissing(state.miro, visibleMiroValue(), state.actualEmpty);
+    return massInService.isMissing(state.miro, visibleMiroValue(), state.actualEmpty);
   }
 
   function fillForm() {
