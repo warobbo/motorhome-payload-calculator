@@ -68,4 +68,20 @@ describe("browser global", function () {
     assert.equal(typeof sandbox.globalThis.MassInService.isMissing, "function");
     assert.equal(sandbox.globalThis.MassInService.isMissing("", "3430", ""), false);
   });
+
+  it("can load all three helper scripts in one page without a SyntaxError", function () {
+    const sandbox = { module: { exports: {} }, exports: {} };
+    sandbox.globalThis = sandbox;
+    const files = ["fuel-payload.js", "driver-payload.js", "mass-in-service.js"];
+    files.forEach(function (name) {
+      vm.runInNewContext(
+        fs.readFileSync(path.join(__dirname, "../lib", name), "utf8"),
+        sandbox
+      );
+    });
+    assert.equal(typeof sandbox.FuelPayload.fuelPayloadKg, "function");
+    assert.equal(typeof sandbox.DriverPayload.driverPayloadKg, "function");
+    assert.equal(typeof sandbox.MassInService.parseWeightInput, "function");
+    assert.equal(sandbox.MassInService.parseWeightInput("3430"), 3430);
+  });
 });
