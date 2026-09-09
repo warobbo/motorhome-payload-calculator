@@ -174,7 +174,7 @@
           "name": "How should I treat fuel, gas and water in this calculator?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Water weighs 1 kg per litre. Diesel is about 0.84 kg per litre. A 9 kg propane bottle weighs around 18–19 kg when full because of the steel cylinder. Mass in Service already assumes about 90% fuel, so this calculator only adds the difference from that assumption unless you are working from a weighed empty van."
+            "text": "Water weighs 1 kg per litre and is usually empty in Mass in Service, so a full tank is extra. Diesel is about 0.84 kg per litre. Mass in Service already includes about 90% fuel, so this page only adds the top-up (about 8 kg on a 90 L tank at 100%), unless you are working from a weighed empty van. A 9 kg propane bottle weighs around 18–19 kg when full because of the steel cylinder."
           }
         },
         {
@@ -385,7 +385,7 @@
             </label>
             <label class="check">
               <input type="checkbox" id="miroIncludesFuel" data-key="miroIncludesFuel">
-              <span>Mass in Service already includes 90% fuel (usual). Only the difference from 90% is added.</span>
+              <span>Mass in Service already includes 90% fuel (usual). Only the top-up above 90% is added.</span>
             </label>
             <details class="plate-find" id="plate-find">
               <summary>Where to find your weight plate, or VIN plate</summary>
@@ -477,7 +477,7 @@
             </span>
           </summary>
           <div class="body">
-            <p class="lede">Water is 1 kg per litre. A “full tanks” departure can cost 90–150 <span class="u-weight">kg</span> on a typical Ducato. Mass in Service usually assumes empty fresh water.</p>
+            <p class="lede">Water is 1 kg per litre and is usually empty in Mass in Service, so a full tank is extra. Mass in Service usually already includes most diesel (about 90%); this page only adds the top-up — on a 90 L tank filled to 100% that is about 8 <span class="u-weight">kg</span>, not the whole 76 <span class="u-weight">kg</span>.</p>
             <div class="grid-2">
               <div class="field">
                 <label for="freshCap">Fresh water capacity</label>
@@ -758,7 +758,7 @@
           <div id="breakdown"></div>
         </div>
         <p class="note" id="waterWhatIf"></p>
-        <p class="note">Mass in Service usually assumes <strong>empty fresh water</strong>, the driver, and about 90% fuel. A full tank is extra payload, not “already in the van figure”.</p>
+        <p class="note">Mass in Service usually assumes <strong>empty fresh water</strong>, the driver, and about 90% fuel. This breakdown only adds water and any fuel above that 90% — not the diesel already in the van figure.</p>
         <p class="note" id="axleNote"></p>
         <div class="result-actions">
           <button type="button" class="btn btn-warn" id="emptyWater">What if I empty the water?</button>
@@ -816,7 +816,7 @@
       </details>
       <details>
         <summary>How should I treat fuel, gas and water in this calculator?</summary>
-        <p>Water weighs 1 kg per litre. Diesel is about 0.84 kg per litre. A 9 kg propane bottle weighs around 18–19 kg when full because of the steel cylinder. Mass in Service already assumes about 90% fuel, so this calculator only adds the difference from that assumption unless you are working from a weighed empty van.</p>
+        <p>Water weighs 1 kg per litre and is usually empty in Mass in Service, so a full tank is extra. Diesel is about 0.84 kg per litre. Mass in Service already includes about 90% fuel, so this page only adds the top-up (about 8 kg on a 90 L tank at 100%), unless you are working from a weighed empty van. A 9 kg propane bottle weighs around 18–19 kg when full because of the steel cylinder.</p>
       </details>
       <details>
         <summary>Is it illegal to drive a motorhome over its MAM?</summary>
@@ -876,6 +876,7 @@
     </div>
   </footer>
 
+  <script src="lib/fuel-payload.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

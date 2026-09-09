@@ -382,11 +382,15 @@
     var fresh = num(s.freshCap) * num(s.freshFill) / 100;
     var grey = num(s.greyCap) * num(s.greyFill) / 100;
     var black = num(s.blackCap) * num(s.blackFill) / 100;
-    var fuelActual = num(s.fuelCap) * num(s.fuelFill) / 100 * num(s.fuelDensity);
-    var fuelMiro = num(s.fuelCap) * 0.9 * num(s.fuelDensity);
-    var fuel = 0;
-    if (usingActualEmpty() || !s.miroIncludesFuel) fuel = fuelActual;
-    else fuel = fuelActual - fuelMiro;
+    var fuelOpts = {
+      fuelCap: s.fuelCap,
+      fuelFill: s.fuelFill,
+      fuelDensity: s.fuelDensity,
+      miroIncludesFuel: s.miroIncludesFuel,
+      actualEmpty: s.actualEmpty
+    };
+    var fuelActual = FuelPayload.fuelActualKg(fuelOpts);
+    var fuel = FuelPayload.fuelPayloadKg(fuelOpts);
 
     var water = fresh + grey + black;
     var gas = num(s.gas6) * num(s.gas6Full) + num(s.gas9) * num(s.gas9Full) + num(s.gas13) * num(s.gas13Full);
@@ -493,7 +497,10 @@
     document.getElementById("breakdown").innerHTML =
       barRow("People & pets", r.people, maxCat) +
       barRow("Fresh / grey / black water", r.water, maxCat) +
-      barRow(usingActualEmpty() || !state.miroIncludesFuel ? "Fuel" : "Fuel vs Mass in Service 90%", r.fuel, maxCat) +
+      barRow(FuelPayload.fuelBreakdownLabel({
+        miroIncludesFuel: state.miroIncludesFuel,
+        actualEmpty: state.actualEmpty
+      }), r.fuel, maxCat) +
       barRow("Gas bottles", r.gas, maxCat) +
       barRow("Electrical & solar", r.electrical, maxCat) +
       barRow("Gear & other", r.gear, maxCat);
