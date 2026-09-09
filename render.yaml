@@ -2,10 +2,12 @@ services:
   - type: web
     name: motorhome-payload-calculator
     runtime: node
-    buildCommand: npm install && node scripts/write-og-image.js
+    buildCommand: npm install
     startCommand: npm start
     healthCheckPath: /
     envVars:
+      - key: NODE_VERSION
+        value: "22"
       - key: NODE_ENV
         value: production
       - key: DVLA_API_KEY

@@ -7,6 +7,6 @@
     "postinstall": "node scripts/write-og-image.js"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=22 <23"
   }
 }

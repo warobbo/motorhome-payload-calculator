@@ -87,7 +87,7 @@ const server = http.createServer((req, res) => {
 try {
   writeOgImage(ROOT);
 } catch (err) {
-  /* share image is optional for local demo */
+  console.log("Skipping og-image.png: " + err.message);
 }
 
 server.listen(PORT, "0.0.0.0", () => {
