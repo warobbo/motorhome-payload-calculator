@@ -2,6 +2,9 @@
 
 const { describe, it } = require("node:test");
 const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const path = require("node:path");
+const vm = require("node:vm");
 const { parseWeightInput, isMissing } = require("../lib/mass-in-service");
 
 describe("parseWeightInput", function () {
@@ -38,5 +41,18 @@ describe("isMissing", function () {
 
   it("is not missing on a weighed-empty ticket without Mass in Service", function () {
     assert.equal(isMissing("", "", 3100), false);
+  });
+});
+
+describe("browser global", function () {
+  it("sets MassInService even when a CommonJS module object exists", function () {
+    const sandbox = { module: { exports: {} }, exports: {} };
+    sandbox.globalThis = sandbox;
+    vm.runInNewContext(
+      fs.readFileSync(path.join(__dirname, "../lib/mass-in-service.js"), "utf8"),
+      sandbox
+    );
+    assert.equal(typeof sandbox.globalThis.MassInService.isMissing, "function");
+    assert.equal(sandbox.globalThis.MassInService.isMissing("", "3430", ""), false);
   });
 });
