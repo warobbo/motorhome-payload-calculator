@@ -24,7 +24,7 @@
   --radius: 18px;
   --font: "Outfit", system-ui, sans-serif;
   --display: "Fraunces", Georgia, serif;
-  --sticky-header: 4.35rem;
+  --sticky-header: 6.85rem;
   --focus: 0 0 0 3px #fff, 0 0 0 6px var(--pine);
 }
 
@@ -69,12 +69,42 @@ a { color: var(--pine); }
 .header-inner {
   max-width: 1180px;
   margin: 0 auto;
-  padding: 0.7rem 1rem;
+  padding: 0.7rem 1rem 0.45rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
 }
+
+.hub-nav {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 1rem 0.6rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.hub-nav a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--line);
+  background: #fff;
+  color: var(--ink);
+  border-radius: 999px;
+  min-height: 2.5rem;
+  padding: 0.35rem 0.9rem;
+  font-weight: 650;
+  font-size: 0.86rem;
+  text-decoration: none;
+}
+.hub-nav a:hover { border-color: var(--pine); }
+.hub-nav a[aria-current="page"] {
+  background: var(--pine);
+  color: #fff;
+  border-color: var(--pine);
+}
+.hub-nav a:focus-visible { box-shadow: var(--focus); }
 .brand {
   display: flex;
   align-items: center;
@@ -212,6 +242,15 @@ a { color: var(--pine); }
   color: var(--copper);
   margin-bottom: 0.15rem;
 }
+.field-heading {
+  margin: 0.95rem 0 0.45rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.field-heading:first-child { margin-top: 0; }
 .body { padding: 0 1.05rem 1.15rem; }
 .lede {
   margin: 0 0 0.9rem;
@@ -390,6 +429,9 @@ input:focus, select:focus, button:focus-visible {
 }
 .btn {
   appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border: 1.5px solid var(--line);
   background: #fff;
   color: var(--ink);
@@ -399,6 +441,7 @@ input:focus, select:focus, button:focus-visible {
   font-weight: 600;
   font-size: 0.88rem;
   cursor: pointer;
+  text-decoration: none;
 }
 .btn:hover { border-color: var(--pine); }
 .btn-primary {
@@ -485,6 +528,51 @@ input:focus, select:focus, button:focus-visible {
 .warn.show { display: block; }
 .warn-over { background: var(--danger-bg); color: var(--danger); }
 .warn-low { background: var(--amber-bg); color: #7a4e00; }
+.banner-disclaimer {
+  margin: 0 0 1.1rem;
+  font-weight: 500;
+}
+.banner-disclaimer strong { display: block; margin-bottom: 0.25rem; }
+
+.decode-out {
+  margin-top: 0.85rem;
+  background: var(--pine-soft);
+  border: 1px solid #c5ddd4;
+  border-radius: 14px;
+  padding: 0.75rem 0.85rem;
+}
+.decode-out .stat-row {
+  align-items: flex-start;
+  gap: 0.85rem;
+}
+.decode-out .stat-row b {
+  font-weight: 500;
+  text-align: right;
+  max-width: 70%;
+}
+.decode-out.is-err {
+  background: var(--amber-bg);
+  border-color: #ead59a;
+}
+.decode-out.is-err p { margin: 0; font-size: 0.9rem; }
+@media (max-width: 560px) {
+  .decode-out .stat-row { flex-direction: column; gap: 0.2rem; }
+  .decode-out .stat-row b { text-align: left; max-width: none; }
+}
+.prose code,
+.decode-out code, .how-to-use code {
+  font-size: 0.9em;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0.05rem 0.35rem;
+}
+.remaining .value .unit-suffix {
+  font-family: var(--font);
+  font-size: 1rem;
+  font-weight: 650;
+  margin-left: 0.2rem;
+}
 
 .breakdown { margin-top: 0.85rem; }
 .breakdown h3 { margin: 0 0 0.45rem; font-size: 0.92rem; }
@@ -507,7 +595,7 @@ input:focus, select:focus, button:focus-visible {
   color: var(--muted);
   margin: 0.7rem 0 0;
 }
-.result-actions { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-top: 0.85rem; }
+.result-actions { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-top: 0.85rem; align-items: center; }
 
 /* Supporting copy */
 .prose h2, .prose h3 { font-family: var(--display); letter-spacing: -0.02em; }
@@ -686,6 +774,7 @@ footer.site-footer {
 @media print {
   .skip,
   .site-header,
+  .hub-nav,
   .intro,
   .how-to-use,
   #presets,
@@ -693,6 +782,7 @@ footer.site-footer {
   #explain,
   #about,
   #privacy,
+  #more-tools,
   .dock,
   .site-footer,
   .result-actions,

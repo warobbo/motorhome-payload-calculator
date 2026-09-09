@@ -1,8 +1,8 @@
 # Motorhome Payload Calculator
 
-A free, mobile-first **UK motorhome / campervan payload calculator** for checking whether a loaded van stays under its legal MAM (especially 3.5-tonne Fiat Ducato and Peugeot Boxer conversions).
+A free, mobile-first **UK motorhome / campervan payload hub**: the payload calculator plus a tyre-pressure notepad and sidewall decoder. Built for checking whether a loaded van stays under its legal MAM (especially 3.5-tonne Fiat Ducato and Peugeot Boxer conversions).
 
-The calculator is a single HTML page plus a tiny Node server. Registration lookup is proxied through `/api/vehicle-lookup` so the DVLA key stays on Render, not in the public page.
+The site is static HTML/CSS/JS plus a tiny Node server. Registration lookup is proxied through `/api/vehicle-lookup` so the DVLA key stays on Render, not in the public page. Tyre figures never leave the browser.
 
 ## Open it
 
@@ -13,7 +13,7 @@ The calculator is a single HTML page plus a tiny Node server. Registration looku
 npm start
 ```
 
-Then visit [http://localhost:4173](http://localhost:4173).
+Then visit [http://localhost:4173](http://localhost:4173) (payload) or [http://localhost:4173/tyres.html](http://localhost:4173/tyres.html) (tyres).
 
 ## What it does
 
@@ -26,6 +26,7 @@ Then visit [http://localhost:4173](http://localhost:4173).
 - Typical 3.5t Ducato/Boxer and light-weekend presets
 - “What if I empty the water?” comparison
 - Printable results and a weighbridge disclaimer
+- **Tyres tool** (`tyres.html`): cold-pressure notepad (bar ↔ PSI, saved on-device), sidewall decoder, optional axle load-index check. Never invents a recommended pressure.
 
 ## How the numbers work
 
@@ -72,4 +73,4 @@ This is a Node web service, not a static site.
 
 After adding `DVLA_API_KEY`, wait for the deploy to go live, then hard-refresh the calculator and look up a real plate.
 
-Public URL is [https://motorhomepayload.co.uk](https://motorhomepayload.co.uk) (non-www). `robots.txt`, `sitemap.xml` and `og-image.png` are static files next to `index.html`.
+Public URL is [https://motorhomepayload.co.uk](https://motorhomepayload.co.uk) (non-www). Tyres: [https://motorhomepayload.co.uk/tyres.html](https://motorhomepayload.co.uk/tyres.html). `robots.txt`, `sitemap.xml` and `og-image.png` are static files next to `index.html`.
