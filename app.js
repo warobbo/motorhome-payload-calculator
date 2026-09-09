@@ -281,13 +281,21 @@
     return el ? el.value : "";
   }
 
-  /* Plate lookup clears state.miro. If the box still shows a number (typed,
-     autofilled, or kept while the model dropdown changes), copy it in. */
+  function parseMiroView(value) {
+    if (globalThis.MassInService && typeof MassInService.parseWeightInput === "function") {
+      return MassInService.parseWeightInput(value);
+    }
+    if (value === "" || value == null) return null;
+    var n = parseFloat(String(value).trim().replace(/,/g, ""));
+    return isFinite(n) && n > 0 ? n : null;
+  }
+
+  /* Always trust a parseable #miro value — even while fillForm is syncing,
+     after lookup, or if MassInService failed to load. */
   function adoptVisibleMiro() {
-    if (syncing) return;
     var el = document.getElementById("miro");
     if (!el) return;
-    var parsed = MassInService.parseWeightInput(el.value);
+    var parsed = parseMiroView(el.value);
     if (parsed == null) return;
     var kg = isImperial() ? parsed * KG_PER_LB : parsed;
     if (state.miro !== kg) {
@@ -298,29 +306,41 @@
 
   function miroMissing() {
     adoptVisibleMiro();
-    return MassInService.isMissing(state.miro, visibleMiroValue(), state.actualEmpty);
+    if (globalThis.MassInService && typeof MassInService.isMissing === "function") {
+      return MassInService.isMissing(state.miro, visibleMiroValue(), state.actualEmpty);
+    }
+    if (num(state.actualEmpty) > 0) return false;
+    return parseMiroView(visibleMiroValue()) == null && parseMiroView(state.miro) == null;
   }
 
-  function fillForm() {
+  function fillForm(opts) {
+    var wipeMiro = opts && opts.wipeMiro;
+    if (!wipeMiro) adoptVisibleMiro();
     syncing = true;
-    ensureModelOption(state.model);
-    document.querySelectorAll("[data-key]").forEach(function (el) {
-      var key = el.getAttribute("data-key");
-      var kind = el.getAttribute("data-kind");
-      var val = state[key];
-      if (el.type === "checkbox") {
-        el.checked = !!val;
-      } else if (kind === "weight" || kind === "volume") {
-        el.value = val === "" || val == null ? "" : roundView(val, kind);
-      } else {
-        el.value = val == null ? "" : val;
-      }
-    });
-    setUnitLabels();
-    toggleCustomFields();
-    syncSteppers();
-    syncWeighedEmptyUi();
-    syncing = false;
+    try {
+      ensureModelOption(state.model);
+      document.querySelectorAll("[data-key]").forEach(function (el) {
+        var key = el.getAttribute("data-key");
+        var kind = el.getAttribute("data-kind");
+        var val = state[key];
+        if (key === "miro" && !wipeMiro && (val === "" || val == null) && parseMiroView(el.value) != null) {
+          return;
+        }
+        if (el.type === "checkbox") {
+          el.checked = !!val;
+        } else if (kind === "weight" || kind === "volume") {
+          el.value = val === "" || val == null ? "" : roundView(val, kind);
+        } else {
+          el.value = val == null ? "" : val;
+        }
+      });
+      setUnitLabels();
+      toggleCustomFields();
+      syncSteppers();
+      syncWeighedEmptyUi();
+    } finally {
+      syncing = false;
+    }
   }
 
   function readForm(el) {
@@ -387,6 +407,94 @@
     return num(state.actualEmpty) > 0;
   }
 
+  var usedHelperFallback = false;
+
+  function helpersReady() {
+    var mass = globalThis.MassInService;
+    var fuel = globalThis.FuelPayload;
+    var driver = globalThis.DriverPayload;
+    return !!(mass && fuel && driver
+      && typeof mass.isMissing === "function"
+      && typeof mass.parseWeightInput === "function"
+      && typeof fuel.fuelPayloadKg === "function"
+      && typeof fuel.fuelActualKg === "function"
+      && typeof fuel.fuelBreakdownLabel === "function"
+      && typeof driver.driverPayloadKg === "function");
+  }
+
+  function driverPayloadSafe(opts) {
+    var driver = globalThis.DriverPayload;
+    if (driver && typeof driver.driverPayloadKg === "function") {
+      return driver.driverPayloadKg(opts);
+    }
+    usedHelperFallback = true;
+    var kg = Number(opts && opts.driverKg);
+    var actual = isFinite(kg) && kg > 0 ? kg : 0;
+    if (Number(opts && opts.actualEmpty) > 0) return actual;
+    var extra = actual - 75;
+    return extra > 0 ? extra : 0;
+  }
+
+  function fuelActualSafe(opts) {
+    var fuel = globalThis.FuelPayload;
+    if (fuel && typeof fuel.fuelActualKg === "function") {
+      return fuel.fuelActualKg(opts);
+    }
+    usedHelperFallback = true;
+    var cap = Number(opts && opts.fuelCap);
+    var fillPct = Number(opts && opts.fuelFill);
+    var density = Number(opts && opts.fuelDensity);
+    var actual = cap * fillPct / 100 * density;
+    return isFinite(actual) && actual > 0 ? actual : 0;
+  }
+
+  function fuelPayloadSafe(opts) {
+    var fuel = globalThis.FuelPayload;
+    if (fuel && typeof fuel.fuelPayloadKg === "function") {
+      return fuel.fuelPayloadKg(opts);
+    }
+    usedHelperFallback = true;
+    var actual = fuelActualSafe(opts);
+    if (Number(opts && opts.actualEmpty) > 0) return actual;
+    var cap = Number(opts && opts.fuelCap) || 0;
+    var density = Number(opts && opts.fuelDensity) || 0;
+    var extra = actual - cap * 0.9 * density;
+    return extra > 0 ? extra : 0;
+  }
+
+  function fuelLabelSafe(opts) {
+    var fuel = globalThis.FuelPayload;
+    if (fuel && typeof fuel.fuelBreakdownLabel === "function") {
+      return fuel.fuelBreakdownLabel(opts);
+    }
+    usedHelperFallback = true;
+    return Number(opts && opts.actualEmpty) > 0
+      ? "Fuel (full tank — not in weighed empty)"
+      : "Fuel (above Mass in Service)";
+  }
+
+  function showSoftFail(message) {
+    var box = document.getElementById("remainingBox");
+    if (box) box.className = "remaining status-tight";
+    var label = document.getElementById("remainingLabel");
+    if (label) label.textContent = "Remaining payload";
+    var value = document.getElementById("remainingValue");
+    if (value) value.textContent = "\u2014";
+    var sub = document.getElementById("remainingSub");
+    if (sub) sub.textContent = message;
+    var breakdown = document.getElementById("breakdown");
+    if (breakdown) breakdown.innerHTML = '<p class="calc-error">' + message + "</p>";
+    var whatIf = document.getElementById("waterWhatIf");
+    if (whatIf) whatIf.textContent = message;
+    var dock = document.getElementById("dockValue");
+    if (dock) {
+      dock.textContent = "\u2014";
+      dock.className = "dock-tight";
+    }
+    var hint = document.getElementById("dockHint");
+    if (hint) hint.textContent = "Refresh to calculate";
+  }
+
   function syncWeighedEmptyUi() {
     var emptyNote = document.getElementById("weighedEmptyNote");
     if (emptyNote) emptyNote.hidden = !usingActualEmpty();
@@ -398,7 +506,7 @@
     var miro = num(s.miro);
     var base = usingActualEmpty() ? num(s.actualEmpty) : miro;
 
-    var driver = DriverPayload.driverPayloadKg({
+    var driver = driverPayloadSafe({
       driverKg: s.driverKg,
       actualEmpty: s.actualEmpty
     });
@@ -413,8 +521,8 @@
       fuelDensity: s.fuelDensity,
       actualEmpty: s.actualEmpty
     };
-    var fuelActual = FuelPayload.fuelActualKg(fuelOpts);
-    var fuel = FuelPayload.fuelPayloadKg(fuelOpts);
+    var fuelActual = fuelActualSafe(fuelOpts);
+    var fuel = fuelPayloadSafe(fuelOpts);
 
     var water = fresh + grey + black;
     var gas = num(s.gas6) * num(s.gas6Full) + num(s.gas9) * num(s.gas9Full) + num(s.gas13) * num(s.gas13Full);
@@ -460,6 +568,16 @@
   }
 
   function calculate() {
+    adoptVisibleMiro();
+    try {
+      renderCalculation();
+    } catch (err) {
+      showSoftFail("Could not update the weight breakdown. Hard-refresh and enter Mass in Service again.");
+    }
+  }
+
+  function renderCalculation() {
+    usedHelperFallback = false;
     if (miroMissing()) {
       var boxEmpty = document.getElementById("remainingBox");
       boxEmpty.className = "remaining status-tight";
@@ -519,7 +637,7 @@
     document.getElementById("breakdown").innerHTML =
       barRow("People & pets", r.people, maxCat) +
       barRow("Fresh / grey / black water", r.water, maxCat) +
-      barRow(FuelPayload.fuelBreakdownLabel({
+      barRow(fuelLabelSafe({
         actualEmpty: state.actualEmpty
       }), r.fuel, maxCat) +
       barRow("Gas bottles", r.gas, maxCat) +
@@ -554,6 +672,15 @@
       : "Mass in Service assumes a 75 kg driver \u2014 only any extra is added. Additional adults are passengers only.";
     syncWeighedEmptyUi();
     updateIdentityCard();
+    if (usedHelperFallback || !helpersReady()) {
+      var breakdownEl = document.getElementById("breakdown");
+      if (breakdownEl && usedHelperFallback) {
+        breakdownEl.insertAdjacentHTML(
+          "afterbegin",
+          '<p class="calc-error">Some calculator scripts did not load. Figures may be incomplete — hard-refresh the page.</p>'
+        );
+      }
+    }
   }
 
   function titleCase(value) {
@@ -709,8 +836,10 @@
     } else {
       notes.push("No plated weight on the DVLA record. Enter MAM from the VIN plate.");
     }
+    var wipeMiro = false;
     if (plateLookup) {
       state.miro = "";
+      wipeMiro = true;
       notes.push("DVLA does not supply Mass in Service \u2014 enter it from the V5 or a weighbridge figure.");
     } else if (vehicle.miroAvailable && vehicle.typicalMiro) {
       state.miro = vehicle.typicalMiro;
@@ -722,7 +851,7 @@
       notes.push("Model was not on the DVLA record \u2014 pick the van platform if you know it.");
     }
     if (vehicle.source === "demo") notes.push("Demo record \u2014 not a live DVLA result.");
-    fillForm();
+    fillForm({ wipeMiro: wipeMiro });
     saveState();
     calculate();
     setLookupStatus(notes.join(" "), "ok");
@@ -789,6 +918,24 @@
     el.addEventListener("blur", function () { readForm(el); });
   });
 
+  function onMiroEdited() {
+    adoptVisibleMiro();
+    var el = document.getElementById("miro");
+    if (el && !syncing) {
+      state.miro = el.value === "" ? "" : storeWeight(el.value);
+      if (parseMiroView(el.value) != null) adoptVisibleMiro();
+      saveState();
+    }
+    calculate();
+  }
+
+  var miroInput = document.getElementById("miro");
+  if (miroInput) {
+    miroInput.addEventListener("input", onMiroEdited);
+    miroInput.addEventListener("change", onMiroEdited);
+    miroInput.addEventListener("blur", onMiroEdited);
+  }
+
   var inputsRoot = document.getElementById("calculator-inputs") || document;
   inputsRoot.addEventListener("input", function (event) {
     var el = fieldFromEvent(event);
@@ -813,6 +960,7 @@
 
   document.querySelectorAll("input[name='units']").forEach(function (el) {
     el.addEventListener("change", function () {
+      adoptVisibleMiro();
       state.units = el.value;
       saveState();
       fillForm();

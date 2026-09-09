@@ -5,7 +5,7 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
 const vm = require("node:vm");
-const { parseWeightInput, isMissing } = require("../lib/mass-in-service");
+const { parseWeightInput, isMissing, visibleOrStored } = require("../lib/mass-in-service");
 
 describe("parseWeightInput", function () {
   it("reads Wayne’s V5 figure", function () {
@@ -44,15 +44,44 @@ describe("isMissing", function () {
   });
 });
 
+describe("visibleOrStored", function () {
+  it("prefers the box when state was cleared by a plate lookup", function () {
+    assert.equal(visibleOrStored("3430", ""), 3430);
+    assert.equal(visibleOrStored("3", ""), 3);
+  });
+
+  it("falls back to stored Mass in Service when the box is blank", function () {
+    assert.equal(visibleOrStored("", 3430), 3430);
+    assert.equal(visibleOrStored("", ""), null);
+  });
+});
+
 describe("browser global", function () {
   it("sets MassInService even when a CommonJS module object exists", function () {
-    const sandbox = { module: { exports: {} }, exports: {} };
+    const sandbox = { module: { exports: {} }, exports: {}, window: {} };
     sandbox.globalThis = sandbox;
+    sandbox.window = sandbox;
     vm.runInNewContext(
       fs.readFileSync(path.join(__dirname, "../lib/mass-in-service.js"), "utf8"),
       sandbox
     );
     assert.equal(typeof sandbox.globalThis.MassInService.isMissing, "function");
     assert.equal(sandbox.globalThis.MassInService.isMissing("", "3430", ""), false);
+  });
+
+  it("can load all three helper scripts in one page without a SyntaxError", function () {
+    const sandbox = { module: { exports: {} }, exports: {} };
+    sandbox.globalThis = sandbox;
+    const files = ["fuel-payload.js", "driver-payload.js", "mass-in-service.js"];
+    files.forEach(function (name) {
+      vm.runInNewContext(
+        fs.readFileSync(path.join(__dirname, "../lib", name), "utf8"),
+        sandbox
+      );
+    });
+    assert.equal(typeof sandbox.FuelPayload.fuelPayloadKg, "function");
+    assert.equal(typeof sandbox.DriverPayload.driverPayloadKg, "function");
+    assert.equal(typeof sandbox.MassInService.parseWeightInput, "function");
+    assert.equal(sandbox.MassInService.parseWeightInput("3430"), 3430);
   });
 });
