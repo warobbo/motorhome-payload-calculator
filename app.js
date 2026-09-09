@@ -262,8 +262,27 @@
     document.getElementById("solarCustomWrap").style.display = state.solarType === "custom" ? "" : "none";
   }
 
+  function ensureModelOption(value) {
+    var sel = document.getElementById("model");
+    if (!sel || sel.tagName !== "SELECT" || !value) return;
+    var exists = Array.prototype.some.call(sel.options, function (opt) {
+      return opt.value === value;
+    });
+    if (!exists) {
+      var opt = document.createElement("option");
+      opt.value = value;
+      opt.textContent = value;
+      sel.appendChild(opt);
+    }
+  }
+
+  function miroMissing() {
+    return !usingActualEmpty() && (state.miro === "" || state.miro == null);
+  }
+
   function fillForm() {
     syncing = true;
+    ensureModelOption(state.model);
     document.querySelectorAll("[data-key]").forEach(function (el) {
       var key = el.getAttribute("data-key");
       var kind = el.getAttribute("data-kind");
@@ -413,6 +432,37 @@
   }
 
   function calculate() {
+    if (miroMissing()) {
+      var boxEmpty = document.getElementById("remainingBox");
+      boxEmpty.className = "remaining status-tight";
+      document.getElementById("remainingLabel").textContent = "Remaining payload";
+      document.getElementById("remainingValue").textContent = "\u2014";
+      document.getElementById("remainingSub").textContent = "Enter MIRO from the handbook or a weighbridge ticket.";
+      document.getElementById("totalWeight").textContent = "\u2014";
+      document.getElementById("mamOut").textContent = fmt(num(state.mam), 0);
+      document.getElementById("platedPayload").textContent = "\u2014";
+      document.getElementById("payloadPct").textContent = "MIRO needed";
+      document.getElementById("meterFill").style.width = "0%";
+      document.getElementById("warnOver").classList.remove("show");
+      document.getElementById("warnLow").classList.remove("show");
+      document.getElementById("breakdown").innerHTML = "";
+      document.getElementById("waterWhatIf").textContent = "Enter MIRO to see how water and kit use the remaining payload.";
+      document.getElementById("axleNote").textContent = "";
+      var dockEmpty = document.getElementById("dockValue");
+      dockEmpty.textContent = "\u2014";
+      dockEmpty.className = "dock-tight";
+      document.getElementById("dockHint").textContent = "Enter MIRO to calculate";
+      document.getElementById("emptyWater").textContent = waterBackup
+        ? "Restore water levels"
+        : "What if I empty the water?";
+      document.getElementById("peopleNote").textContent = "MIRO is blank after the plate lookup \u2014 the handbook figure is not guessed.";
+      document.getElementById("driverHint").textContent = usingActualEmpty()
+        ? "Added because you entered a weighed empty van."
+        : "Used only if MIRO does not include the driver, or you enter a weighed empty weight.";
+      updateIdentityCard();
+      return;
+    }
+
     var r = compute();
     var cls = statusClass(r.remaining);
     var box = document.getElementById("remainingBox");
@@ -611,9 +661,12 @@
   }
 
   function applyLookup(vehicle) {
+    var plateLookup = vehicle.source === "dvla";
     state.vrm = vehicle.registrationNumber || state.vrm;
     state.make = titleCase(vehicle.make || "");
-    state.model = vehicle.model || "";
+    var exactModel = vehicle.model && !vehicle.modelInferred ? vehicle.model : "";
+    state.model = plateLookup ? exactModel : (vehicle.model || "");
+    ensureModelOption(state.model);
     state.yearOfManufacture = vehicle.yearOfManufacture || "";
     state.colour = titleCase(vehicle.colour || "");
     state.fuelType = vehicle.fuelType || "";
@@ -625,19 +678,24 @@
       notes.push("Revenue weight " + vehicle.revenueWeight + " kg applied as MAM.");
     } else if (vehicle.revenueWeight) {
       notes.push("DVLA revenue weight is " + vehicle.revenueWeight + " kg \u2014 check the VIN plate before using it as MAM.");
-    } else if (vehicle.typicalMam) {
+    } else if (!plateLookup && vehicle.typicalMam) {
       state.mam = vehicle.typicalMam;
       notes.push("Typical MAM " + vehicle.typicalMam + " kg applied.");
     } else {
       notes.push("No plated weight on the DVLA record. Enter MAM from the VIN plate.");
     }
-    if (vehicle.miroAvailable && vehicle.typicalMiro) {
+    if (plateLookup) {
+      state.miro = "";
+      notes.push("DVLA does not supply MIRO \u2014 keep the handbook or weighbridge figure.");
+    } else if (vehicle.miroAvailable && vehicle.typicalMiro) {
       state.miro = vehicle.typicalMiro;
       notes.push("Typical MIRO " + vehicle.typicalMiro + " kg applied" + (vehicle.typicalLabel ? " for " + vehicle.typicalLabel : "") + ". Replace with the handbook figure if you have it.");
     } else {
       notes.push("DVLA does not supply MIRO \u2014 keep the handbook or weighbridge figure.");
     }
-    if (vehicle.modelInferred) notes.push("Model is inferred from make for this van platform; edit it if the conversion badge is different.");
+    if (plateLookup && !state.model) {
+      notes.push("Model was not on the DVLA record \u2014 pick the van platform if you know it.");
+    }
     if (vehicle.source === "demo") notes.push("Demo record \u2014 not a live DVLA result.");
     fillForm();
     saveState();
@@ -805,6 +863,23 @@
   fillForm();
   calculate();
   probeLookupStatus();
+
+  /* Hidden check for converter-brand DVLA shape (no API key required). */
+  if (location.hash === "#qa-hymer-dvla") {
+    applyLookup({
+      source: "dvla",
+      registrationNumber: "Y3WAR",
+      make: "HYMER",
+      model: "",
+      modelInferred: false,
+      yearOfManufacture: 2024,
+      colour: "Grey",
+      fuelType: "DIESEL",
+      revenueWeight: 4430,
+      applyAsMam: true,
+      miroAvailable: false
+    });
+  }
 
   function openHashTarget() {
     var id = (location.hash || "").replace(/^#/, "");

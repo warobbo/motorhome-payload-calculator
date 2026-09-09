@@ -198,7 +198,7 @@
           "name": "Can I look up my motorhome by registration?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Yes. A UK plate lookup fills make, model and year, plus the DVLA revenue weight (often the plated MAM). Model is inferred for common van platforms unless MOT history is connected. You can also type make, model and year to apply typical 3.5t MAM and MIRO figures. Always confirm weights on the VIN plate and handbook."
+            "text": "Yes. A UK plate lookup fills make and year, plus the DVLA revenue weight (often the plated MAM). DVLA does not supply model or MIRO. Model stays blank unless MOT history gives an exact van-maker model — coachbuilts such as Hymer are not filled with Ducato. Pick the platform from the list, and enter handbook MIRO. You can also choose make, model and year to apply typical 3.5t figures."
           }
         }
       ]
@@ -276,7 +276,7 @@
                 <div class="field">
                   <span class="field-row">
                     <label for="vrm">UK registration</label>
-                    <span class="tip" tabindex="0" data-tip="A plate lookup fills make, model and year. DVLA supplies make and year; model is inferred for common van platforms, or taken from MOT history if a key is set. You can also type make, model and year and look up typical 3.5t weights.">?</span>
+                    <span class="tip" tabindex="0" data-tip="A plate lookup fills make and year, plus DVLA revenue weight as MAM. Model stays blank unless MOT history gives an exact van-maker model — converter brands are not guessed as Ducato or similar. Pick the platform from the list. DVLA never supplies MIRO.">?</span>
                   </span>
                   <input id="vrm" class="vrm-input" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="10" placeholder="e.g. WN67 DSO or DEMO3500" data-key="vrm">
                 </div>
@@ -293,8 +293,20 @@
                   <input id="make" type="text" list="make-list" data-key="make" placeholder="Fiat" autocomplete="off">
                 </div>
                 <div class="field">
-                  <label for="model">Model</label>
-                  <input id="model" type="text" list="model-list" data-key="model" placeholder="Ducato" autocomplete="off">
+                  <label for="model">Model / platform</label>
+                  <select id="model" data-key="model">
+                    <option value="">Select platform / model</option>
+                    <option value="Ducato">Ducato</option>
+                    <option value="Boxer">Boxer</option>
+                    <option value="Relay">Relay</option>
+                    <option value="Sprinter">Sprinter</option>
+                    <option value="Transit">Transit</option>
+                    <option value="Crafter">Crafter</option>
+                    <option value="Transporter">Transporter</option>
+                    <option value="Master">Master</option>
+                    <option value="Movano">Movano</option>
+                    <option value="Daily">Daily</option>
+                  </select>
                 </div>
                 <div class="field">
                   <label for="yearOfManufacture">Year</label>
@@ -311,19 +323,9 @@
                 <option value="Renault"></option>
                 <option value="Vauxhall"></option>
                 <option value="Iveco"></option>
+                <option value="Hymer"></option>
               </datalist>
-              <datalist id="model-list">
-                <option value="Ducato"></option>
-                <option value="Boxer"></option>
-                <option value="Relay"></option>
-                <option value="Sprinter"></option>
-                <option value="Transit"></option>
-                <option value="Crafter"></option>
-                <option value="Transporter"></option>
-                <option value="Master"></option>
-                <option value="Movano"></option>
-                <option value="Daily"></option>
-              </datalist>
+              <p class="hint" style="margin-top:0.35rem">Coachbuilt converters (Hymer and similar) are left blank after a plate lookup — pick the chassis platform if you know it.</p>
               <div class="presets" style="margin-top:0.65rem">
                 <button type="button" class="btn" id="lookupSpecBtn">Look up make / model / year</button>
               </div>
@@ -335,7 +337,7 @@
                 </div>
                 <div class="field" style="margin-top:0.55rem">
                   <label for="motApiKey">MOT history API key (optional)</label>
-                  <input id="motApiKey" type="password" autocomplete="off" spellcheck="false" placeholder="Fills model when DVLA does not">
+                  <input id="motApiKey" type="password" autocomplete="off" spellcheck="false" placeholder="Exact van-maker model only; not used for converters">
                 </div>
               </div>
             </div>
@@ -354,7 +356,7 @@
                   <span class="tip" tabindex="0" data-tip="Manufacturer ready-to-drive weight. Typically includes the driver and 90% fuel. Fresh water is usually empty.">?</span>
                 </span>
                 <input id="miro" type="number" inputmode="decimal" min="0" step="1" data-key="miro" data-kind="weight">
-                <span class="hint">Handbook figure, <span class="u-weight">kg</span></span>
+                <span class="hint">Handbook or weighbridge figure — a plate lookup leaves this blank</span>
               </div>
               <div class="field">
                 <span class="field-row">
@@ -826,7 +828,7 @@
       </details>
       <details>
         <summary>Can I look up my motorhome by registration?</summary>
-        <p>Yes. A UK plate lookup fills make, model and year, plus the DVLA revenue weight (often the plated MAM). Model is inferred for common van platforms unless MOT history is connected. You can also type make, model and year to apply typical 3.5t MAM and MIRO figures. Always confirm weights on the VIN plate and handbook.</p>
+        <p>Yes. A UK plate lookup fills make and year, plus the DVLA revenue weight (often the plated MAM). DVLA does not supply model or MIRO. Model stays blank unless MOT history gives an exact van-maker model — coachbuilts such as Hymer are not filled with Ducato. Pick the platform from the list, and enter handbook MIRO. You can also choose make, model and year to apply typical 3.5t figures. Always confirm weights on the VIN plate and handbook.</p>
       </details>
     </section>
 

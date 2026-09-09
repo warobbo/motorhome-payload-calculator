@@ -40,7 +40,7 @@ This is an **estimate**. Confirm on a calibrated weighbridge before you treat th
 
 ## Registration lookup
 
-The official DVLA Vehicle Enquiry API returns **make** and **year**, plus **revenue weight** (kg). **Model** is not on the DVLA record, so the calculator infers it for common van platforms (Ducato, Boxer, Relay, Sprinter, and others). You can also type make, model and year and press **Look up make / model / year** to apply typical 3.5t MAM and MIRO figures.
+The official DVLA Vehicle Enquiry API returns **make** and **year**, plus **revenue weight** (kg). **Model** and **MIRO** are not on the DVLA record. After a live plate lookup the model field stays blank unless MOT history supplies an exact van-maker model — converter brands (Hymer and similar coachbuilts) are never filled with Ducato, Boxer, Relay or Sprinter. Pick the platform from the list if you know it. MIRO is cleared so you can enter the handbook or weighbridge figure. You can also choose make, model and year and press **Look up make / model / year** to apply typical 3.5t MAM and MIRO figures.
 
 Without an API key, these demo plates still work:
 
