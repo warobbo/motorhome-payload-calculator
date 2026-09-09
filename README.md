@@ -63,10 +63,12 @@ This is a Node web service, not a static site.
 
 | Setting | Value |
 | --- | --- |
-| Runtime | Node |
+| Runtime | Node **22** (pinned; do not use `>=18` or Render may pick a future major) |
 | Build command | `npm install` |
 | Start command | `npm start` |
 | Instance | Binds `0.0.0.0` and uses Render’s `PORT` |
+
+`npm install` runs `scripts/write-og-image.js` as a postinstall step. That script keeps a valid `og-image.png`, rebuilds it from optional `og-image.b64`, or generates a branded 1200×630 PNG. If none of that is possible it logs `Skipping og-image.png` and exits 0 so the Render build still succeeds. The generated PNG is a build artefact (gitignored); do not commit `DVLA_API_KEY`.
 
 After adding `DVLA_API_KEY`, wait for the deploy to go live, then hard-refresh the calculator and look up a real plate.
 
