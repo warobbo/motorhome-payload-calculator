@@ -5,7 +5,7 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
 const vm = require("node:vm");
-const { parseWeightInput, isMissing } = require("../lib/mass-in-service");
+const { parseWeightInput, isMissing, visibleOrStored } = require("../lib/mass-in-service");
 
 describe("parseWeightInput", function () {
   it("reads Wayne’s V5 figure", function () {
@@ -41,6 +41,18 @@ describe("isMissing", function () {
 
   it("is not missing on a weighed-empty ticket without Mass in Service", function () {
     assert.equal(isMissing("", "", 3100), false);
+  });
+});
+
+describe("visibleOrStored", function () {
+  it("prefers the box when state was cleared by a plate lookup", function () {
+    assert.equal(visibleOrStored("3430", ""), 3430);
+    assert.equal(visibleOrStored("3", ""), 3);
+  });
+
+  it("falls back to stored Mass in Service when the box is blank", function () {
+    assert.equal(visibleOrStored("", 3430), 3430);
+    assert.equal(visibleOrStored("", ""), null);
   });
 });
 

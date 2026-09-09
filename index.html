@@ -379,8 +379,6 @@
                 <input id="rearAxle" type="number" inputmode="decimal" min="0" step="1" data-key="rearAxle" data-kind="weight">
               </div>
             </div>
-            <p class="assumption">Mass in Service usually assumes a 75 kg driver</p>
-            <p class="assumption">Mass in Service already includes 90% fuel (usual). Only the difference from 90% is added.</p>
             <p class="hint" id="weighedEmptyNote" hidden>Weighed empty is the van only — the driver and the full fuel tank from Fluids are added on top.</p>
             <details class="plate-find" id="plate-find">
               <summary>Where to find your weight plate, or VIN plate</summary>
@@ -513,6 +511,7 @@
                 <label for="fuelFill">Fuel fill level (%)</label>
                 <input id="fuelFill" type="number" inputmode="decimal" min="0" max="100" step="1" data-key="fuelFill">
               </div>
+              <p class="assumption">Mass in Service already includes 90% fuel (usual). Only the difference from 90% is added.</p>
               <div class="field">
                 <label for="fuelDensity">Diesel density</label>
                 <input id="fuelDensity" type="number" inputmode="decimal" min="0.7" max="1" step="0.01" data-key="fuelDensity">
@@ -871,9 +870,10 @@
     </div>
   </footer>
 
-  <script src="lib/fuel-payload.js"></script>
-  <script src="lib/driver-payload.js"></script>
-  <script src="lib/mass-in-service.js"></script>
-  <script src="app.js"></script>
+  <!-- ASSET_VERSION: bump when app.js or lib/*.js change so browsers do not mix old scripts -->
+  <script src="lib/fuel-payload.js?v=20260909-4"></script>
+  <script src="lib/driver-payload.js?v=20260909-4"></script>
+  <script src="lib/mass-in-service.js?v=20260909-4"></script>
+  <script src="app.js?v=20260909-4"></script>
 </body>
 </html>

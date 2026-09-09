@@ -315,6 +315,14 @@ input:focus, select:focus, button:focus-visible {
   font-size: 0.9rem;
   color: var(--muted);
 }
+.grid-2 > .assumption {
+  grid-column: 1 / -1;
+}
+.calc-error {
+  margin: 0.35rem 0 0;
+  font-size: 0.9rem;
+  color: var(--danger);
+}
 .check input {
   width: 1.15rem;
   height: 1.15rem;
