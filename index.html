@@ -365,10 +365,10 @@
                 </span>
                 <input id="actualEmpty" type="number" inputmode="decimal" min="0" step="1" data-key="actualEmpty" data-kind="weight" placeholder="Leave blank to use Mass in Service">
               </div>
-              <div class="field">
+              <div class="field" id="driverWeightField" hidden>
                 <label for="driverKg">Driver weight</label>
                 <input id="driverKg" type="number" inputmode="decimal" min="0" step="1" data-key="driverKg" data-kind="weight">
-                <span class="hint" id="driverHint">Used when you enter a weighed empty van. Mass in Service already includes the driver.</span>
+                <span class="hint" id="driverHint">The weighbridge ticket is the van only — add the driver here.</span>
               </div>
               <div class="field">
                 <label for="frontAxle">Front axle rating (optional)</label>

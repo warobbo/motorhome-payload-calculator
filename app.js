@@ -298,6 +298,7 @@
     setUnitLabels();
     toggleCustomFields();
     syncSteppers();
+    syncWeighedEmptyUi();
     syncing = false;
   }
 
@@ -363,6 +364,20 @@
 
   function usingActualEmpty() {
     return num(state.actualEmpty) > 0;
+  }
+
+  function syncWeighedEmptyUi() {
+    var on = usingActualEmpty();
+    var driverField = document.getElementById("driverWeightField");
+    if (driverField) driverField.hidden = !on;
+    var emptyNote = document.getElementById("weighedEmptyNote");
+    if (emptyNote) emptyNote.hidden = !on;
+    var driverHint = document.getElementById("driverHint");
+    if (driverHint) {
+      driverHint.textContent = on
+        ? "The weighbridge ticket is the van only \u2014 add the driver here."
+        : "";
+    }
   }
 
   function compute(overrides) {
@@ -454,11 +469,7 @@
         ? "Restore water levels"
         : "What if I empty the water?";
       document.getElementById("peopleNote").textContent = "Mass in Service is blank after the plate lookup \u2014 the V5 figure is not guessed.";
-      document.getElementById("driverHint").textContent = usingActualEmpty()
-        ? "Added because you entered a weighed empty van."
-        : "Mass in Service already includes the driver.";
-      var emptyNoteMissing = document.getElementById("weighedEmptyNote");
-      if (emptyNoteMissing) emptyNoteMissing.hidden = !usingActualEmpty();
+      syncWeighedEmptyUi();
       updateIdentityCard();
       return;
     }
@@ -523,15 +534,10 @@
       ? "Restore water levels"
       : "What if I empty the water?";
 
-    var driverNote = usingActualEmpty()
+    document.getElementById("peopleNote").textContent = usingActualEmpty()
       ? "Weighed empty is in use, so the driver is added separately."
       : "Driver is already in Mass in Service \u2014 additional adults are passengers only.";
-    document.getElementById("peopleNote").textContent = driverNote;
-    document.getElementById("driverHint").textContent = usingActualEmpty()
-      ? "Added because you entered a weighed empty van."
-      : "Mass in Service already includes the driver.";
-    var emptyNote = document.getElementById("weighedEmptyNote");
-    if (emptyNote) emptyNote.hidden = !usingActualEmpty();
+    syncWeighedEmptyUi();
     updateIdentityCard();
   }
 
