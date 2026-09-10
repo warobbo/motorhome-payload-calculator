@@ -68,7 +68,7 @@ describe("browser global", function () {
   it("loads FuelPayload, DriverPayload and MassInService in one page realm", function () {
     const sandbox = {};
     sandbox.globalThis = sandbox;
-    ["fuel-payload.js", "driver-payload.js", "mass-in-service.js"].forEach(function (file) {
+    ["fuel-payload.js", "driver-payload.js", "mass-in-service.js", "custom-kit.js", "axle-check.js"].forEach(function (file) {
       vm.runInNewContext(
         fs.readFileSync(path.join(__dirname, "../lib", file), "utf8"),
         sandbox
@@ -77,5 +77,7 @@ describe("browser global", function () {
     assert.equal(typeof sandbox.FuelPayload.fuelPayloadKg, "function");
     assert.equal(typeof sandbox.DriverPayload.driverPayloadKg, "function");
     assert.equal(typeof sandbox.MassInService.isMissing, "function");
+    assert.equal(typeof sandbox.CustomKit.totalKg, "function");
+    assert.equal(typeof sandbox.AxleCheck.isIncomplete, "function");
   });
 });

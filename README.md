@@ -1,6 +1,6 @@
 # Motorhome Payload Calculator
 
-A free, mobile-first **UK motorhome / campervan payload hub**: the payload calculator plus a tyre-pressure tool for non-OEM sizes. Built for checking whether a loaded van stays under its legal MAM (especially 3.5-tonne Fiat Ducato and Peugeot Boxer conversions).
+A free, mobile-first **UK motorhome / campervan payload hub**: the payload calculator plus a tyre-pressure tool for non-OEM sizes. Built for checking whether a loaded van stays under its plated MAM — 3500, 3850, 4500 kg or whatever is on the plate. A 3.5 t Ducato or Boxer is a common example, not the product identity.
 
 The site is static HTML/CSS/JS plus a tiny Node server. Registration lookup is proxied through `/api/vehicle-lookup` so the DVLA key stays on Render, not in the public page. Tyre figures never leave the browser.
 
@@ -19,11 +19,11 @@ Then visit [http://localhost:4173](http://localhost:4173) (payload) or [http://l
 
 - UK registration lookup for make and plated revenue weight (often the MAM)
 - Live remaining-payload calculation as you type
-- Vehicle base (MAM, Mass in Service, optional weighbridge empty weight, axle ratings)
-- People, pets, water, diesel, gas bottles, batteries, solar and touring kit
+- Vehicle base (empty weighbridge ticket first, then V5 Mass in Service, MAM, plate axle ratings)
+- People, pets, water, diesel, gas bottles, batteries, solar, touring kit and custom extra items
 - Metric (kg / litres) by default, with a UK imperial toggle (lb / UK gallons)
 - Remembers the last figures in `localStorage`
-- Typical 3.5t Ducato/Boxer and light-weekend presets
+- Example presets (including a typical 3.5 t setup) — change MAM to match the plate
 - “What if I empty the water?” comparison
 - Printable results and a weighbridge disclaimer
 - **Tyres tool** (`tyres.html`): cold front and rear pressure from the sidewall plus axle loads. **Currently curated: Continental / General** Tyre Databook (Car · 4x4 · Van) for LT, C and CP sizes on 15–18″ (kg per axle at bar), **Michelin Agilis CrossClimate C and LT** from Michelin RV load/inflation tables, **and Michelin CrossClimate Camping CP** (ETRTO / Michelin 5.5 bar rear practice; Conti camping load steps only when that size + LI is in the book — never an invented Michelin CP grid). The **2025 Conti row is used for LT265/65R17** where it differs from older books. Same size + different load index = different row. Rim not 15–18″, or a size / LI we do not have, is refused. **CP single rear** never shows less than **5.5 bar** even if the table step is lower; the table figure is still shown. Goodyear, BFGoodrich and Yokohama are a later, labelled roadmap. The page names its sources. Sidewall decoder, bar ↔ PSI converter, and an optional notepad are helpers. Refuses a number if the tyre is outside the table or overloaded.
@@ -41,7 +41,7 @@ This is an **estimate**. Confirm on a calibrated weighbridge before you treat th
 
 ## Registration lookup
 
-The official DVLA Vehicle Enquiry API returns **make** and **year**, plus **revenue weight** (kg). **Model** and **Mass in Service** are not on the DVLA record. After a live plate lookup the model field stays blank unless MOT history supplies an exact van-maker model — converter brands (Hymer and similar coachbuilts) are never filled with Ducato, Boxer, Relay or Sprinter. Pick the platform from the list if you know it. Mass in Service is cleared so you can enter the V5 or weighbridge figure. You can also choose make, model and year and press **Look up make / model / year** to apply typical 3.5t MAM and Mass in Service figures.
+The official DVLA Vehicle Enquiry API returns **make** and **year**, plus **revenue weight** (kg). **Model** and **Mass in Service** are not on the DVLA record. After a live plate lookup the model field stays blank unless MOT history supplies an exact van-maker model — converter brands (Hymer and similar coachbuilts) are never filled with Ducato, Boxer, Relay or Sprinter. Pick the platform from the list if you know it. Mass in Service is cleared so you can enter an empty weighbridge ticket (best) or the V5 figure. You can also choose make, model and year and press **Look up make / model / year** to apply typical catalogue figures (often 3.5 t examples).
 
 Without an API key, these demo plates still work:
 
