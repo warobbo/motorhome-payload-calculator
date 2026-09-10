@@ -739,7 +739,8 @@ footer.site-footer {
 }
 @media (max-width: 979px) {
   footer.site-footer {
-    padding-bottom: calc(7.5rem + env(safe-area-inset-bottom, 0px));
+    padding-top: 5.75rem;
+    padding-bottom: calc(2.5rem + env(safe-area-inset-bottom, 0px));
   }
 }
 .footer-inner { max-width: 1180px; margin: 0 auto; }
