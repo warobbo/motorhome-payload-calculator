@@ -18,6 +18,8 @@ const {
   LT_TABLES,
   LT_DATABOOK_SOURCE,
   TraDb,
+  MichelinDb,
+  detectMaker,
   WAYNE_EXAMPLE,
   getChart,
   suggestChartId,
@@ -997,7 +999,7 @@ describe("Continental / General coverage extras", function () {
     }).error, "no-matching-li");
   });
 
-  it("does not embed Michelin, Goodyear, BFGoodrich or Yokohama tables", function () {
+  it("keeps Continental tables Conti-only; Michelin lives in its own file", function () {
     const blob = JSON.stringify(TraDb.ALL);
     assert.equal(/michelin/i.test(blob), false);
     assert.equal(/goodyear/i.test(blob), false);
@@ -1006,6 +1008,20 @@ describe("Continental / General coverage extras", function () {
     assert.ok(TraDb.LT_SOURCE.indexOf("Continental") !== -1);
     assert.ok(TraDb.C_SOURCE.indexOf("Continental") !== -1);
     assert.ok(TraDb.CP_SOURCE.indexOf("Continental") !== -1);
+    assert.equal(TraDb.ALL[0].maker, "continental");
+    assert.ok(MichelinDb);
+    assert.ok(MichelinDb.ALL.length > 0);
+    assert.equal(MichelinDb.ALL[0].maker, "michelin");
+    const mic = JSON.stringify(MichelinDb.ALL);
+    assert.equal(/goodyear/i.test(mic), false);
+    assert.equal(/bfgoodrich|camping cp/i.test(mic), false);
+    assert.equal(/yokohama/i.test(mic), false);
+    assert.ok(MichelinDb.ALL.every(function (row) {
+      return row.family === "C" || row.family === "LT";
+    }));
+    assert.ok(MichelinDb.ALL.every(function (row) {
+      return MichelinDb.isSupportedRim(row.rimIn);
+    }));
   });
 
   it("leaves a complementary hook for the CP rear 5.5 bar floor (PR #11)", function () {
@@ -1031,5 +1047,153 @@ describe("describeSidewall LT", function () {
     assert.match(text.service, /[Nn]ot the old US lb\/PSI extract/);
     assert.match(text.service, /not the European C-type/);
     assert.match(text.load, /1400 kg/);
+  });
+});
+
+describe("Michelin Agilis C/LT tables", function () {
+  it("detects maker from the brand box or sidewall text", function () {
+    assert.equal(detectMaker("Michelin Agilis", ""), "michelin");
+    assert.equal(detectMaker("agilis crossclimate", ""), "michelin");
+    assert.equal(detectMaker("General Grabber", ""), "continental");
+    assert.equal(detectMaker("", "Continental VanContact 225/75R16C"), "continental");
+    assert.equal(detectMaker("Goodyear Wrangler", ""), "goodyear");
+    assert.equal(detectMaker("BFGoodrich", ""), "later");
+    assert.equal(detectMaker("", ""), null);
+  });
+
+  it("uses Michelin C 195/75R16C 107 from the April 2025 chart, not Conti steps", function () {
+    const front = coldPressureForAxle({
+      sidewall: "195/75 R16C 107/105R",
+      brand: "Michelin Agilis",
+      axleLoadKg: 1600,
+      tyresOnAxle: 2
+    });
+    const rear = coldPressureForAxle({
+      sidewall: "195/75 R16C 107/105R",
+      brand: "Michelin Agilis",
+      axleLoadKg: 1800,
+      tyresOnAxle: 2
+    });
+    assert.equal(front.path, "c-databook");
+    assert.equal(front.table.maker, "michelin");
+    assert.equal(front.bar, 3.8);
+    assert.equal(front.capacityKg, 1630);
+    assert.equal(rear.bar, 4.5);
+    assert.equal(rear.capacityKg, 1870);
+    assert.match(front.table.source, /Michelin/);
+  });
+
+  it("uses Michelin C 205/65R15C 102 including the 3.75 bar sidewall-max step", function () {
+    const low = coldPressureForAxle({
+      sidewall: "205/65 R15C 102/100T",
+      brand: "Michelin",
+      axleLoadKg: 1400,
+      tyresOnAxle: 2
+    });
+    const high = coldPressureForAxle({
+      sidewall: "205/65 R15C 102/100T",
+      brand: "Michelin",
+      axleLoadKg: 1600,
+      tyresOnAxle: 2
+    });
+    assert.equal(low.bar, 3.1);
+    assert.equal(low.capacityKg, 1460);
+    assert.equal(high.bar, 3.75);
+    assert.equal(high.capacityKg, 1700);
+  });
+
+  it("uses Michelin LT215/85R16 115 from the Agilis LT grid", function () {
+    const r = coldPressureForAxle({
+      sidewall: "LT215/85R16 115/112R",
+      brand: "Michelin Agilis CrossClimate",
+      axleLoadKg: 1800,
+      tyresOnAxle: 2
+    });
+    assert.equal(r.path, "lt-databook");
+    assert.equal(r.table.maker, "michelin");
+    assert.equal(r.bar, 3.8);
+    assert.equal(r.capacityKg, 1864);
+  });
+
+  it("keeps an unmarked Conti/General C size on the Conti book", function () {
+    const r = coldPressureForAxle({
+      sidewall: "195/75 R16C 107/105R",
+      axleLoadKg: 1600,
+      tyresOnAxle: 2
+    });
+    assert.equal(r.table.maker, "continental");
+    assert.equal(r.bar, 3.75);
+    assert.equal(r.capacityKg, 1615);
+  });
+
+  it("refuses Michelin-branded CP instead of using Agilis C or Conti CP", function () {
+    const r = coldPressureForAxle({
+      sidewall: "225/75 R16 CP 118R",
+      brand: "Michelin CrossClimate Camping",
+      axleLoadKg: 2000,
+      tyresOnAxle: 2,
+      axle: "rear"
+    });
+    assert.equal(r.error, "no-table");
+    assert.equal(r.reason, "michelin-cp-no-table");
+  });
+
+  it("still uses Conti CP when the brand is not Michelin", function () {
+    const r = coldPressureForAxle({
+      sidewall: "225/75 R16 CP 118R",
+      brand: "Continental VanContact Camper",
+      axleLoadKg: 2000,
+      tyresOnAxle: 2,
+      axle: "rear"
+    });
+    assert.equal(r.path, "cp-databook");
+    assert.equal(r.table.maker, "continental");
+    assert.equal(r.bar, 4.25);
+  });
+
+  it("refuses a Michelin brand on a Conti-only Grabber size", function () {
+    const r = coldPressureForAxle({
+      sidewall: "LT265/65R17 120/117S",
+      brand: "Michelin",
+      axleLoadKg: 1800,
+      tyresOnAxle: 2
+    });
+    assert.equal(r.error, "no-table");
+  });
+
+  it("refuses Goodyear and other later brands", function () {
+    assert.equal(coldPressureForAxle({
+      sidewall: "LT265/65R17 120/117S",
+      brand: "Goodyear Wrangler",
+      axleLoadKg: 1800,
+      tyresOnAxle: 2
+    }).reason, "brand-later");
+    assert.equal(coldPressureForAxle({
+      sidewall: "LT245/75R16 120/116S",
+      brand: "BFGoodrich",
+      axleLoadKg: 1800,
+      tyresOnAxle: 2
+    }).reason, "brand-later");
+  });
+
+  it("refuses a Michelin C size that has no published Agilis grid", function () {
+    const r = coldPressureForAxle({
+      sidewall: "205/75 R16C 113/111R",
+      brand: "Michelin Agilis",
+      axleLoadKg: 1800,
+      tyresOnAxle: 2
+    });
+    assert.equal(r.error, "no-table");
+  });
+
+  it("does not invent 19.5″ or 22.5″ Michelin truck sizes", function () {
+    const r = coldPressureForAxle({
+      sidewall: "LT235/85R19 120/116R",
+      brand: "Michelin",
+      axleLoadKg: 2000,
+      tyresOnAxle: 2
+    });
+    assert.equal(r.error, "unsupported-rim");
+    assert.equal(r.rimIn, 19);
   });
 });

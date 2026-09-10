@@ -1,6 +1,6 @@
 /* =========================================================================
    Tyres tool UI — sidewall + axle loads → cold front/rear from the
-   right published table (Continental LT databook or ETRTO C-type).
+   right published table (Continental databook or Michelin Agilis C/LT).
    ========================================================================= */
 (function () {
   "use strict";
@@ -189,16 +189,25 @@
         return parsed;
       }
       var text = T.describeSidewall(parsed);
-      var path = T.resolvePressurePath(parsed);
+      var path = T.resolvePressurePath(parsed, { brand: $("brandLabel").value });
       var rows = [];
       rows.push(row("Size", text.size));
       var familyNote = " — no inflation table on this page";
-      if (path.path === "lt-databook") familyNote = " — Continental TRA-standard LT table (15–18″)";
-      else if (path.path === "c-databook") familyNote = " — Continental Van / ETRTO C table (15–18″)";
-      else if (path.path === "cp-databook") familyNote = " — Continental CP / camping table (15–18″)";
+      var mic = path.table && path.table.maker === "michelin";
+      if (path.path === "lt-databook") {
+        familyNote = mic
+          ? " — Michelin Agilis CrossClimate LT table (15–18″)"
+          : " — Continental TRA-standard LT table (15–18″)";
+      } else if (path.path === "c-databook") {
+        familyNote = mic
+          ? " — Michelin Agilis CrossClimate C-Metric table (15–18″)"
+          : " — Continental Van / ETRTO C table (15–18″)";
+      } else if (path.path === "cp-databook") familyNote = " — Continental CP / camping table (15–18″)";
       else if (path.path === "c-etrto") familyNote = " — ETRTO C-type chart";
       else if (path.path === "no-matching-li") familyNote = " — that load index is not in our table";
       else if (path.path === "unsupported-rim") familyNote = " — only 15–18″ wheels are in this table";
+      else if (path.reason === "michelin-cp-no-table") familyNote = " — Michelin has no CP camping grid on this page";
+      else if (path.reason === "brand-later") familyNote = " — that brand is not in the book yet";
       rows.push(row("Family", parsed.family + familyNote));
       rows.push(row("C / LT mark", text.service));
       if (text.extraLoad) rows.push(row("Reinforced", text.extraLoad));
@@ -233,6 +242,7 @@
       dualLoadIndex: rear ? $("rearDualLoadIndex").value : $("dualLoadIndex").value,
       chartId: rear ? $("rearChartId").value : $("chartId").value,
       sidewall: rear ? $("rearSidewall").value : $("sidewall").value,
+      brand: $("brandLabel").value,
       parsed: parsed && parsed.ok ? parsed : null,
       axle: which
     };
@@ -295,15 +305,21 @@
       }
       if (result.error === "no-table") {
         if (result.reason === "lt-size-unknown") {
-          return "That LT size is not in our table yet, so this page will not invent a pressure. Only 15–18″ TRA-standard rows are embedded.";
+          return "That LT size is not in our table yet, so this page will not invent a pressure. Only listed 15–18″ Continental / General and Michelin Agilis rows are embedded.";
         }
         if (result.reason === "cp-size-unknown") {
-          return "That CP camping size is not in our table yet, so this page will not invent a pressure. Only listed 15–18″ CP rows are embedded — not the plain C table.";
+          return "That CP camping size is not in our table yet, so this page will not invent a pressure. Only listed 15–18″ Continental CP rows are embedded — not the plain C table, and not a Michelin CP grid.";
+        }
+        if (result.reason === "michelin-cp-no-table") {
+          return "Michelin does not publish a size-by-size Camping CP grid like Continental. This page will not treat an Agilis C table as CP, so it refuses a number. A fitter and Michelin still win.";
+        }
+        if (result.reason === "brand-later") {
+          return "That brand is not in our book yet (Goodyear, BFGoodrich and Yokohama come later). This page will not invent a pressure.";
         }
         if (result.reason === "p-metric") {
           return "P-metric size — this page has no published inflation table for it, so it will not invent a pressure.";
         }
-        return "Not in our table yet — only 15–18″ LT, listed C, and listed CP sizes are supported.";
+        return "Not in our table yet — only listed 15–18″ Continental / General (LT, C, CP) and Michelin Agilis (C, LT) sizes are supported.";
       }
       if (result.error === "unrecognised") return "Paste a sidewall such as LT265/65R17 120/117S.";
       if (result.error === "tyres") return "Tyres on the axle must be 2 or 4.";
@@ -360,12 +376,12 @@
 
   function updateFamilyUi() {
     var parsed = T.parseSidewall($("sidewall").value);
-    var path = parsed && parsed.ok ? T.resolvePressurePath(parsed) : null;
+    var path = parsed && parsed.ok ? T.resolvePressurePath(parsed, { brand: $("brandLabel").value }) : null;
     var badge = $("familyBadge");
     var isCFallback = path && path.path === "c-etrto";
     $("cChartWrap").hidden = !isCFallback;
     var rearParsed = $("rearDifferent").checked ? T.parseSidewall($("rearSidewall").value) : parsed;
-    var rearPath = rearParsed && rearParsed.ok ? T.resolvePressurePath(rearParsed) : path;
+    var rearPath = rearParsed && rearParsed.ok ? T.resolvePressurePath(rearParsed, { brand: $("brandLabel").value }) : path;
     $("rearChartWrap").hidden = !(rearPath && rearPath.path === "c-etrto");
 
     if (!String($("sidewall").value).trim()) {
@@ -381,7 +397,10 @@
       var sizeLabel = parsed.sizeKey + (path.table && path.table.family === "CP" ? " CP" : "") +
         (path.table && path.table.loadRange ? " LR" + path.table.loadRange : "") +
         (path.table && path.table.loadIndex != null ? " LI " + path.table.loadIndex : "");
-      badge.textContent = (brand ? brand + " · " : "") + sizeLabel + " · Continental databook";
+      var book = path.table && path.table.maker === "michelin"
+        ? "Michelin Agilis table"
+        : "Continental databook";
+      badge.textContent = (brand ? brand + " · " : "") + sizeLabel + " · " + book;
     } else if (path.path === "no-matching-li") {
       badge.textContent = T.formatLiMismatch(path) || "That load index is not in our table.";
     } else if (path.path === "c-etrto") {
