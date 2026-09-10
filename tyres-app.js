@@ -492,7 +492,13 @@
   }
 
   function applyExample() {
-    fillFromState(DEFAULTS);
+    fillFromState(Object.assign({}, DEFAULTS, {
+      sidewall: EXAMPLE.sidewall,
+      brandLabel: EXAMPLE.brand,
+      frontAxleKg: EXAMPLE.frontAxleKg,
+      rearAxleKg: EXAMPLE.rearAxleKg,
+      tyresOnAxle: EXAMPLE.tyresOnAxle
+    }));
     decodeInto("sidewall", { sync: true });
     renderAnswers();
     saveState();
