@@ -392,7 +392,7 @@
       return path;
     }
     if (!parsed || !parsed.ok) {
-      badge.textContent = "Sidewall not recognised yet — try LT265/65R17 120/117S.";
+      badge.textContent = "Sidewall not recognised yet — try 225/75R16C 118R.";
       return path;
     }
     if (path.path === "lt-databook" || path.path === "c-databook" || path.path === "cp-databook") {
