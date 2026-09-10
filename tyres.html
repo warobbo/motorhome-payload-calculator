@@ -68,7 +68,7 @@
           "name": "Where do these cold pressures come from?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "TRA-standard values as published in Continental Tyre Databook (General/Continental brands). 2025 row used for LT265/65R17 where it differs from older books. Figures are kg per axle on 15–18″ wheels. C-marked van tyres use the same book’s Van steps when that size is listed, otherwise the ETRTO C-type relationship. A fitter and the maker’s own chart still win."
+            "text": "TRA-standard values as published in Continental Tyre Databook (General/Continental brands). 2025 row used for LT265/65R17 where it differs from older books. Figures are kg per axle on 15–18″ wheels. C-marked van tyres use the same book’s Van steps when that size and load index are listed, otherwise the ETRTO C-type relationship. CP camping tyres use the book’s separate front/rear camping columns — not the plain C table. A fitter and the maker’s own chart still win."
           }
         },
         {
@@ -166,9 +166,9 @@
       <h2>How to use</h2>
       <ol>
         <li>This is for <strong>non-OEM sizes</strong>. The door sticker is for the old size.</li>
-        <li>Paste the <strong>sidewall</strong> (example already filled: <code>LT265/65R17 120/117S</code>). The page detects LT vs C vs P-metric.</li>
+        <li>Paste the <strong>sidewall</strong> (example already filled: <code>LT265/65R17 120/117S</code>). The page detects LT vs C vs CP vs P-metric and reads the <strong>load index</strong>.</li>
         <li>Enter <strong>front and rear axle loads in kg</strong> from a weighbridge. Or use the clearly labelled estimate from total laden weight + front/rear split % — that still becomes axle loads, not “payload remaining”.</li>
-        <li>Read the headline: <strong>Front cold</strong> and <strong>Rear cold</strong> in bar and PSI. The table is <strong>kg per axle</strong> — compare your axle load to the Single column. Only <strong>15–18″</strong> wheels. If the size is not in the table, or the axle is over the last step → <strong>Fail</strong>, no invented pressure.</li>
+        <li>Read the headline: <strong>Front cold</strong> and <strong>Rear cold</strong> in bar and PSI. The table is <strong>kg per axle</strong> — compare your axle load to the Single column (CP uses separate front and rear columns). Only <strong>15–18″</strong> wheels. If the size or load index is not in the table, or the axle is over the last step → <strong>Fail</strong>, no invented pressure.</li>
       </ol>
     </section>
 
@@ -188,12 +188,12 @@
         <div class="field">
           <label for="sidewall">Sidewall code</label>
           <input id="sidewall" type="text" spellcheck="false" autocomplete="off" autocapitalize="characters" placeholder="LT265/65R17 120/117S">
-          <span class="hint">LT, C or P-metric — e.g. <code>LT265/65R17 120/117S</code> or <code>265/65 R17 120/117S</code></span>
+          <span class="hint">LT, C, CP or P-metric — e.g. <code>LT265/65R17 120/117S</code> or <code>225/75 R16 CP 116R</code></span>
         </div>
         <div class="field">
           <label for="brandLabel">Tyre brand / model <span class="hint">(label only)</span></label>
           <input id="brandLabel" type="text" spellcheck="false" autocomplete="off" placeholder="e.g. General Grabber">
-          <span class="hint">A name on the page only. Pressures come from the Continental TRA-standard table (kg per axle). 15–18″ LT and C sizes only.</span>
+          <span class="hint">A name on the page only. Pressures come from the Continental table (kg per axle). 15–18″ LT, C and CP sizes. The load index on the sidewall must match a row we have.</span>
         </div>
         <div id="decodeOut" class="decode-out" hidden></div>
         <div class="grid-2" style="margin-top:0.85rem">
@@ -371,8 +371,9 @@
         <p>From the <strong>published table for that tyre family</strong>:</p>
         <ul>
           <li><strong>LT 15–18″</strong> (including General Grabber <code>LT265/65R17 120/117S</code>): TRA-standard values as published in Continental Tyre Databook (General/Continental brands). <strong>2025 row used for LT265/65R17</strong> where it differs from older books. The table is <strong>kg per axle</strong>. A typical motorhome uses the Single (S) column. Cold pressure is the lowest bar step that covers the load.</li>
-          <li><strong>C or CP</strong> van tyres on 15–18″: the same book’s Van (ETRTO C) steps when that size is listed. Otherwise the ETRTO C-type load/pressure relationship (load index at 3.75 bar, or 4.50 bar if you switch).</li>
-          <li>Rim not 15–18″, or a size we do not have → refused. No invented pressure. No mixing of wrong tables.</li>
+          <li><strong>C</strong> van tyres on 15–18″: the same book’s Van (ETRTO C) steps when that size <em>and load index</em> are listed. Otherwise the ETRTO C-type load/pressure relationship (load index at 3.75 bar, or 4.50 bar if you switch).</li>
+          <li><strong>CP</strong> camping / motorhome tyres on 15–18″: the book’s VanContact Camper front-axle and rear-axle columns (ETRTO camping). Not the plain C table. A size or load index we do not have is refused.</li>
+          <li>Rim not 15–18″, or a size / load index we do not have → refused. No invented pressure. No mixing of wrong tables or a different LI.</li>
         </ul>
         <p>Official LT 265/65 R 17 Load Range E, LI 120/117 S, measuring rim 8J — load capacity <strong>kg per axle</strong>:</p>
         <ul>
@@ -403,8 +404,12 @@
         <p>This page shows a clear fail and will <strong>not</strong> suggest a pressure if the axle load is over the last published step for that size (for Wayne’s Grabber that is 2800 kg on the Single column at 5.5 bar). Fit a higher-capacity tyre, or lose weight. A fitter and the vehicle plate win.</p>
       </details>
       <details>
+        <summary>What does CP mean on a motorhome tyre?</summary>
+        <p><strong>CP</strong> is Camping Pneu — a motorhome / camper tyre with ETRTO <em>special camping</em> load capacities. It is not the same as a plain <strong>C</strong> van tyre. This page uses the Continental databook’s CP front (FA) and rear (RA) kg-per-axle columns for driving cold pressure. The rear column needs a higher pressure for the same load (Continental also notes a higher rear camping pressure, about +0.75 bar on some fact sheets). When the van is parked, CP rules can allow a <strong>temporary higher load</strong> at a higher pressure — that parked / site figure is not what this page prints. A fitter and the maker’s own camping table still win.</p>
+      </details>
+      <details>
         <summary>What does 120/117 mean?</summary>
-        <p>Load indexes on the sidewall. The databook Single column is already <strong>kg for the whole axle</strong> with two tyres. Do not divide your axle load by 2 and then look up a US lb-per-tyre table. Dual wheels use the Dual column only if you select 4 tyres on that axle.</p>
+        <p>Load indexes on the sidewall. Each load index is a <strong>separate row</strong> in the table — <code>225/75R16C</code> LI 116, 118 and 121 are three entries, not one blob. We will not silently use another LI. The databook Single column is already <strong>kg for the whole axle</strong> with two tyres. Do not divide your axle load by 2 and then look up a US lb-per-tyre table. Dual wheels use the Dual column only if you select 4 tyres on that axle.</p>
       </details>
       <details>
         <summary>Is this a substitute for the maker or a fitter?</summary>
@@ -418,7 +423,7 @@
 
     <section class="prose" id="about">
       <h2>About</h2>
-      <p>Tyres tool on the Motorhome Payload hub. Figures stay on this device. LT and C sizes on 15–18″ use the Continental Tyre Databook (TRA-standard / ETRTO van steps, kg per axle). The 2025 row is used for LT265/65R17 where it differs from older books.</p>
+      <p>Tyres tool on the Motorhome Payload hub. Figures stay on this device. LT, C and CP sizes on 15–18″ use the Continental Tyre Databook (TRA-standard / ETRTO van / ETRTO camping steps, kg per axle). The 2025 row is used for LT265/65R17 where it differs from older books.</p>
     </section>
 
     <section class="prose" id="privacy">
@@ -449,8 +454,8 @@
     </div>
   </footer>
 
-  <script src="lib/tyre-tra-db.js?v=20260910tra"></script>
-  <script src="lib/tyre-calc.js?v=20260910tra"></script>
-  <script src="tyres-app.js?v=20260910tra"></script>
+  <script src="lib/tyre-tra-db.js?v=20260910cpli"></script>
+  <script src="lib/tyre-calc.js?v=20260910cpli"></script>
+  <script src="tyres-app.js?v=20260910cpli"></script>
 </body>
 </html>

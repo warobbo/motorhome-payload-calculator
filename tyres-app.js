@@ -195,7 +195,9 @@
       var familyNote = " — no inflation table on this page";
       if (path.path === "lt-databook") familyNote = " — Continental TRA-standard LT table (15–18″)";
       else if (path.path === "c-databook") familyNote = " — Continental Van / ETRTO C table (15–18″)";
+      else if (path.path === "cp-databook") familyNote = " — Continental CP / camping table (15–18″)";
       else if (path.path === "c-etrto") familyNote = " — ETRTO C-type chart";
+      else if (path.path === "no-matching-li") familyNote = " — that load index is not in our table";
       else if (path.path === "unsupported-rim") familyNote = " — only 15–18″ wheels are in this table";
       rows.push(row("Family", parsed.family + familyNote));
       rows.push(row("C / LT mark", text.service));
@@ -231,7 +233,8 @@
       dualLoadIndex: rear ? $("rearDualLoadIndex").value : $("dualLoadIndex").value,
       chartId: rear ? $("rearChartId").value : $("chartId").value,
       sidewall: rear ? $("rearSidewall").value : $("sidewall").value,
-      parsed: parsed && parsed.ok ? parsed : null
+      parsed: parsed && parsed.ok ? parsed : null,
+      axle: which
     };
   }
 
@@ -256,9 +259,10 @@
     if (result.status === "over-capacity" || result.status === "over-pressure") {
       valueEl.textContent = "Fail";
       altEl.textContent = "Over this chart";
-      if ((result.path === "lt-databook" || result.path === "c-databook") && result.maxKg != null) {
+      if ((result.path === "lt-databook" || result.path === "c-databook" || result.path === "cp-databook") && result.maxKg != null) {
+        var overCol = result.column === "dual" ? "Dual" : (result.column === "front" ? "Front" : (result.column === "rear" ? "Rear" : "Single"));
         altEl.textContent = "Over " + result.maxBar + " bar " +
-          (result.column === "dual" ? "Dual" : "Single") +
+          overCol +
           " (" + Math.round(result.maxKg) + " kg/axle)";
       }
       return;
@@ -286,25 +290,28 @@
         return "Only 15–18″ wheels are in this table. A " + result.rimIn +
           "″ rim is not supported, so this page will not invent a pressure.";
       }
-      if (result.error === "ambiguous") {
-        return "That size has more than one load range in the book. Paste the load index (or LRE / LRD) from the sidewall.";
+      if (result.error === "ambiguous" || result.error === "no-matching-li") {
+        return T.formatLiMismatch(result) || "Paste the load index from the sidewall. We will not use a different LI.";
       }
       if (result.error === "no-table") {
         if (result.reason === "lt-size-unknown") {
           return "That LT size is not in our table yet, so this page will not invent a pressure. Only 15–18″ TRA-standard rows are embedded.";
         }
+        if (result.reason === "cp-size-unknown") {
+          return "That CP camping size is not in our table yet, so this page will not invent a pressure. Only listed 15–18″ CP rows are embedded — not the plain C table.";
+        }
         if (result.reason === "p-metric") {
           return "P-metric size — this page has no published inflation table for it, so it will not invent a pressure.";
         }
-        return "Not in our table yet — only 15–18″ LT and listed C sizes are supported.";
+        return "Not in our table yet — only 15–18″ LT, listed C, and listed CP sizes are supported.";
       }
       if (result.error === "unrecognised") return "Paste a sidewall such as LT265/65R17 120/117S.";
       if (result.error === "tyres") return "Tyres on the axle must be 2 or 4.";
       return "Not enough to calculate the " + axleName + ".";
     }
     if (result.status === "over-capacity") {
-      if (result.path === "lt-databook" || result.path === "c-databook") {
-        var colName = result.column === "dual" ? "Dual" : "Single";
+      if (result.path === "lt-databook" || result.path === "c-databook" || result.path === "cp-databook") {
+        var colName = result.column === "dual" ? "Dual" : (result.column === "front" ? "Front" : (result.column === "rear" ? "Rear" : "Single"));
         return "Over the databook " + colName + " column at " + result.maxBar + " bar (" +
           Math.round(result.axleLoadKg) + " kg on the axle; max " + Math.round(result.maxKg) +
           " kg/axle). No safe pressure from this chart.";
@@ -316,9 +323,10 @@
       return "Would need more than the chart maximum to carry this load. No pressure suggested.";
     }
     var bits = [];
-    if (result.path === "lt-databook" || result.path === "c-databook") {
+    if (result.path === "lt-databook" || result.path === "c-databook" || result.path === "cp-databook") {
+      var usedCol = result.column === "dual" ? "Dual" : (result.column === "front" ? "Front" : (result.column === "rear" ? "Rear" : "Single"));
       bits.push(Math.round(result.axleLoadKg) + " kg on the axle");
-      bits.push((result.column === "dual" ? "Dual" : "Single") + " column " +
+      bits.push(usedCol + " column " +
         Math.round(result.capacityKg) + " kg/axle covers it");
       bits.push("lowest databook bar step");
     } else {
@@ -338,7 +346,7 @@
   }
 
   function sourceHtml(result) {
-    if (result && (result.path === "lt-databook" || result.path === "c-databook") && result.table) {
+    if (result && (result.path === "lt-databook" || result.path === "c-databook" || result.path === "cp-databook") && result.table) {
       return result.table.source;
     }
     if (result && result.path === "c-etrto" && result.chart) {
@@ -368,10 +376,14 @@
       badge.textContent = "Sidewall not recognised yet — try LT265/65R17 120/117S.";
       return path;
     }
-    if (path.path === "lt-databook" || path.path === "c-databook") {
+    if (path.path === "lt-databook" || path.path === "c-databook" || path.path === "cp-databook") {
       var brand = $("brandLabel").value.trim();
-      var sizeLabel = parsed.sizeKey + (path.table && path.table.loadRange ? " LR" + path.table.loadRange : "");
+      var sizeLabel = parsed.sizeKey + (path.table && path.table.family === "CP" ? " CP" : "") +
+        (path.table && path.table.loadRange ? " LR" + path.table.loadRange : "") +
+        (path.table && path.table.loadIndex != null ? " LI " + path.table.loadIndex : "");
       badge.textContent = (brand ? brand + " · " : "") + sizeLabel + " · Continental databook";
+    } else if (path.path === "no-matching-li") {
+      badge.textContent = T.formatLiMismatch(path) || "That load index is not in our table.";
     } else if (path.path === "c-etrto") {
       badge.textContent = path.label;
     } else if (path.path === "unsupported-rim") {
@@ -400,12 +412,12 @@
 
     var extras = [];
     var brand = $("brandLabel").value.trim();
-    if (brand && path && (path.path === "lt-databook" || path.path === "c-databook")) {
-      extras.push(brand + " — " + (T.LT_DATABOOK_SOURCE || "Continental TRA-standard table, kg per axle."));
+    if (brand && path && (path.path === "lt-databook" || path.path === "c-databook" || path.path === "cp-databook")) {
+      extras.push(brand + " — " + (path.table && path.table.source ? path.table.source : (T.LT_DATABOOK_SOURCE || "Continental TRA-standard table, kg per axle.")));
     }
     if ($("rearDifferent").checked) extras.push("Front and rear tyres are set separately.");
     if (path && path.family === "CP") {
-      extras.push("CP camping tyre: this is a driving cold-pressure estimate. Use the maker’s camping table for parked / site load.");
+      extras.push("CP camping tyre: driving cold pressure from the book’s front and rear columns. Parked / site load can allow a temporary higher load at a higher pressure — the maker’s camping table and a fitter still win.");
     }
     $("answerNotes").textContent = extras.join(" ");
 
