@@ -1,6 +1,6 @@
 # Motorhome Payload Calculator
 
-A free, mobile-first **UK motorhome / campervan payload hub**: the payload calculator plus a tyre-pressure notepad and sidewall decoder. Built for checking whether a loaded van stays under its legal MAM (especially 3.5-tonne Fiat Ducato and Peugeot Boxer conversions).
+A free, mobile-first **UK motorhome / campervan payload hub**: the payload calculator plus a tyre-pressure tool for non-OEM sizes. Built for checking whether a loaded van stays under its legal MAM (especially 3.5-tonne Fiat Ducato and Peugeot Boxer conversions).
 
 The site is static HTML/CSS/JS plus a tiny Node server. Registration lookup is proxied through `/api/vehicle-lookup` so the DVLA key stays on Render, not in the public page. Tyre figures never leave the browser.
 
@@ -26,7 +26,7 @@ Then visit [http://localhost:4173](http://localhost:4173) (payload) or [http://l
 - Typical 3.5t Ducato/Boxer and light-weekend presets
 - “What if I empty the water?” comparison
 - Printable results and a weighbridge disclaimer
-- **Tyres tool** (`tyres.html`): cold front and rear pressure from axle loads and the fitted tyre (ETRTO/ISO-style load–pressure chart). Sidewall decoder, bar ↔ PSI converter, and an optional notepad are helpers. Refuses a number if the tyre is outside the table or overloaded.
+- **Tyres tool** (`tyres.html`): cold front and rear pressure from the sidewall plus axle loads. **LT-metric** sizes (first: General Grabber LT265/65R17 120/117S) use the TRA / industry Light Truck load & inflation table. **C-marked** van tyres use the ETRTO C-type path. Sidewall decoder, bar ↔ PSI converter, and an optional notepad are helpers. Refuses a number if the tyre is outside the table or overloaded.
 
 ## How the numbers work
 

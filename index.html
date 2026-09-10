@@ -68,7 +68,7 @@
         "People, fluids, gas, batteries, solar and gear breakdown",
         "UK registration lookup for make and plated weight",
         "Local storage of last vehicle details",
-        "Tyre pressure notepad and sidewall decoder"
+        "Tyre pressure from sidewall and axle loads (TRA LT chart or ETRTO C-type)"
       ],
       "audience": {
         "@type": "Audience",
@@ -207,7 +207,7 @@
           "name": "What about tyre pressure if I change away from the original tyres?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "The door-sticker pressure is for the original tyres. If you fitted a different size, use the Tyres tool with your axle loads and the new load index. It estimates cold front and rear pressure from an ETRTO-style chart. The tyre maker and a fitter still win."
+            "text": "The door-sticker pressure is for the original tyres. If you fitted a different size, use the Tyres tool with your axle loads and the new sidewall. LT sizes such as LT265/65R17 use the TRA Light Truck chart; C-marked van tyres use the ETRTO C-type path. The tyre maker and a fitter still win."
           }
         }
       ]
@@ -216,8 +216,8 @@
 }
   </script>
 
-  <!-- ASSET_VERSION=20260909t — bump this query on CSS/JS below to force-refresh cached assets. -->
-  <link rel="stylesheet" href="styles.css?v=20260910a">
+  <!-- ASSET_VERSION=20260910lt2 — bump this query on CSS/JS below to force-refresh cached assets. -->
+  <link rel="stylesheet" href="styles.css?v=20260910lt2">
 
 </head>
 <body>
@@ -840,7 +840,7 @@
       </details>
       <details id="faq-tyres">
         <summary>What about tyre pressure if I change away from the original tyres?</summary>
-        <p>The door sticker is for the original tyres. If you fitted a different size, use the <a href="tyres.html">Tyres tool</a> with your front and rear axle loads and the new sidewall. It estimates cold bar and PSI from an ETRTO-style load/pressure chart — not a copy of the old sticker. The tyre maker and a fitter still win.</p>
+        <p>The door sticker is for the original tyres. If you fitted a different size, use the <a href="tyres.html">Tyres tool</a> with your front and rear axle loads and the new sidewall. LT sizes such as General Grabber LT265/65R17 use the TRA Light Truck chart; C-marked van tyres use the ETRTO C-type path. The tyre maker and a fitter still win.</p>
       </details>
     </section>
 
@@ -862,7 +862,7 @@
 
     <section class="prose" id="more-tools">
       <h2>Also on this hub</h2>
-      <p>Fitted a different tyre size? The <strong>Tyres</strong> tool turns front and rear axle loads plus the new sidewall into a cold bar and PSI estimate. Converter and sidewall decoder are still there as helpers.</p>
+      <p>Fitted a non-OEM size such as General Grabber <code>LT265/65R17 120/117S</code>? The Tyres tool turns sidewall + axle loads into cold front and rear PSI and bar from the published chart for that family.</p>
       <p><a class="btn btn-primary" href="tyres.html">Open the Tyres tool</a></p>
     </section>
 
