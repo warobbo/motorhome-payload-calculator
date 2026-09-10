@@ -178,6 +178,31 @@ a { color: var(--pine); }
 }
 .intro p { margin: 0; color: var(--muted); }
 .intro p + p { margin-top: 0.7rem; }
+.path-card {
+  margin: 0.85rem 0 0;
+  padding: 0.75rem 0.9rem 0.85rem;
+  background: var(--pine-soft);
+  border: 1px solid #c5ddd4;
+  border-radius: 14px;
+}
+.path-card ol {
+  margin: 0;
+  padding-left: 1.15rem;
+}
+.path-card li {
+  margin: 0.35rem 0;
+  color: var(--ink);
+  font-size: 0.92rem;
+}
+.axle-block {
+  margin-top: 1rem;
+  padding: 0.85rem 0.9rem 0.95rem;
+  background: var(--pine-soft);
+  border: 1px solid #c5ddd4;
+  border-radius: 14px;
+}
+.axle-block .lede { margin-bottom: 0.65rem; }
+.axle-block .field-heading { margin-top: 0; color: var(--pine-2); }
 
 .how-to-use {
   margin: 0 0 1.2rem;
@@ -504,6 +529,9 @@ input:focus, select:focus, button:focus-visible {
   border-bottom: 1px solid var(--line);
 }
 .stat-row b { font-variant-numeric: tabular-nums; }
+#platedPayloadNote {
+  margin: 0.2rem 0 0.45rem;
+}
 .meter {
   height: 10px;
   background: var(--bg-deep);
@@ -706,6 +734,40 @@ input:focus, select:focus, button:focus-visible {
   font-size: 0.8rem;
   color: var(--muted);
   margin: 0.7rem 0 0;
+}
+.tyres-link {
+  margin: 0.85rem 0 0;
+  padding: 0.7rem 0.75rem;
+  background: var(--pine-soft);
+  border: 1px solid #c5ddd4;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 650;
+}
+.tyres-link a { font-weight: 750; }
+.custom-kit {
+  margin-top: 1rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line);
+}
+.custom-kit .field-heading { margin-top: 0; }
+.custom-kit-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.45rem;
+  padding: 0.75rem 0;
+  border-top: 1px solid var(--line);
+}
+.custom-kit-row:first-child { border-top: 0; padding-top: 0.35rem; }
+.kit-remove {
+  justify-self: start;
+}
+@media (min-width: 640px) {
+  .custom-kit-row {
+    grid-template-columns: 1.4fr 0.7fr 0.95fr auto;
+    align-items: end;
+  }
+  .kit-remove { min-height: 48px; }
 }
 .result-actions { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-top: 0.85rem; align-items: center; }
 

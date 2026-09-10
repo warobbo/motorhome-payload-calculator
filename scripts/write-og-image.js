@@ -207,8 +207,8 @@ function generateOgPng() {
   drawVan(px, width, height, 110, 230, 4);
   drawText(px, width, height, "MOTORHOME PAYLOAD", 560, 200, 7, PINE);
   drawText(px, width, height, "CALCULATOR", 560, 268, 7, INK);
-  drawText(px, width, height, "FREE UK 3.5T WEIGHT CHECKER", 560, 360, 4, MUTED);
-  drawText(px, width, height, "STAY LEGAL UNDER YOUR MAM", 560, 420, 3, COPPER);
+  drawText(px, width, height, "FREE UK WEIGHT CHECKER", 560, 360, 4, MUTED);
+  drawText(px, width, height, "ANY PLATED MAM", 560, 420, 3, COPPER);
   fillRect(px, width, height, 0, height - 28, width, 28, PINE_DEEP);
   return encodePng(width, height, px);
 }

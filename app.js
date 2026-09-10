@@ -74,7 +74,8 @@
     toolboxKg: 10,
     foodPeople: 1,
     foodKgEach: 12,
-    miscKg: 20
+    miscKg: 20,
+    customItems: []
   };
 
   var TYPICAL = {
@@ -188,6 +189,18 @@
     miscKg: 45
   };
 
+  var nextCustomId = 1;
+  var customKit = (typeof CustomKit !== "undefined" && CustomKit)
+    || (typeof globalThis !== "undefined" && globalThis.CustomKit)
+    || { normalizeItems: function (list) { return Array.isArray(list) ? list : []; }, totalKg: function () { return 0; } };
+  var axleCheck = (typeof AxleCheck !== "undefined" && AxleCheck)
+    || (typeof globalThis !== "undefined" && globalThis.AxleCheck)
+    || {
+      hasRating: function (v) { return Number(v) > 0; },
+      isIncomplete: function (f, r) { return !(Number(f) > 0 && Number(r) > 0); },
+      cautionLabel: function () { return "MAM check only — axle check incomplete"; },
+      cautionDetail: function () { return "Enter both front and rear axle ratings from the VIN plate. This page does not invent axle loads."; }
+    };
   var state = loadState();
   var waterBackup = null;
   var syncing = false;
@@ -207,6 +220,13 @@
           : 0;
       }
     } catch (e) { /* private mode */ }
+    merged.customItems = (customKit && customKit.normalizeItems)
+      ? customKit.normalizeItems(merged.customItems)
+      : (Array.isArray(merged.customItems) ? merged.customItems : []);
+    merged.customItems.forEach(function (item) {
+      var n = parseInt(String(item.id || "").replace(/\D/g, ""), 10);
+      if (isFinite(n) && n >= nextCustomId) nextCustomId = n + 1;
+    });
     return merged;
   }
 
@@ -336,6 +356,7 @@
     });
     setUnitLabels();
     toggleCustomFields();
+    renderCustomKit();
     syncSteppers();
     syncWeighedEmptyUi();
     syncing = false;
@@ -410,6 +431,83 @@
     if (emptyNote) emptyNote.hidden = !usingActualEmpty();
   }
 
+  function escapeHtml(value) {
+    return String(value == null ? "" : value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function newCustomItem() {
+    return { id: "kit-" + (nextCustomId++), name: "", kg: "", qty: 1 };
+  }
+
+  function renderCustomKit() {
+    var root = document.getElementById("customKitRows");
+    if (!root) return;
+    state.customItems = customKit.normalizeItems(state.customItems);
+    if (!state.customItems.length) {
+      root.innerHTML = '<p class="hint" id="customKitEmpty">No extra items yet.</p>';
+      return;
+    }
+    root.innerHTML = state.customItems.map(function (item) {
+      var kgView = item.kg === "" || item.kg == null ? "" : roundView(item.kg, "weight");
+      return '<div class="custom-kit-row" data-kit-id="' + escapeHtml(item.id) + '">' +
+        '<div class="field"><label>Item</label>' +
+        '<input type="text" class="kit-name" maxlength="80" autocomplete="off" placeholder="e.g. extra chairs" value="' + escapeHtml(item.name) + '"></div>' +
+        '<div class="field"><label>Weight each</label>' +
+        '<input type="number" class="kit-kg" inputmode="decimal" min="0" step="0.1" value="' + escapeHtml(kgView) + '"></div>' +
+        '<div class="field"><label>Quantity</label><div class="stepper">' +
+        '<button type="button" class="stepper-btn kit-step" data-step="-1" aria-label="Fewer of this item">\u2212</button>' +
+        '<input type="number" class="kit-qty" inputmode="numeric" min="0" step="1" value="' + escapeHtml(item.qty) + '">' +
+        '<button type="button" class="stepper-btn kit-step" data-step="1" aria-label="More of this item">+</button>' +
+        '</div></div>' +
+        '<button type="button" class="btn kit-remove" aria-label="Remove ' + escapeHtml(item.name || "custom item") + '">Remove</button>' +
+        '</div>';
+    }).join("");
+  }
+
+  function customItemFromRow(row) {
+    var id = row.getAttribute("data-kit-id");
+    var nameEl = row.querySelector(".kit-name");
+    var kgEl = row.querySelector(".kit-kg");
+    var qtyEl = row.querySelector(".kit-qty");
+    return {
+      id: id,
+      name: nameEl ? nameEl.value : "",
+      kg: kgEl && kgEl.value !== "" ? storeWeight(kgEl.value) : "",
+      qty: qtyEl && qtyEl.value !== "" ? num(qtyEl.value) : 1
+    };
+  }
+
+  function readCustomKitFromDom() {
+    var root = document.getElementById("customKitRows");
+    if (!root) return;
+    var rows = root.querySelectorAll(".custom-kit-row");
+    state.customItems = Array.prototype.map.call(rows, customItemFromRow);
+  }
+
+  function updateAxleResults() {
+    var frontEl = document.getElementById("frontAxleOut");
+    var rearEl = document.getElementById("rearAxleOut");
+    var warn = document.getElementById("warnAxleIncomplete");
+    var note = document.getElementById("axleNote");
+    var incomplete = axleCheck.isIncomplete(state.frontAxle, state.rearAxle);
+    if (frontEl) {
+      frontEl.textContent = axleCheck.hasRating(state.frontAxle) ? fmt(num(state.frontAxle), 0) : "\u2014";
+    }
+    if (rearEl) {
+      rearEl.textContent = axleCheck.hasRating(state.rearAxle) ? fmt(num(state.rearAxle), 0) : "\u2014";
+    }
+    if (warn) warn.classList.toggle("show", incomplete);
+    if (note) {
+      note.textContent = incomplete
+        ? axleCheck.cautionDetail()
+        : "Plate ratings entered. This calculator cannot split today’s load between axles — confirm both on a weighbridge.";
+    }
+  }
+
   function compute(overrides) {
     var s = Object.assign({}, state, overrides || {});
     var mam = num(s.mam);
@@ -447,6 +545,7 @@
     if (s.furniture) gear += num(s.furnitureKg);
     if (s.generator) gear += num(s.generatorKg);
     if (s.toolbox) gear += num(s.toolboxKg);
+    gear += customKit.totalKg(s.customItems);
 
     var added = people + water + fuel + gas + electrical + gear;
     var total = base + added;
@@ -487,13 +586,15 @@
       document.getElementById("totalWeight").textContent = "\u2014";
       document.getElementById("mamOut").textContent = fmt(num(state.mam), 0);
       document.getElementById("platedPayload").textContent = "\u2014";
+      var platedNoteEmpty = document.getElementById("platedPayloadNote");
+      if (platedNoteEmpty) platedNoteEmpty.hidden = true;
       document.getElementById("payloadPct").textContent = "Mass in Service needed";
       document.getElementById("meterFill").style.width = "0%";
       document.getElementById("warnOver").classList.remove("show");
       document.getElementById("warnLow").classList.remove("show");
       document.getElementById("breakdown").innerHTML = "";
-      document.getElementById("waterWhatIf").textContent = "Enter Mass in Service to see how water and kit use the remaining payload.";
-      document.getElementById("axleNote").textContent = "";
+      document.getElementById("waterWhatIf").textContent = "Enter Mass in Service or a weighbridge ticket to see how water and kit use the remaining payload.";
+      updateAxleResults();
       var dockEmpty = document.getElementById("dockValue");
       dockEmpty.textContent = "\u2014";
       dockEmpty.className = "dock-tight";
@@ -523,7 +624,10 @@
 
     document.getElementById("totalWeight").textContent = fmt(r.total, 0);
     document.getElementById("mamOut").textContent = fmt(r.mam, 0);
-    document.getElementById("platedPayload").textContent = fmt(r.plated, 0);
+    var hasMiro = num(state.miro) > 0;
+    document.getElementById("platedPayload").textContent = hasMiro ? fmt(r.plated, 0) : "\u2014";
+    var platedNote = document.getElementById("platedPayloadNote");
+    if (platedNote) platedNote.hidden = !hasMiro;
     document.getElementById("payloadPct").textContent = Math.max(0, r.usedPct).toLocaleString("en-GB", { maximumFractionDigits: 0 }) + "% of available payload";
 
     var fill = document.getElementById("meterFill");
@@ -550,13 +654,7 @@
       ? "Emptying fresh, grey and black water would free " + fmt(saved, 0) + " and leave " + fmt(empty.remaining, 0) + " remaining."
       : "Water tanks are already empty in this estimate.";
 
-    var axle = "";
-    if (num(state.frontAxle) || num(state.rearAxle)) {
-      axle = "Axle limits entered: front " + (num(state.frontAxle) ? fmt(num(state.frontAxle), 0) : "\u2014") +
-        ", rear " + (num(state.rearAxle) ? fmt(num(state.rearAxle), 0) : "\u2014") +
-        ". This calculator cannot split axle loads \u2014 confirm both on a weighbridge.";
-    }
-    document.getElementById("axleNote").textContent = axle;
+    updateAxleResults();
 
     var dock = document.getElementById("dockValue");
     dock.textContent = (r.remaining < 0 ? "\u2212" : "") + fmt(Math.abs(r.remaining), 0);
@@ -729,12 +827,12 @@
     }
     if (plateLookup) {
       state.miro = "";
-      notes.push("DVLA does not supply Mass in Service \u2014 enter it from the V5 or a weighbridge figure.");
+      notes.push("DVLA does not supply Mass in Service \u2014 an empty weighbridge ticket is best; otherwise use the V5 figure.");
     } else if (vehicle.miroAvailable && vehicle.typicalMiro) {
       state.miro = vehicle.typicalMiro;
-      notes.push("Typical Mass in Service " + vehicle.typicalMiro + " kg applied" + (vehicle.typicalLabel ? " for " + vehicle.typicalLabel : "") + ". Replace with the V5 or handbook figure if you have it.");
+      notes.push("Typical Mass in Service " + vehicle.typicalMiro + " kg applied" + (vehicle.typicalLabel ? " for " + vehicle.typicalLabel : "") + ". Replace with a weighbridge ticket or the V5 figure if you have it.");
     } else {
-      notes.push("DVLA does not supply Mass in Service \u2014 enter it from the V5 or a weighbridge figure.");
+      notes.push("DVLA does not supply Mass in Service \u2014 an empty weighbridge ticket is best; otherwise use the V5 figure.");
     }
     if (plateLookup && !state.model) {
       notes.push("Model was not on the DVLA record \u2014 pick the van platform if you know it.");
@@ -837,6 +935,50 @@
       calculate();
     });
   });
+
+  var customKitRoot = document.getElementById("customKit");
+  if (customKitRoot) {
+    customKitRoot.addEventListener("input", function (event) {
+      if (!event.target.closest(".custom-kit-row")) return;
+      readCustomKitFromDom();
+      saveState();
+      calculate();
+    });
+    customKitRoot.addEventListener("click", function (event) {
+      var stepBtn = event.target.closest(".kit-step");
+      if (stepBtn) {
+        var input = stepBtn.closest(".stepper").querySelector("input");
+        if (input) stepValue(input, Number(stepBtn.getAttribute("data-step")));
+        return;
+      }
+      var removeBtn = event.target.closest(".kit-remove");
+      if (removeBtn) {
+        var row = removeBtn.closest(".custom-kit-row");
+        if (!row) return;
+        var id = row.getAttribute("data-kit-id");
+        state.customItems = customKit.normalizeItems(state.customItems).filter(function (item) {
+          return item.id !== id;
+        });
+        fillForm();
+        saveState();
+        calculate();
+      }
+    });
+  }
+  var addCustomBtn = document.getElementById("addCustomKit");
+  if (addCustomBtn) {
+    addCustomBtn.addEventListener("click", function () {
+      readCustomKitFromDom();
+      state.customItems = customKit.normalizeItems(state.customItems);
+      state.customItems.push(newCustomItem());
+      fillForm();
+      saveState();
+      calculate();
+      var rows = document.querySelectorAll(".custom-kit-row .kit-name");
+      var last = rows[rows.length - 1];
+      if (last) last.focus();
+    });
+  }
 
   document.getElementById("preset-typical").addEventListener("click", function () { applyPreset(TYPICAL, "preset-typical"); });
   document.getElementById("preset-light").addEventListener("click", function () { applyPreset(LIGHT, "preset-light"); });
