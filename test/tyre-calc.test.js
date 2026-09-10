@@ -28,7 +28,8 @@ const {
   ltColdBarForAxleLoad,
   coldPressureForLoad,
   coldPressureForAxle,
-  formatLiMismatch
+  formatLiMismatch,
+  ETRTO_CP_SINGLE_REAR_MIN_BAR
 } = require("../lib/tyre-calc");
 
 describe("bar ↔ PSI", function () {
@@ -918,6 +919,106 @@ describe("load index is a separate row", function () {
     });
     assert.equal(nope.error, "no-matching-li");
     assert.equal(nope.wantedLoadIndex, 114);
+  });
+});
+
+describe("Continental / General coverage extras", function () {
+  it("keeps Wayne’s Grabber LT265/65R17 120/117 at 3.5 / 4.0 bar", function () {
+    const front = coldPressureForAxle({
+      sidewall: WAYNE_EXAMPLE.sidewall,
+      axleLoadKg: WAYNE_EXAMPLE.frontAxleKg,
+      tyresOnAxle: 2
+    });
+    const rear = coldPressureForAxle({
+      sidewall: WAYNE_EXAMPLE.sidewall,
+      axleLoadKg: WAYNE_EXAMPLE.rearAxleKg,
+      tyresOnAxle: 2
+    });
+    assert.equal(front.bar, 3.5);
+    assert.equal(rear.bar, 4.0);
+    assert.equal(front.capacityKg, 1950);
+    assert.equal(rear.capacityKg, 2170);
+    assert.equal(front.path, "lt-databook");
+  });
+
+  it("adds further Conti C rows from the 2020–2021 Van section", function () {
+    const special115 = coldPressureForAxle({
+      sidewall: "225/70 R15C 115N",
+      axleLoadKg: 2010,
+      tyresOnAxle: 2
+    });
+    assert.equal(special115.path, "c-databook");
+    assert.equal(special115.table.loadIndex, 115);
+    assert.equal(special115.bar, 3.75);
+    assert.equal(special115.capacityKg, 2010);
+
+    const li122 = coldPressureForAxle({
+      sidewall: "225/75 R16C 122R",
+      axleLoadKg: 3000,
+      tyresOnAxle: 2
+    });
+    assert.equal(li122.table.loadIndex, 122);
+    assert.equal(li122.bar, 6.0);
+    assert.equal(li122.capacityKg, 3000);
+
+    const wide = coldPressureForAxle({
+      sidewall: "285/65 R16C 128N",
+      axleLoadKg: 2895,
+      tyresOnAxle: 2
+    });
+    assert.equal(wide.table.loadIndex, 128);
+    assert.equal(wide.bar, 4.0);
+
+    const sprinter = coldPressureForAxle({
+      sidewall: "235/60 R17C 114R",
+      axleLoadKg: 1955,
+      tyresOnAxle: 2
+    });
+    assert.equal(sprinter.table.loadIndex, 114);
+    assert.equal(sprinter.bar, 3.75);
+  });
+
+  it("refuses a size or load index that is still not in the Conti book", function () {
+    assert.equal(coldPressureForAxle({
+      sidewall: "LT255/70R17 121/118S",
+      axleLoadKg: 1800,
+      tyresOnAxle: 2
+    }).error, "no-table");
+    assert.equal(coldPressureForAxle({
+      sidewall: "215/65 R16 CP 109R",
+      axleLoadKg: 1600,
+      tyresOnAxle: 2,
+      axle: "front"
+    }).error, "no-table");
+    assert.equal(coldPressureForAxle({
+      sidewall: "225/75 R16C 114/112R",
+      axleLoadKg: 2000,
+      tyresOnAxle: 2
+    }).error, "no-matching-li");
+  });
+
+  it("does not embed Michelin, Goodyear, BFGoodrich or Yokohama tables", function () {
+    const blob = JSON.stringify(TraDb.ALL);
+    assert.equal(/michelin/i.test(blob), false);
+    assert.equal(/goodyear/i.test(blob), false);
+    assert.equal(/bfgoodrich|bfg/i.test(blob), false);
+    assert.equal(/yokohama/i.test(blob), false);
+    assert.ok(TraDb.LT_SOURCE.indexOf("Continental") !== -1);
+    assert.ok(TraDb.C_SOURCE.indexOf("Continental") !== -1);
+    assert.ok(TraDb.CP_SOURCE.indexOf("Continental") !== -1);
+  });
+
+  it("leaves a complementary hook for the CP rear 5.5 bar floor (PR #11)", function () {
+    assert.equal(ETRTO_CP_SINGLE_REAR_MIN_BAR, 5.5);
+    const rear = coldPressureForAxle({
+      sidewall: "225/75 R16 CP 118R",
+      axleLoadKg: 2000,
+      tyresOnAxle: 2,
+      axle: "rear"
+    });
+    assert.equal(rear.path, "cp-databook");
+    assert.equal(rear.tableBar, 4.25);
+    assert.equal(rear.bar, 4.25);
   });
 });
 

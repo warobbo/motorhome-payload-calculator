@@ -68,7 +68,7 @@
           "name": "Where do these cold pressures come from?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "TRA-standard values as published in Continental Tyre Databook (General/Continental brands). 2025 row used for LT265/65R17 where it differs from older books. Figures are kg per axle on 15–18″ wheels. C-marked van tyres use the same book’s Van steps when that size and load index are listed, otherwise the ETRTO C-type relationship. CP camping tyres use the book’s separate front/rear camping columns — not the plain C table. A fitter and the maker’s own chart still win."
+            "text": "Pressures come from published manufacturer tables, not guesses. Currently curated: Continental / General Tyre Databook (Car · 4x4 · Van) for the LT, C and CP sizes we list. Coming later: Michelin (C/LT), Goodyear Wrangler (LT), then BFGoodrich / Yokohama using industry TRA tables, clearly labelled when added. If your size, brand or load index is not listed, the tool refuses a number. A fitter and the maker’s own chart still win."
           }
         },
         {
@@ -101,8 +101,8 @@
 }
   </script>
 
-  <!-- ASSET_VERSION=20260910tra — bump this query on CSS/JS below to force-refresh cached assets. -->
-  <link rel="stylesheet" href="styles.css?v=20260910tra">
+  <!-- ASSET_VERSION=20260910src1 — bump this query on CSS/JS below to force-refresh cached assets. -->
+  <link rel="stylesheet" href="styles.css?v=20260910src1">
 </head>
 <body>
   <a class="skip" href="#tyres">Skip to tyre tool</a>
@@ -169,8 +169,20 @@
         <li>Paste the <strong>sidewall</strong> (example already filled: <code>LT265/65R17 120/117S</code>). The page detects LT vs C vs CP vs P-metric and reads the <strong>load index</strong>.</li>
         <li>Enter <strong>front and rear axle loads in kg</strong> from a weighbridge. Or use the clearly labelled estimate from total laden weight + front/rear split % — that still becomes axle loads, not “payload remaining”.</li>
         <li>Read the headline: <strong>Front cold</strong> and <strong>Rear cold</strong> in bar and PSI. The table is <strong>kg per axle</strong> — compare your axle load to the Single column (CP uses separate front and rear columns). Only <strong>15–18″</strong> wheels. If the size or load index is not in the table, or the axle is over the last step → <strong>Fail</strong>, no invented pressure.</li>
+        <li>See <a href="#sources">Sources we use</a> for which brands are in the book today.</li>
       </ol>
     </section>
+
+    <aside class="sources-note" id="sources" aria-labelledby="sources-heading">
+      <h2 id="sources-heading">Sources we use</h2>
+      <p>Pressures come from published manufacturer load/pressure tables — not guesses.</p>
+      <ul>
+        <li><strong>Currently curated:</strong> Continental / General Tyre Databook (Car · 4x4 · Van) for the LT, C and CP sizes we list.</li>
+        <li><strong>Coming later:</strong> Michelin (C/LT), Goodyear Wrangler (LT), then BFGoodrich / Yokohama using industry TRA tables (clearly labelled when added).</li>
+      </ul>
+      <p>If your size, brand or load index is not listed, the tool refuses a number. We will not invent one.</p>
+      <p>Always check pressures cold, stay within the rim maximum, and weigh the axles when you can.</p>
+    </aside>
 
     <details class="block" open>
       <summary>
@@ -374,6 +386,7 @@
           <li><strong>C</strong> van tyres on 15–18″: the same book’s Van (ETRTO C) steps when that size <em>and load index</em> are listed. Otherwise the ETRTO C-type load/pressure relationship (load index at 3.75 bar, or 4.50 bar if you switch).</li>
           <li><strong>CP</strong> camping / motorhome tyres on 15–18″: the book’s VanContact Camper front-axle and rear-axle columns (ETRTO camping). Not the plain C table. A size or load index we do not have is refused.</li>
           <li>Rim not 15–18″, or a size / load index we do not have → refused. No invented pressure. No mixing of wrong tables or a different LI.</li>
+          <li><a href="#sources">Sources we use</a> names the brands we have today and the ones coming later. We do not claim Michelin, Goodyear, BFGoodrich or Yokohama tables yet.</li>
         </ul>
         <p>Official LT 265/65 R 17 Load Range E, LI 120/117 S, measuring rim 8J — load capacity <strong>kg per axle</strong>:</p>
         <ul>
@@ -386,6 +399,12 @@
           <li>5.5 bar — Single 2800 / Dual 5140</li>
         </ul>
         <p>Example: 1800 kg front needs 3.5 bar (1950 covers; 3.0 only 1720). 2100 kg rear needs 4.0 bar (2170 covers; 3.5 only 1950). Dual (D) only if you select dual wheels on that axle. A fitter and the maker’s own chart still win.</p>
+      </details>
+      <details>
+        <summary>Which brands do you have tables for?</summary>
+        <p><strong>Today:</strong> Continental / General Tyre Databook (Car · 4x4 · Van) for the LT, C and CP sizes we list. Pressures are from that published book, not guesses.</p>
+        <p><strong>Coming later:</strong> Michelin (C/LT), then Goodyear Wrangler (LT), then BFGoodrich / Yokohama using industry TRA tables — each clearly labelled when added.</p>
+        <p>If your size, brand or load index is not listed, this page refuses a number. We will not invent one. Always check pressures cold, stay within the rim maximum, and weigh the axles when you can.</p>
       </details>
       <details>
         <summary>Why not the old US lb/PSI table, or the C-type formula?</summary>
@@ -423,7 +442,7 @@
 
     <section class="prose" id="about">
       <h2>About</h2>
-      <p>Tyres tool on the Motorhome Payload hub. Figures stay on this device. LT, C and CP sizes on 15–18″ use the Continental Tyre Databook (TRA-standard / ETRTO van / ETRTO camping steps, kg per axle). The 2025 row is used for LT265/65R17 where it differs from older books.</p>
+      <p>Tyres tool on the Motorhome Payload hub. Figures stay on this device. Today’s tables are Continental / General only (see <a href="#sources">Sources we use</a>). LT, C and CP sizes on 15–18″ use that databook (TRA-standard / ETRTO van / ETRTO camping steps, kg per axle). The 2025 row is used for LT265/65R17 where it differs from older books. Other brands are refused until their tables are added.</p>
     </section>
 
     <section class="prose" id="privacy">
@@ -447,6 +466,7 @@
         <a href="index.html">Payload calculator</a>
         <a href="tyres.html">Tyres</a>
         <a href="#how-to-use">How to use</a>
+        <a href="#sources">Sources</a>
         <a href="#faq">FAQ</a>
         <a href="#privacy">Privacy</a>
       </nav>
@@ -454,8 +474,8 @@
     </div>
   </footer>
 
-  <script src="lib/tyre-tra-db.js?v=20260910cpli"></script>
-  <script src="lib/tyre-calc.js?v=20260910cpli"></script>
-  <script src="tyres-app.js?v=20260910cpli"></script>
+  <script src="lib/tyre-tra-db.js?v=20260910src1"></script>
+  <script src="lib/tyre-calc.js?v=20260910src1"></script>
+  <script src="tyres-app.js?v=20260910src1"></script>
 </body>
 </html>
