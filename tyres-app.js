@@ -322,6 +322,9 @@
     if (result.status === "over-pressure") {
       return "Would need more than the chart maximum to carry this load. No pressure suggested.";
     }
+    if (result.note) {
+      return result.note;
+    }
     var bits = [];
     if (result.path === "lt-databook" || result.path === "c-databook" || result.path === "cp-databook") {
       var usedCol = result.column === "dual" ? "Dual" : (result.column === "front" ? "Front" : (result.column === "rear" ? "Rear" : "Single"));
@@ -417,7 +420,7 @@
     }
     if ($("rearDifferent").checked) extras.push("Front and rear tyres are set separately.");
     if (path && path.family === "CP") {
-      extras.push("CP camping tyre: driving cold pressure from the book’s front and rear columns. Parked / site load can allow a temporary higher load at a higher pressure — the maker’s camping table and a fitter still win.");
+      extras.push("CP camping tyre: driving cold pressure from the book’s front (FA S) and rear (RA S) columns. On a single rear (2 tyres) we never show less than 5.5 bar — ETRTO camping / Continental owner advice for likely rear overload — even if the table step is lower. The table figure is still shown. Front stays on the table. Rear dual uses RA T only, with no 5.5 floor. Parked / site load can allow a temporary higher load at a higher pressure. A fitter and the maker’s camping table still win.");
     }
     $("answerNotes").textContent = extras.join(" ");
 

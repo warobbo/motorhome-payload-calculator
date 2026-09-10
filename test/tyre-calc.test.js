@@ -155,6 +155,23 @@ describe("parseSidewall", function () {
     assert.equal(trailing.loadIndex, 116);
   });
 
+  it("reads 225/75 R16CP 118R and 225/75 R16 CP 118R as family CP, LI 118", function () {
+    const glued = parseSidewall("225/75 R16CP 118R");
+    const spaced = parseSidewall("225/75 R16 CP 118R");
+    assert.equal(glued.ok, true);
+    assert.equal(spaced.ok, true);
+    assert.equal(glued.family, "CP");
+    assert.equal(spaced.family, "CP");
+    assert.equal(glued.service, "CP");
+    assert.equal(spaced.service, "CP");
+    assert.equal(glued.loadIndex, 118);
+    assert.equal(spaced.loadIndex, 118);
+    assert.equal(glued.sizeKey, "225/75R16");
+    assert.equal(spaced.sizeKey, "225/75R16");
+    assert.equal(glued.speedCode, "R");
+    assert.equal(spaced.speedCode, "R");
+  });
+
   it("still reads size when load and speed are missing", function () {
     const p = parseSidewall("195/70 R15C");
     assert.equal(p.ok, true);
@@ -789,7 +806,9 @@ describe("CP camping lane", function () {
       axle: "rear"
     });
     assert.equal(rear.path, "cp-databook");
-    assert.equal(rear.bar, 5.25);
+    assert.equal(rear.tableBar, 5.25);
+    assert.equal(rear.bar, 5.5);
+    assert.equal(rear.recommendedBar, 5.5);
     assert.equal(rear.column, "rear");
     assert.equal(rear.capacityKg, 2410);
 
@@ -818,9 +837,76 @@ describe("CP camping lane", function () {
       axle: "rear"
     });
     assert.equal(front.bar, 3.25);
-    assert.equal(rear.bar, 4.75);
+    assert.equal(rear.tableBar, 4.75);
+    assert.equal(rear.bar, 5.5);
     assert.match(describeSidewall(parseSidewall("215/70 R15CP 109R")).service, /Camping Pneu/);
     assert.match(describeSidewall(parseSidewall("215/70 R15CP 109R")).service, /Not the same as a plain C/);
+  });
+
+  it("floors CP single-rear to 5.5 bar when the RA S table is lower", function () {
+    const rear = coldPressureForAxle({
+      sidewall: "225/75 R16 CP 118R",
+      axleLoadKg: 2000,
+      tyresOnAxle: 2,
+      axle: "rear"
+    });
+    assert.equal(rear.ok, true);
+    assert.equal(rear.path, "cp-databook");
+    assert.equal(rear.table.loadIndex, 118);
+    assert.equal(rear.column, "rear");
+    assert.equal(rear.tableBar, 4.25);
+    assert.equal(rear.bar, 5.5);
+    assert.equal(rear.recommendedBar, 5.5);
+    assert.equal(rear.appliedCpRearFloor, true);
+    assert.match(rear.note, /Databook table for your axle load: 4\.25 bar/);
+    assert.match(rear.note, /ETRTO CP single-rear camping minimum: 5\.5 bar/);
+    assert.match(rear.note, /We show the higher/);
+  });
+
+  it("keeps the RA S table value when CP single-rear already needs more than 5.5 bar", function () {
+    const rear = coldPressureForAxle({
+      sidewall: "225/75 R16 CP 118R",
+      axleLoadKg: 2500,
+      tyresOnAxle: 2,
+      axle: "rear"
+    });
+    assert.equal(rear.tableBar, 5.75);
+    assert.equal(rear.bar, 5.75);
+    assert.equal(rear.recommendedBar, 5.75);
+    assert.equal(rear.appliedCpRearFloor, false);
+    assert.match(rear.note, /Databook table for your axle load: 5\.75 bar/);
+    assert.match(rear.note, /ETRTO CP single-rear camping minimum: 5\.5 bar/);
+  });
+
+  it("leaves CP front on the FA S table with no 5.5 floor", function () {
+    const front = coldPressureForAxle({
+      sidewall: "225/75 R16 CP 118R",
+      axleLoadKg: 1800,
+      tyresOnAxle: 2,
+      axle: "front"
+    });
+    assert.equal(front.column, "front");
+    assert.equal(front.tableBar, 3.25);
+    assert.equal(front.bar, 3.25);
+    assert.equal(front.recommendedBar, 3.25);
+    assert.equal(front.appliedCpRearFloor, false);
+    assert.equal(front.note, undefined);
+  });
+
+  it("does not apply the 5.5 single-rear floor to CP dual rear", function () {
+    const dual = coldPressureForAxle({
+      sidewall: "225/75 R16 CP 118R",
+      axleLoadKg: 3500,
+      tyresOnAxle: 4,
+      axle: "rear"
+    });
+    assert.equal(dual.column, "dual");
+    assert.equal(dual.tableBar, 3.5);
+    assert.equal(dual.bar, 3.5);
+    assert.equal(dual.recommendedBar, 3.5);
+    assert.equal(dual.appliedCpRearFloor, false);
+    assert.match(dual.note, /RA T table only/);
+    assert.match(dual.note, /5\.5 bar ETRTO CP single-rear camping minimum does not apply/);
   });
 
   it("does not treat a CP size we do not have as a C tyre", function () {
