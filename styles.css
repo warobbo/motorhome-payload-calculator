@@ -748,8 +748,9 @@ footer.site-footer {
 }
 @media (max-width: 979px) {
   footer.site-footer {
-    padding-top: 5.75rem;
-    padding-bottom: calc(2.5rem + env(safe-area-inset-bottom, 0px));
+    padding-top: 1.4rem;
+    /* Clear the sticky cold-pressure / payload bar so Disclaimer and Privacy stay readable. */
+    padding-bottom: calc(7.5rem + env(safe-area-inset-bottom, 0px));
   }
 }
 .footer-inner { max-width: 1180px; margin: 0 auto; }
@@ -766,7 +767,7 @@ footer.site-footer {
   position: sticky;
   bottom: 0;
   z-index: 30;
-  margin: 0 -1rem -6.5rem;
+  margin: 0 -1rem 0;
   background: var(--paper);
   border-top: 1px solid var(--line);
   padding: 0.65rem 1rem calc(0.7rem + env(safe-area-inset-bottom));
