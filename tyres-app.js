@@ -189,7 +189,11 @@
         return parsed;
       }
       var text = T.describeSidewall(parsed);
-      var path = T.resolvePressurePath(parsed, { brand: $("brandLabel").value });
+      var path = T.resolvePressurePath(parsed, {
+      brand: $("brandLabel").value,
+      loadIndex: $("loadIndex").value,
+      dualLoadIndex: $("dualLoadIndex").value
+    });
       var rows = [];
       rows.push(row("Size", text.size));
       var familyNote = " — no inflation table on this page";
@@ -385,12 +389,20 @@
 
   function updateFamilyUi() {
     var parsed = T.parseSidewall($("sidewall").value);
-    var path = parsed && parsed.ok ? T.resolvePressurePath(parsed, { brand: $("brandLabel").value }) : null;
+    var path = parsed && parsed.ok ? T.resolvePressurePath(parsed, {
+      brand: $("brandLabel").value,
+      loadIndex: $("loadIndex").value,
+      dualLoadIndex: $("dualLoadIndex").value
+    }) : null;
     var badge = $("familyBadge");
     var isCFallback = path && path.path === "c-etrto";
     $("cChartWrap").hidden = !isCFallback;
     var rearParsed = $("rearDifferent").checked ? T.parseSidewall($("rearSidewall").value) : parsed;
-    var rearPath = rearParsed && rearParsed.ok ? T.resolvePressurePath(rearParsed, { brand: $("brandLabel").value }) : path;
+    var rearPath = rearParsed && rearParsed.ok ? T.resolvePressurePath(rearParsed, {
+      brand: $("brandLabel").value,
+      loadIndex: $("rearDifferent").checked ? $("rearLoadIndex").value : $("loadIndex").value,
+      dualLoadIndex: $("rearDifferent").checked ? $("rearDualLoadIndex").value : $("dualLoadIndex").value
+    }) : path;
     $("rearChartWrap").hidden = !(rearPath && rearPath.path === "c-etrto");
 
     if (!String($("sidewall").value).trim()) {
@@ -497,7 +509,7 @@
   }
 
   function afterChange() {
-    decodeInto("sidewall");
+    decodeInto("sidewall", { sync: true });
     renderAnswers();
     saveState();
   }

@@ -1244,6 +1244,19 @@ describe("Michelin Agilis C/LT tables", function () {
     assert.match(rear.pathInfo.source, /5\.5 bar/);
   });
 
+  it("says the load index is wrong when Michelin Camping CP size exists but LI does not", function () {
+    const r = coldPressureForAxle({
+      sidewall: "225/75 R16 CP 118R",
+      brand: "Michelin CrossClimate Camping",
+      loadIndex: 107,
+      axleLoadKg: 2000,
+      tyresOnAxle: 2,
+      axle: "rear"
+    });
+    assert.equal(r.error, "no-matching-li");
+    assert.equal(r.reason, "wrong-load-index");
+  });
+
   it("refuses Michelin Camping CP when there is no matching Conti camping row", function () {
     const r = coldPressureForAxle({
       sidewall: "215/75 R16 CP 116R",
