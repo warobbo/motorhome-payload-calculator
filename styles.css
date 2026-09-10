@@ -541,7 +541,11 @@ input:focus, select:focus, button:focus-visible {
 .result-hero .remaining .value {
   font-size: clamp(1.55rem, 6vw, 2.35rem);
 }
-.axle-status .value { word-break: break-word; }
+.axle-status .value {
+  word-break: normal;
+  overflow-wrap: normal;
+  font-size: clamp(1.45rem, 5.2vw, 2.1rem);
+}
 .remaining {
   text-align: center;
   padding: 0.85rem 0.5rem 0.5rem;
