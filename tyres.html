@@ -11,26 +11,26 @@
   <meta name="apple-mobile-web-app-title" content="Tyre Pressure">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
 
-  <title>Motorhome Tyre Pressure | Cold Front &amp; Rear from the Databook</title>
+  <title>Motorhome Tyre Pressure | Cold Front &amp; Rear</title>
   <meta name="description" content="Cold front and rear motorhome tyre pressure from your sidewall and axle weights. Continental / General and Michelin tables for listed sizes. Planner only.">
   <meta name="keywords" content="motorhome tyre pressure, camping tyre CP, cold tyre pressure, axle weight, UK motorhome tyres">
   <meta name="author" content="Motorhome Payload Calculator">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://motorhomepayload.co.uk/tyres.html">
 
-  <meta property="og:title" content="Motorhome Tyre Pressure | Cold Front &amp; Rear from the Databook">
+  <meta property="og:title" content="Motorhome Tyre Pressure | Cold Front &amp; Rear">
   <meta property="og:description" content="Enter the tyre sidewall and front and rear axle weights to read cold bar and PSI from published manufacturer tables.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://motorhomepayload.co.uk/tyres.html">
   <meta property="og:image" content="https://motorhomepayload.co.uk/og-image.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Motorhome tyre pressure from axle load">
+  <meta property="og:image:alt" content="Motorhome tyre pressure from axle weights">
   <meta property="og:locale" content="en_GB">
   <meta property="og:site_name" content="Motorhome Payload Calculator">
 
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Motorhome Tyre Pressure from axle load">
+  <meta name="twitter:title" content="Motorhome Tyre Pressure from axle weights">
   <meta name="twitter:description" content="Cold front and rear bar and PSI when you have fitted a different tyre size.">
   <meta name="twitter:image" content="https://motorhomepayload.co.uk/og-image.png">
 
@@ -65,23 +65,23 @@
       "mainEntity": [
         {
           "@type": "Question",
-          "name": "Where do these motorhome tyre pressures come from?",
+          "name": "Where do these pressures come from?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "From published manufacturer tables, not guesses. Today we cover Continental / General and Michelin for the sizes listed under Sources we use. If your size, brand or load index is not listed, the tool refuses a number."
+            "text": "From published manufacturer tables. Today we cover Continental / General and Michelin for the sizes listed under Sources we use. If your size, brand or load index is not listed, the tool refuses a number."
           }
         },
         {
           "@type": "Question",
-          "name": "Motorhome tyre pressure — cold or hot?",
+          "name": "Cold or hot?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "These figures are cold only. Cold means the van has been parked for a few hours, not just off a motorway. Pressure rises as tyres warm up. Do not let air out of a hot tyre to match this page."
+            "text": "These figures are cold only. Cold means the van has been parked for a few hours, not just off a motorway. Do not let air out of a hot tyre to match this page."
           }
         },
         {
           "@type": "Question",
-          "name": "Why isn’t my door-sticker pressure right for new tyres?",
+          "name": "Why isn’t the sticker inside the driver’s door right for new tyres?",
           "acceptedAnswer": {
             "@type": "Answer",
             "text": "The sticker inside the driver’s door matches the original factory size. A different size needs a pressure from that tyre’s published table at your actual axle weights."
@@ -97,7 +97,7 @@
         },
         {
           "@type": "Question",
-          "name": "What does CP mean on a motorhome tyre?",
+          "name": "What does CP mean?",
           "acceptedAnswer": {
             "@type": "Answer",
             "text": "CP means camping / motorhome tyre — not the same as a plain van C tyre. On a rear axle with two tyres we never show less than 5.5 bar, even if the table step is lower."
@@ -109,8 +109,8 @@
 }
   </script>
 
-  <!-- ASSET_VERSION=20260910copy4 — bump this query on CSS/JS below to force-refresh cached assets. -->
-  <link rel="stylesheet" href="styles.css?v=20260910copy4">
+  <!-- ASSET_VERSION=20260910copy5 — bump this query on CSS/JS below to force-refresh cached assets. -->
+  <link rel="stylesheet" href="styles.css?v=20260910copy5">
 </head>
 <body>
   <a class="skip" href="#tyres">Skip to tyre tool</a>
@@ -127,7 +127,7 @@
         </span>
         <span>
           <h1>Motorhome Tyre Pressure</h1>
-          <p>Cold front and rear from the published chart</p>
+          <p>Cold front and rear in bar and PSI</p>
         </span>
       </a>
     </div>
@@ -138,9 +138,10 @@
   </header>
 
   <main class="wrap" id="tyres">
-    <div class="intro">
+    <div class="intro" id="how-to-use">
       <h2>Use this when you’ve fitted a different size to the ones that came on the van.</h2>
       <p>The usual recommended pressures are usually on a sticker inside the driver’s door. Those match the original factory size, not a replacement size.</p>
+      <p>Enter the tyre specification information found on the sidewall of the tyre, add front and rear axle loads from either the vehicle VIN plate, from a public weighbridge, or from the Payload data.</p>
     </div>
 
     <div class="warn warn-over show banner-disclaimer" role="note">
@@ -170,25 +171,14 @@
       <p class="note" id="answerNotes"></p>
     </section>
 
-    <section class="prose how-to-use" id="how-to-use">
-      <h2>How to use</h2>
-      <ol>
-        <li>Use this when your tyres are a <strong>different size</strong> to the ones that came on the van. The usual pressures are usually on a sticker inside the driver’s door — those match the original size.</li>
-        <li>Enter the tyre specification from the <strong>sidewall</strong> (fields start empty; a faint example is shown in the box).</li>
-        <li>Add <strong>front and rear axle weights</strong> in kg from a public weighbridge (best), the Payload calculator, or the VIN plate (plated figures are usually maximums, not today’s weight).</li>
-        <li>Read <strong>cold front</strong> and <strong>cold rear</strong> in bar and PSI. If your size or load index isn’t covered, the tool refuses — no guessed pressure.</li>
-        <li>See <a href="#sources">Sources we use</a> for which manufacturer tables we cover today.</li>
-      </ol>
-    </section>
-
     <aside class="sources-note" id="sources" aria-labelledby="sources-heading">
       <h2 id="sources-heading">Sources we use</h2>
       <p>Pressures come from published manufacturer tables — not guesses.</p>
       <ul>
-        <li><strong>Covered today:</strong> Continental / General (LT, C and camping CP sizes we list) and Michelin Agilis CrossClimate C and LT, plus Michelin CrossClimate Camping CP where we have a matching published camping row (rear never below 5.5 bar).</li>
+        <li><strong>Covered today:</strong> Continental / General (listed LT, C and camping CP sizes) and Michelin Agilis CrossClimate C and LT. Michelin CrossClimate Camping CP only where we have a matching camping row — rear never below 5.5 bar.</li>
       </ul>
-      <p>If your size, brand or load index is not listed, the tool refuses a number. We will not invent one.</p>
-      <p>Don’t go above the maximum <strong>air pressure</strong> marked on the wheel (bar or PSI) — that limit is pressure, not weight. If you can’t find it, ask a tyre fitter. Also check pressures cold, and weigh the axles when you can.</p>
+      <p>If your size, brand or load index is not listed, the tool refuses a number.</p>
+      <p>Don’t go above the maximum <strong>air pressure</strong> marked on the wheel. Check pressures cold.</p>
     </aside>
 
     <details class="block" open>
@@ -199,7 +189,7 @@
         </span>
       </summary>
       <div class="body">
-        <p class="lede">Enter the specification from the sidewall you fitted. The sticker inside the driver’s door matches the original size, not a replacement size.</p>
+        <p class="lede">The size printed on the tyre you fitted.</p>
         <div class="example-bar">
           <button type="button" class="btn btn-ghost" id="loadExample">Load an example</button>
           <span class="hint">Optional sample only — fields start empty.</span>
@@ -228,8 +218,8 @@
           <div class="field">
             <label for="tyresOnAxle">Tyres on each axle</label>
             <select id="tyresOnAxle">
-              <option value="2" selected>2 (usual motorhome axle — Single column)</option>
-              <option value="4">4 (dual wheels — Dual column)</option>
+              <option value="2" selected>2 (usual motorhome axle)</option>
+              <option value="4">4 (dual wheels)</option>
             </select>
           </div>
         </div>
@@ -237,7 +227,7 @@
           <div class="field">
             <label for="chartId">C-type chart (van tyres only)</label>
             <select id="chartId">
-              <option value="c375">C-type — load index at 3.75 bar (ETRTO)</option>
+              <option value="c375">C-type — load index at 3.75 bar</option>
               <option value="c450">C-type / van — load index at 4.50 bar</option>
             </select>
             <span class="hint">Shown only for some van C tyres we do not have a full table for.</span>
@@ -289,7 +279,7 @@
         </span>
       </summary>
       <div class="body">
-        <p class="lede">Enter front and rear axle <strong>weight</strong> in kg — from a public weighbridge (best), the Payload calculator, or plated axle figures on the VIN plate if that’s all you have (plated figures are usually maximums, not today’s weight). This is weight on each axle, not payload remaining.</p>
+        <p class="lede">Front and rear axle <strong>weight</strong> in kg. A public weighbridge is best. VIN-plate figures are usually maximums, not today’s weight. Or use the Payload calculator.</p>
         <div class="grid-2">
           <div class="field">
             <label for="frontAxleKg">Front axle weight</label>
@@ -304,7 +294,7 @@
         </div>
         <details class="plate-find" id="splitHelper">
           <summary>Estimate from total laden weight + front/rear split %</summary>
-          <p>Use this only if you do not have per-axle weights. It turns a total kg and a front % into axle loads — still an estimate, not payload remaining.</p>
+          <p>Only if you do not have per-axle weights. Turns a total kg and a front % into axle weights — still an estimate.</p>
           <div class="grid-2">
             <div class="field">
               <label for="totalKg">Total laden weight</label>
@@ -386,50 +376,38 @@
     <section class="prose faq" id="faq">
       <h2>Tyres FAQ</h2>
       <details open>
-        <summary>Where do these motorhome tyre pressures come from?</summary>
-        <p>From published manufacturer tables, not guesses. We use the table that matches the tyre you typed. See <a href="#sources">Sources we use</a> for the brands and sizes covered today. If your size, brand or load index is not listed, the tool refuses a number.</p>
+        <summary>Where do these pressures come from?</summary>
+        <p>From published manufacturer tables. See <a href="#sources">Sources we use</a>. If your size, brand or load index is not listed, the tool refuses a number.</p>
       </details>
       <details>
-        <summary>Which brands do you have tables for?</summary>
-        <p>Today: Continental / General, and Michelin (Agilis C and LT, plus CrossClimate Camping CP where we have a matching published camping row). If your size or brand is not listed, this page refuses a number. We will not invent one.</p>
+        <summary>Cold or hot?</summary>
+        <p>These figures are <strong>cold</strong> only — van parked for a few hours, not just off a motorway. Do not let air out of a hot tyre to match this page.</p>
       </details>
       <details>
-        <summary>Motorhome tyre pressure — cold or hot?</summary>
-        <p>These figures are <strong>cold</strong> only. Cold means the van has been parked for a few hours, not just off a motorway. Pressure rises as tyres warm up. Do not let air out of a hot tyre to “match” this page.</p>
-      </details>
-      <details>
-        <summary>Why isn’t my door-sticker pressure right for new tyres?</summary>
-        <p>The sticker inside the driver’s door is written for the original factory size. A different size needs a pressure from that tyre’s published table at <em>your</em> axle weights. Copying the old sticker can under- or over-inflate the new rubber.</p>
+        <summary>Why isn’t the sticker inside the driver’s door right for new tyres?</summary>
+        <p>That sticker matches the original factory size. A different size needs a pressure from that tyre’s published table at your axle weights.</p>
       </details>
       <details>
         <summary>What if the tyre cannot carry the axle weight?</summary>
-        <p>This page shows a clear fail and will <strong>not</strong> suggest a pressure if the axle weight is over the last published step for that size. Fit a higher-capacity tyre, or lose weight. A fitter and the vehicle plate win.</p>
+        <p>This page shows a fail and will not suggest a pressure if the axle weight is over the last published step. Fit a higher-capacity tyre, or lose weight.</p>
       </details>
       <details>
-        <summary>What does CP mean on a motorhome tyre?</summary>
-        <p><strong>CP</strong> means camping / motorhome tyre. It is not the same as a plain <strong>C</strong> van tyre. On a rear axle with two tyres we never show less than <strong>5.5 bar</strong>, even if the table step is lower. Front stays on the table. Four tyres on the rear do not use that 5.5 bar minimum.</p>
-      </details>
-      <details>
-        <summary>Why does a CP rear often show 5.5 bar?</summary>
-        <p>The table can look low on a modest rear axle weight. For a camping tyre with two tyres on the rear we show the <strong>higher of the table step and 5.5 bar</strong>. The note still prints the table figure so you can see both. A fitter still wins.</p>
+        <summary>What does CP mean?</summary>
+        <p><strong>CP</strong> is a camping / motorhome tyre — not a plain <strong>C</strong> van tyre. On a rear axle with two tyres we never show less than <strong>5.5 bar</strong>, even if the table step is lower. Front stays on the table.</p>
       </details>
       <details>
         <summary>What does the load index 120/117 mean?</summary>
-        <p>Those numbers on the sidewall are load indexes. Each one is a separate row in the table — we will not silently use a different number. The first figure is for two tyres on the axle. The second is only for dual wheels (four tyres).</p>
+        <p>The first figure is for two tyres on the axle. The second is only for dual wheels (four tyres). We will not silently use a different number.</p>
       </details>
       <details>
         <summary>Is this a substitute for a tyre fitter?</summary>
-        <p>No. Planning estimate only. If the size is outside the tables on this page, it refuses to invent a number. Confirm with the tyre maker’s published chart and a fitter.</p>
-      </details>
-      <details>
-        <summary>How does this sit with the payload calculator?</summary>
-        <p>Use the <a href="index.html">payload calculator</a> for MAM and kit. Use this page once you know (or estimate) axle weights and have fitted a different tyre.</p>
+        <p>No. Planning estimate only. Confirm with the tyre maker’s published chart and a fitter.</p>
       </details>
     </section>
 
     <section class="prose" id="about">
       <h2>About</h2>
-      <p>This tyre pressure tool sits on the Motorhome Payload hub. Enter the sidewall of the tyre you fitted and your front and rear axle weights to get cold pressures in bar and PSI. Your figures stay on this device — nothing is sent away to calculate. We only use published manufacturer tables for the brands and sizes listed under <a href="#sources">Sources we use</a>. If your size or load index isn’t covered, the tool refuses a number rather than guessing. This is a guide — check pressures cold, don’t exceed the wheel’s maximum air pressure, and ask a tyre fitter if unsure.</p>
+      <p>Cold front and rear from the published table for the tyre you typed. Figures stay on this device. If your size isn’t listed, the tool refuses a number. Check pressures cold, don’t exceed the wheel’s maximum air pressure, and ask a tyre fitter if unsure. See <a href="#sources">Sources we use</a>.</p>
     </section>
 
     <section class="prose" id="privacy">
@@ -461,9 +439,9 @@
     </div>
   </footer>
 
-  <script src="lib/tyre-tra-db.js?v=20260910copy1"></script>
-  <script src="lib/tyre-michelin-db.js?v=20260910copy1"></script>
-  <script src="lib/tyre-calc.js?v=20260910copy1"></script>
-  <script src="tyres-app.js?v=20260910copy3"></script>
+  <script src="lib/tyre-tra-db.js?v=20260910copy5"></script>
+  <script src="lib/tyre-michelin-db.js?v=20260910copy5"></script>
+  <script src="lib/tyre-calc.js?v=20260910copy5"></script>
+  <script src="tyres-app.js?v=20260910copy5"></script>
 </body>
 </html>

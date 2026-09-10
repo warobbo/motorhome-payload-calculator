@@ -323,7 +323,7 @@
     if (result.status === "over-capacity") {
       if (result.path === "lt-databook" || result.path === "c-databook" || result.path === "cp-databook") {
         var colName = result.column === "dual" ? "Dual" : (result.column === "front" ? "Front" : (result.column === "rear" ? "Rear" : "Single"));
-        return "Over the databook " + colName + " column at " + result.maxBar + " bar (" +
+        return "Over the published table " + colName + " column at " + result.maxBar + " bar (" +
           Math.round(result.axleLoadKg) + " kg on the axle; max " + Math.round(result.maxKg) +
           " kg/axle). No safe pressure from this chart.";
       }
@@ -342,7 +342,7 @@
       bits.push(Math.round(result.axleLoadKg) + " kg on the axle");
       bits.push(usedCol + " column " +
         Math.round(result.capacityKg) + " kg/axle covers it");
-      bits.push("lowest databook bar step");
+      bits.push("lowest published bar step");
     } else {
       bits.push(Math.round(result.loadKg) + " kg on each of " + result.tyresOnAxle + " tyres");
       bits.push("index " + result.usedIndex + " = " + result.lref + " kg");

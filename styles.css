@@ -177,6 +177,7 @@ a { color: var(--pine); }
   letter-spacing: -0.03em;
 }
 .intro p { margin: 0; color: var(--muted); }
+.intro p + p { margin-top: 0.7rem; }
 
 .how-to-use {
   margin: 0 0 1.2rem;
