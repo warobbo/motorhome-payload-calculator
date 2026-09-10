@@ -204,10 +204,23 @@ describe("describeSidewall", function () {
     assert.match(text.size, /215 mm wide/);
     assert.match(text.size, /15-inch/);
     assert.match(text.service, /C — reinforced van tyre/);
+    assert.equal(text.service.includes("ETRTO"), false);
+    assert.equal(text.service.includes("VanContact"), false);
     assert.match(text.load, /1030 kg/);
     assert.match(text.load, /975 kg/);
     assert.match(text.speed, /99 mph/);
     assert.match(text.speed, /160 km\/h/);
+  });
+
+  it("uses one short line for CP and LT marks", function () {
+    assert.equal(
+      describeSidewall(parseSidewall("225/75 R16 CP 118R")).service,
+      "CP — camping / motorhome tyre (not a plain van C tyre)"
+    );
+    assert.equal(
+      describeSidewall(parseSidewall("LT265/65R17 120/117S")).service,
+      "LT — light truck tyre"
+    );
   });
 
   it("returns null when parse failed", function () {
