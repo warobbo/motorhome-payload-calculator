@@ -203,6 +203,39 @@ a { color: var(--pine); }
 }
 .axle-block .lede { margin-bottom: 0.65rem; }
 .axle-block .field-heading { margin-top: 0; color: var(--pine-2); }
+.weighbridge-axle-card {
+  margin-top: 0.85rem;
+}
+.weighbridge-axle-card .lede { color: var(--ink); }
+.axle-mode {
+  display: flex;
+  flex-wrap: wrap;
+  background: #fff;
+  border-radius: 999px;
+  padding: 4px;
+  border: 1.5px solid var(--line);
+  margin: 0 0 0.55rem;
+}
+.axle-mode input { position: absolute; opacity: 0; pointer-events: none; }
+.axle-mode label {
+  flex: 1 1 8rem;
+  text-align: center;
+  padding: 0.55rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.88rem;
+  font-weight: 650;
+  cursor: pointer;
+  color: var(--muted);
+  min-height: 2.6rem;
+  display: grid;
+  place-items: center;
+}
+.axle-mode input:checked + label {
+  background: var(--pine);
+  color: #fff;
+}
+.axle-mode input:focus-visible + label { box-shadow: var(--focus); }
+#axleModeHint { margin: 0 0 0.7rem; font-weight: 600; color: var(--ink); }
 
 .how-to-use {
   margin: 0 0 1.2rem;
@@ -496,6 +529,19 @@ input:focus, select:focus, button:focus-visible {
   margin: 0 0 0.35rem;
   font-size: 1.05rem;
 }
+.result-hero {
+  display: grid;
+  gap: 0.55rem;
+  margin: 0.6rem 0 0.85rem;
+}
+@media (min-width: 360px) {
+  .result-hero { grid-template-columns: 1fr 1fr; }
+}
+.result-hero .remaining { margin: 0; }
+.result-hero .remaining .value {
+  font-size: clamp(1.55rem, 6vw, 2.35rem);
+}
+.axle-status .value { word-break: break-word; }
 .remaining {
   text-align: center;
   padding: 0.85rem 0.5rem 0.5rem;

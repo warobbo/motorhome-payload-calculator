@@ -1,6 +1,6 @@
 # Motorhome Payload Calculator
 
-A free, mobile-first **UK motorhome / campervan payload hub**: the payload calculator plus a tyre-pressure tool for non-OEM sizes. Built for checking whether a loaded van stays under its plated MAM — 3500, 3850, 4500 kg or whatever is on the plate. A 3.5 t Ducato or Boxer is a common example, not the product identity.
+A free, mobile-first **UK motorhome / campervan payload hub**: the payload calculator plus a tyre-pressure tool for non-OEM sizes. Built for checking whether a loaded van stays under its plated **Maximum Authorised Mass (MAM)** — the heaviest your van is allowed to be on the road. For UK campervans and motorhomes at any plated weight — light vans around 2800–3200 kg (e.g. VW Transporter-style), motorhomes at 3500, 3850, 4500 kg and up.
 
 The site is static HTML/CSS/JS plus a tiny Node server. Registration lookup is proxied through `/api/vehicle-lookup` so the DVLA key stays on Render, not in the public page. Tyre figures never leave the browser.
 
@@ -20,6 +20,7 @@ Then visit [http://localhost:4173](http://localhost:4173) (payload) or [http://l
 - UK registration lookup for make and plated revenue weight (often the MAM)
 - Live remaining-payload calculation as you type
 - Vehicle base (empty weighbridge ticket first, then V5 Mass in Service, MAM, plate axle ratings)
+- Empty or Loaded weighbridge axle check (front/rear kg vs plate limits — never invented from kit)
 - People, pets, water, diesel, gas bottles, batteries, solar, touring kit and custom extra items
 - Metric (kg / litres) by default, with a UK imperial toggle (lb / UK gallons)
 - Remembers the last figures in `localStorage`
