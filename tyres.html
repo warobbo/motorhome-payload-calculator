@@ -109,8 +109,8 @@
 }
   </script>
 
-  <!-- ASSET_VERSION=20260910copy6 — bump this query on CSS/JS below to force-refresh cached assets. -->
-  <link rel="stylesheet" href="styles.css?v=20260910copy6">
+  <!-- ASSET_VERSION=20260910copy7 — bump this query on CSS/JS below to force-refresh cached assets. -->
+  <link rel="stylesheet" href="styles.css?v=20260910copy7">
 </head>
 <body>
   <a class="skip" href="#tyres">Skip to tyre tool</a>
@@ -138,11 +138,22 @@
   </header>
 
   <main class="wrap" id="tyres">
-    <div class="intro" id="how-to-use">
+    <div class="intro">
       <h2>Use this when you’ve fitted a different size to the ones that came on the van.</h2>
       <p>The usual recommended pressures are usually on a sticker inside the driver’s door. Those match the original factory size, not a replacement size.</p>
       <p>Enter the tyre specification information found on the sidewall of the tyre, add front and rear axle loads from either the vehicle VIN plate, from a public weighbridge, or from the Payload data.</p>
     </div>
+
+    <section class="prose how-to-use" id="how-to-use">
+      <h2>How to use</h2>
+      <ol>
+        <li>Use this when your tyres are a <strong>different size</strong> to the ones that came on the van. The usual pressures are usually on a sticker inside the driver’s door — those match the original size.</li>
+        <li>Enter the tyre specification from the <strong>sidewall</strong> (fields start empty; a faint example is shown in the box, such as <code>225/75R16C 118R</code>).</li>
+        <li>Add front and rear axle loads in kg from the vehicle VIN plate, a public weighbridge, or the Payload calculator.</li>
+        <li>Read <strong>cold front</strong> and <strong>cold rear</strong> in bar and PSI. If your size or load index isn’t covered, the tool refuses — no guessed pressure.</li>
+        <li>See <a href="#sources">Sources we use</a> — that box names the manufacturer tables we use.</li>
+      </ol>
+    </section>
 
     <div class="warn warn-over show banner-disclaimer" role="note">
       <strong>Planning estimate only — cold pressures.</strong>
