@@ -1,11 +1,11 @@
 /* =========================================================================
    Tyres tool UI — sidewall + axle loads → cold front/rear from the
-   right published table (TRA LT or ETRTO C-type).
+   right published table (Continental LT databook or ETRTO C-type).
    ========================================================================= */
 (function () {
   "use strict";
 
-  var STORAGE_KEY = "mh-tyres-v3";
+  var STORAGE_KEY = "mh-tyres-v4";
   var T = window.TyreCalc;
   if (!T) return;
 
@@ -192,7 +192,7 @@
       var path = T.resolvePressurePath(parsed);
       var rows = [];
       rows.push(row("Size", text.size));
-      rows.push(row("Family", parsed.family + (path.path === "lt-tra" ? " — TRA Light Truck table" : path.path === "c-etrto" ? " — ETRTO C-type chart" : " — no inflation table on this page")));
+      rows.push(row("Family", parsed.family + (path.path === "lt-databook" ? " — Continental / General Databook 2025 LT table" : path.path === "c-etrto" ? " — ETRTO C-type chart" : " — no inflation table on this page")));
       rows.push(row("C / LT mark", text.service));
       if (text.extraLoad) rows.push(row("Reinforced", text.extraLoad));
       if (text.load) rows.push(row("Load index", text.load));
@@ -237,7 +237,9 @@
 
   function formatBar(bar) {
     if (bar == null) return "";
-    return Number(T.roundBar(bar)).toFixed(2);
+    var n = Number(T.roundBar(bar));
+    if (Math.abs(n * 10 - Math.round(n * 10)) < 1e-9) return n.toFixed(1);
+    return n.toFixed(2);
   }
 
   function paintValue(result, valueEl, altEl) {
@@ -248,19 +250,17 @@
     }
     if (result.status === "over-capacity" || result.status === "over-pressure") {
       valueEl.textContent = "Fail";
-      altEl.textContent = result.path === "lt-tra"
-        ? "Over max at 80 PSI"
+      altEl.textContent = result.path === "lt-databook"
+        ? "Over 5.5 bar Single (2800 kg/axle)"
         : "Over this chart";
+      if (result.path === "lt-databook" && result.column === "dual") {
+        altEl.textContent = "Over 5.5 bar Dual (5140 kg/axle)";
+      }
       return;
     }
     if (result.psi == null && result.bar == null) {
       valueEl.textContent = "—";
       altEl.textContent = "";
-      return;
-    }
-    if (result.path === "lt-tra" && result.psi != null) {
-      valueEl.textContent = formatPsi(result.psi) + " PSI";
-      altEl.textContent = formatBar(result.bar) + " bar";
       return;
     }
     valueEl.textContent = formatBar(result.bar) + " bar";
@@ -279,7 +279,7 @@
       }
       if (result.error === "no-table") {
         if (result.reason === "lt-size-unknown") {
-          return "That LT size is not in the TRA table on this page yet, so it will not invent a pressure.";
+          return "That LT size is not in the Continental Databook table on this page yet, so it will not invent a pressure.";
         }
         if (result.reason === "p-metric") {
           return "P-metric size — this page has no published inflation table for it, so it will not invent a pressure.";
@@ -291,10 +291,11 @@
       return "Not enough to calculate the " + axleName + ".";
     }
     if (result.status === "over-capacity") {
-      if (result.path === "lt-tra") {
-        return "Over the TRA table at 80 PSI (" + Math.round(result.loadKg) +
-          " kg on each tyre; max " + Math.round(result.maxKg) + " kg / " + result.maxLb +
-          " lb). No safe pressure from this chart.";
+      if (result.path === "lt-databook") {
+        var colName = result.column === "dual" ? "Dual" : "Single";
+        return "Over the Continental Databook " + colName + " column at 5.5 bar (" +
+          Math.round(result.axleLoadKg) + " kg on the axle; max " + Math.round(result.maxKg) +
+          " kg/axle). No safe pressure from this chart.";
       }
       return "Over load-index capacity (" + Math.round(result.loadKg) + " kg on each tyre; index " +
         result.usedIndex + " is " + result.lref + " kg). No safe pressure from this chart.";
@@ -303,14 +304,13 @@
       return "Would need more than the chart maximum to carry this load. No pressure suggested.";
     }
     var bits = [];
-    bits.push(Math.round(result.loadKg) + " kg on each of " + result.tyresOnAxle + " tyres");
-    if (result.path === "lt-tra") {
-      bits.push((result.column === "dual" ? "Dual" : "Single") + " column");
-      bits.push("lowest table PSI that covers the load");
-      if (result.interpolatedPsi != null && result.interpolatedPsi !== result.psi) {
-        bits.push("between-steps interpolation " + formatPsi(result.interpolatedPsi) + " PSI");
-      }
+    if (result.path === "lt-databook") {
+      bits.push(Math.round(result.axleLoadKg) + " kg on the axle");
+      bits.push((result.column === "dual" ? "Dual" : "Single") + " column " +
+        Math.round(result.capacityKg) + " kg/axle covers it");
+      bits.push("lowest databook bar step");
     } else {
+      bits.push(Math.round(result.loadKg) + " kg on each of " + result.tyresOnAxle + " tyres");
       bits.push("index " + result.usedIndex + " = " + result.lref + " kg");
       if (result.useDual) bits.push("dual-wheel figure");
       if (result.status === "min-pressure") bits.push("raised to the chart minimum cold pressure");
@@ -326,12 +326,8 @@
   }
 
   function sourceHtml(result) {
-    if (result && result.path === "lt-tra" && result.table) {
-      var cite = result.table.source;
-      if (result.table.sourceUrl) {
-        cite += ' <a href="' + escapeHtml(result.table.sourceUrl) + '" rel="noopener noreferrer">Public LT-metric table</a>.';
-      }
-      return cite;
+    if (result && result.path === "lt-databook" && result.table) {
+      return result.table.source;
     }
     if (result && result.path === "c-etrto" && result.chart) {
       return result.chart.label + " — " + result.chart.source;
@@ -360,9 +356,9 @@
       badge.textContent = "Sidewall not recognised yet — try LT265/65R17 120/117S.";
       return path;
     }
-    if (path.path === "lt-tra") {
+    if (path.path === "lt-databook") {
       var brand = $("brandLabel").value.trim();
-      badge.textContent = (brand ? brand + " · " : "") + "LT-metric · TRA Light Truck table for " + path.tableId;
+      badge.textContent = (brand ? brand + " · " : "") + "LT 265/65 R 17 · Continental / General Databook 2025";
     } else if (path.path === "c-etrto") {
       badge.textContent = path.label;
     } else {
@@ -389,8 +385,8 @@
 
     var extras = [];
     var brand = $("brandLabel").value.trim();
-    if (brand && path && path.path === "lt-tra") {
-      extras.push(brand + " is a label only. The pressure source is still the TRA LT table for this size, not a branded PDF.");
+    if (brand && path && path.path === "lt-databook") {
+      extras.push(brand + " — pressures are from the Continental Tyre Databook 2025 LT table (kg per axle), which applies to Continental brands including General.");
     }
     if ($("rearDifferent").checked) extras.push("Front and rear tyres are set separately.");
     if (path && path.family === "CP") {
@@ -398,8 +394,8 @@
     }
     $("answerNotes").textContent = extras.join(" ");
 
-    if (lastFront && lastFront.psi != null && lastRear && lastRear.psi != null) {
-      $("dockValue").textContent = formatPsi(lastFront.psi) + " / " + formatPsi(lastRear.psi) + " PSI";
+    if (lastFront && lastFront.bar != null && lastRear && lastRear.bar != null) {
+      $("dockValue").textContent = formatBar(lastFront.bar) + " / " + formatBar(lastRear.bar) + " bar";
       $("dockHint").textContent = "Cold front / rear";
       $("dock").className = "dock dock-ok";
     } else if ((lastFront && (lastFront.status === "over-capacity" || lastFront.status === "over-pressure")) ||
@@ -453,7 +449,7 @@
     decodeInto("sidewall", { sync: true });
     renderAnswers();
     saveState();
-    setSaveNote("Wayne’s General Grabber example loaded.");
+    setSaveNote("Wayne’s General Grabber example loaded — 3.5 bar front / 4.0 bar rear.");
   }
 
   function copyAnswers() {

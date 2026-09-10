@@ -4,11 +4,8 @@ const { describe, it } = require("node:test");
 const assert = require("node:assert/strict");
 const {
   BAR_TO_PSI,
-  LB_TO_KG,
   barToPsi,
   psiToBar,
-  lbToKg,
-  kgToLb,
   roundBar,
   roundPsi,
   loadIndexToKg,
@@ -19,14 +16,15 @@ const {
   PRESSURE_CHARTS,
   PRESSURE_EXPONENT,
   LT_TABLES,
+  LT_DATABOOK_SOURCE,
   WAYNE_EXAMPLE,
   getChart,
   suggestChartId,
   resolvePressurePath,
   splitAxleLoads,
   roundUpBar,
-  ltCapacityAtPsi,
-  ltColdPsiForLoad,
+  ltCapacityAtBar,
+  ltColdBarForAxleLoad,
   coldPressureForLoad,
   coldPressureForAxle
 } = require("../lib/tyre-calc");
@@ -285,10 +283,10 @@ describe("suggestChartId", function () {
     assert.equal(suggestChartId(parseSidewall("225/70 R15CP 115/113 Q")), "c375");
   });
 
-  it("picks the TRA LT table for LT-metric markings, not the C-type formula", function () {
-    assert.equal(suggestChartId(parseSidewall("LT265/65R17 120/117S")), "lt-tra");
-    assert.equal(suggestChartId(parseSidewall("265/65 R17 120/117S")), "lt-tra");
-    assert.equal(suggestChartId({ ok: true, service: "LT", family: "LT", extraLoad: false }), "lt-tra");
+  it("picks the Continental LT databook for LT-metric markings, not the C-type formula", function () {
+    assert.equal(suggestChartId(parseSidewall("LT265/65R17 120/117S")), "lt-databook");
+    assert.equal(suggestChartId(parseSidewall("265/65 R17 120/117S")), "lt-databook");
+    assert.equal(suggestChartId({ ok: true, service: "LT", family: "LT", extraLoad: false }), "lt-databook");
   });
 
   it("picks passenger or XL from the marking", function () {
@@ -430,7 +428,7 @@ describe("coldPressureForAxle", function () {
     assert.equal(coldPressureForAxle({ axleLoadKg: 1600, tyresOnAxle: 0, loadIndex: 109, chartId: "c375" }).error, "tyres");
   });
 
-  it("uses the TRA LT table for Wayne’s Grabber, not the C-type ETRTO path", function () {
+  it("uses the Continental databook for Wayne’s Grabber, not the C-type ETRTO path", function () {
     const lt = coldPressureForAxle({
       sidewall: WAYNE_EXAMPLE.sidewall,
       axleLoadKg: WAYNE_EXAMPLE.frontAxleKg,
@@ -442,90 +440,63 @@ describe("coldPressureForAxle", function () {
       tyresOnAxle: 2,
       chartId: "c375"
     });
-    assert.equal(lt.path, "lt-tra");
-    assert.equal(lt.psi, 45);
+    assert.equal(lt.path, "lt-databook");
+    assert.equal(lt.bar, 3.5);
     assert.equal(cType.path, "c-etrto");
-    assert.notEqual(lt.psi, cType.psi);
+    assert.notEqual(lt.bar, cType.bar);
   });
 });
 
-describe("kg / lb", function () {
-  it("converts with the standard avoirdupois factor", function () {
-    assert.equal(LB_TO_KG, 0.45359237);
-    assert.ok(Math.abs(lbToKg(3085) - 1399.332) < 0.001);
-    assert.ok(Math.abs(kgToLb(lbToKg(3085)) - 3085) < 1e-9);
-    assert.equal(lbToKg(""), null);
-    assert.equal(kgToLb("nope"), null);
-  });
-});
-
-describe("LT265/65R17 TRA table", function () {
-  it("embeds the published single and dual pound rows", function () {
+describe("LT265/65R17 Continental Databook 2025", function () {
+  it("embeds the official kg-per-axle Single and Dual rows", function () {
     const rows = LT_TABLES["265/65R17"].rows;
-    assert.equal(rows[0].psi, 35);
-    assert.equal(rows[0].singleLb, 1765);
-    assert.equal(rows[0].dualLb, 1605);
-    assert.equal(rows[3].psi, 50);
-    assert.equal(rows[3].singleLb, 2270);
-    assert.equal(rows[3].dualLb, 2040);
+    assert.match(LT_DATABOOK_SOURCE, /Continental Tyre Databook 2025/);
+    assert.match(LT_DATABOOK_SOURCE, /Not the old US lb\/PSI extract/);
+    assert.equal(LT_TABLES["265/65R17"].loadRange, "E");
+    assert.equal(LT_TABLES["265/65R17"].measuringRim, "8J");
+    assert.equal(rows[0].bar, 2.5);
+    assert.equal(rows[0].singleKg, 1490);
+    assert.equal(rows[0].dualKg, 2735);
+    assert.equal(rows[2].bar, 3.5);
+    assert.equal(rows[2].singleKg, 1950);
+    assert.equal(rows[3].bar, 4.0);
+    assert.equal(rows[3].singleKg, 2170);
     const max = rows[rows.length - 1];
-    assert.equal(max.psi, 80);
-    assert.equal(max.singleLb, 3085);
-    assert.equal(max.dualLb, 2835);
-    assert.ok(Math.abs(lbToKg(3085) - 1399.332) < 0.001);
+    assert.equal(max.bar, 5.5);
+    assert.equal(max.singleKg, 2800);
+    assert.equal(max.dualKg, 5140);
   });
 
-  it("returns exact capacity on a published PSI step", function () {
-    const r = ltCapacityAtPsi({ psi: 80, column: "single", sizeKey: "265/65R17" });
+  it("returns exact capacity on a published bar step and refuses invented steps", function () {
+    const r = ltCapacityAtBar({ bar: 5.5, column: "single", sizeKey: "265/65R17" });
     assert.equal(r.ok, true);
-    assert.equal(r.interpolated, false);
-    assert.equal(r.capacityLb, 3085);
-    const dual = ltCapacityAtPsi({ psi: 80, column: "dual", sizeKey: "265/65R17" });
-    assert.equal(dual.capacityLb, 2835);
+    assert.equal(r.capacityKg, 2800);
+    const dual = ltCapacityAtBar({ bar: 5.5, column: "dual", sizeKey: "265/65R17" });
+    assert.equal(dual.capacityKg, 5140);
+    assert.equal(ltCapacityAtBar({ bar: 3.25, column: "single", sizeKey: "265/65R17" }).error, "outside-table");
+    assert.equal(ltCapacityAtBar({ bar: 3.5, column: "single", sizeKey: "275/70R18" }).error, "unknown-table");
   });
 
-  it("interpolates capacity between PSI steps and refuses values outside the table", function () {
-    const mid = ltCapacityAtPsi({ psi: 42.5, column: "single", sizeKey: "265/65R17" });
-    assert.equal(mid.ok, true);
-    assert.equal(mid.interpolated, true);
-    assert.equal(mid.capacityLb, 2020);
-    assert.equal(ltCapacityAtPsi({ psi: 30, column: "single", sizeKey: "265/65R17" }).error, "outside-table");
-    assert.equal(ltCapacityAtPsi({ psi: 85, column: "single", sizeKey: "265/65R17" }).error, "outside-table");
-    assert.equal(ltCapacityAtPsi({ psi: 50, column: "single", sizeKey: "275/70R18" }).error, "unknown-table");
+  it("steps to the lowest bar whose Single kg/axle covers the axle load", function () {
+    assert.equal(ltColdBarForAxleLoad({ axleLoadKg: 1800, column: "single" }).bar, 3.5);
+    assert.equal(ltColdBarForAxleLoad({ axleLoadKg: 2100, column: "single" }).bar, 4.0);
+    assert.equal(ltColdBarForAxleLoad({ axleLoadKg: 2800, column: "single" }).bar, 5.5);
+    assert.equal(ltColdBarForAxleLoad({ axleLoadKg: 1720, column: "single" }).bar, 3.0);
+    assert.equal(ltColdBarForAxleLoad({ axleLoadKg: 1721, column: "single" }).bar, 3.5);
+    assert.equal(ltColdBarForAxleLoad({ axleLoadKg: 1950, column: "single" }).bar, 3.5);
+    assert.equal(ltColdBarForAxleLoad({ axleLoadKg: 1951, column: "single" }).bar, 4.0);
   });
 
-  it("steps up to the lowest published PSI that covers the load", function () {
-    const exact = ltColdPsiForLoad({ loadLb: 1935, column: "single", sizeKey: "265/65R17" });
-    assert.equal(exact.status, "ok");
-    assert.equal(exact.psi, 40);
-    assert.equal(exact.interpolatedPsi, 40);
-
-    const justOver = ltColdPsiForLoad({ loadLb: 1936, column: "single", sizeKey: "265/65R17" });
-    assert.equal(justOver.psi, 45);
-    assert.ok(justOver.interpolatedPsi >= 40);
-    assert.ok(justOver.interpolatedPsi < 45);
-
-    const wayneFront = ltColdPsiForLoad({ loadKg: 900, column: "single", sizeKey: "265/65R17" });
-    assert.equal(wayneFront.psi, 45);
-    assert.ok(Math.abs(wayneFront.bar - 45 / BAR_TO_PSI) < 0.005);
-  });
-
-  it("interpolates PSI between the surrounding table rows", function () {
-    const r = ltColdPsiForLoad({ loadLb: 2020, column: "single", sizeKey: "265/65R17" });
-    assert.equal(r.psi, 45);
-    assert.equal(r.interpolatedPsi, 42.5);
-  });
-
-  it("fails when the load is over the 80 PSI single maximum", function () {
-    const r = ltColdPsiForLoad({ loadLb: 3086, column: "single", sizeKey: "265/65R17" });
+  it("fails when the axle load is over 2800 kg Single at 5.5 bar", function () {
+    const r = ltColdBarForAxleLoad({ axleLoadKg: 2801, column: "single" });
     assert.equal(r.status, "over-capacity");
-    assert.equal(r.psi, null);
     assert.equal(r.bar, null);
-    assert.equal(r.maxPsi, 80);
-    assert.equal(r.maxLb, 3085);
+    assert.equal(r.psi, null);
+    assert.equal(r.maxBar, 5.5);
+    assert.equal(r.maxKg, 2800);
   });
 
-  it("uses the Single column for a two-tyre motorhome axle", function () {
+  it("compares axle kg directly and does not divide by 2", function () {
     const front = coldPressureForAxle({
       sidewall: "LT265/65R17 120/117S",
       axleLoadKg: 1800,
@@ -536,16 +507,38 @@ describe("LT265/65R17 TRA table", function () {
       axleLoadKg: 2100,
       tyresOnAxle: 2
     });
-    assert.equal(front.path, "lt-tra");
+    assert.equal(front.path, "lt-databook");
     assert.equal(front.column, "single");
-    assert.equal(front.psi, 45);
-    assert.equal(front.status, "ok");
-    assert.equal(rear.path, "lt-tra");
-    assert.equal(rear.psi, 55);
-    assert.equal(resolvePressurePath(parseSidewall("265/65 R17 120/117S")).path, "lt-tra");
+    assert.equal(front.bar, 3.5);
+    assert.equal(front.axleLoadKg, 1800);
+    assert.equal(front.capacityKg, 1950);
+    assert.ok(Math.abs(front.psi - 3.5 * BAR_TO_PSI) < 0.05);
+    assert.equal(rear.path, "lt-databook");
+    assert.equal(rear.bar, 4.0);
+    assert.equal(rear.capacityKg, 2170);
+    assert.notEqual(front.bar, 3.1);
+    assert.notEqual(rear.psi, 55);
+    assert.equal(resolvePressurePath(parseSidewall("265/65 R17 120/117S")).path, "lt-databook");
   });
 
-  it("uses the Dual column when there are four tyres on the axle", function () {
+  it("shows Wayne’s sample as 3.5 bar front and 4.0 bar rear", function () {
+    const front = coldPressureForAxle({
+      sidewall: WAYNE_EXAMPLE.sidewall,
+      axleLoadKg: WAYNE_EXAMPLE.frontAxleKg,
+      tyresOnAxle: 2
+    });
+    const rear = coldPressureForAxle({
+      sidewall: WAYNE_EXAMPLE.sidewall,
+      axleLoadKg: WAYNE_EXAMPLE.rearAxleKg,
+      tyresOnAxle: 2
+    });
+    assert.equal(front.bar, 3.5);
+    assert.equal(rear.bar, 4.0);
+    assert.equal(front.status, "ok");
+    assert.equal(rear.status, "ok");
+  });
+
+  it("uses the Dual column only when there are four tyres on the axle", function () {
     const r = coldPressureForAxle({
       sidewall: "LT265/65R17 120/117S",
       axleLoadKg: 3600,
@@ -553,18 +546,33 @@ describe("LT265/65R17 TRA table", function () {
     });
     assert.equal(r.column, "dual");
     assert.equal(r.useDual, true);
-    assert.equal(r.psi, 50);
+    assert.equal(r.bar, 4.0);
+    assert.equal(r.capacityKg, 3980);
+    const stillSingle = coldPressureForAxle({
+      sidewall: "LT265/65R17 120/117S",
+      axleLoadKg: 2100,
+      tyresOnAxle: 2
+    });
+    assert.equal(stillSingle.column, "single");
+    assert.equal(stillSingle.bar, 4.0);
   });
 
-  it("fails an overloaded motorhome axle at 80 PSI", function () {
-    const r = coldPressureForAxle({
+  it("covers 2800 kg Single at 5.5 bar and fails 2801", function () {
+    const ok = coldPressureForAxle({
       sidewall: WAYNE_EXAMPLE.sidewall,
       axleLoadKg: 2800,
       tyresOnAxle: 2
     });
-    assert.equal(r.status, "over-capacity");
-    assert.equal(r.psi, null);
-    assert.equal(r.bar, null);
+    assert.equal(ok.status, "ok");
+    assert.equal(ok.bar, 5.5);
+    const fail = coldPressureForAxle({
+      sidewall: WAYNE_EXAMPLE.sidewall,
+      axleLoadKg: 2801,
+      tyresOnAxle: 2
+    });
+    assert.equal(fail.status, "over-capacity");
+    assert.equal(fail.bar, null);
+    assert.equal(fail.psi, null);
   });
 });
 
@@ -595,7 +603,7 @@ describe("C vs LT path", function () {
     }).error, "no-table");
   });
 
-  it("refuses an LT size that is not in the embedded TRA table", function () {
+  it("refuses an LT size that is not in the embedded Continental databook", function () {
     const parsed = parseSidewall("LT245/75R16 120/116S");
     assert.equal(parsed.family, "LT");
     assert.equal(resolvePressurePath(parsed).reason, "lt-size-unknown");
@@ -608,9 +616,11 @@ describe("C vs LT path", function () {
 });
 
 describe("describeSidewall LT", function () {
-  it("says the LT family uses the TRA Light Truck table", function () {
+  it("says the LT family uses the Continental / General databook", function () {
     const text = describeSidewall(parseSidewall("LT265/65R17 120/117S"));
-    assert.match(text.service, /TRA|Light Truck|LT-metric/);
+    assert.match(text.service, /Continental Tyre Databook 2025/);
+    assert.match(text.service, /kg per axle/);
+    assert.match(text.service, /not the old US lb\/PSI extract/);
     assert.match(text.service, /not the European C-type/);
     assert.match(text.load, /1400 kg/);
   });
