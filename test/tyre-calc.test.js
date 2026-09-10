@@ -158,6 +158,23 @@ describe("parseSidewall", function () {
     assert.equal(trailing.loadIndex, 116);
   });
 
+  it("reads 225/75 R16CP 118R and 225/75 R16 CP 118R as family CP, LI 118", function () {
+    const glued = parseSidewall("225/75 R16CP 118R");
+    const spaced = parseSidewall("225/75 R16 CP 118R");
+    assert.equal(glued.ok, true);
+    assert.equal(spaced.ok, true);
+    assert.equal(glued.family, "CP");
+    assert.equal(spaced.family, "CP");
+    assert.equal(glued.service, "CP");
+    assert.equal(spaced.service, "CP");
+    assert.equal(glued.loadIndex, 118);
+    assert.equal(spaced.loadIndex, 118);
+    assert.equal(glued.sizeKey, "225/75R16");
+    assert.equal(spaced.sizeKey, "225/75R16");
+    assert.equal(glued.speedCode, "R");
+    assert.equal(spaced.speedCode, "R");
+  });
+
   it("still reads size when load and speed are missing", function () {
     const p = parseSidewall("195/70 R15C");
     assert.equal(p.ok, true);
@@ -792,7 +809,9 @@ describe("CP camping lane", function () {
       axle: "rear"
     });
     assert.equal(rear.path, "cp-databook");
-    assert.equal(rear.bar, 5.25);
+    assert.equal(rear.tableBar, 5.25);
+    assert.equal(rear.bar, 5.5);
+    assert.equal(rear.recommendedBar, 5.5);
     assert.equal(rear.column, "rear");
     assert.equal(rear.capacityKg, 2410);
 
@@ -821,9 +840,76 @@ describe("CP camping lane", function () {
       axle: "rear"
     });
     assert.equal(front.bar, 3.25);
-    assert.equal(rear.bar, 4.75);
+    assert.equal(rear.tableBar, 4.75);
+    assert.equal(rear.bar, 5.5);
     assert.match(describeSidewall(parseSidewall("215/70 R15CP 109R")).service, /Camping Pneu/);
     assert.match(describeSidewall(parseSidewall("215/70 R15CP 109R")).service, /Not the same as a plain C/);
+  });
+
+  it("floors CP single-rear to 5.5 bar when the RA S table is lower", function () {
+    const rear = coldPressureForAxle({
+      sidewall: "225/75 R16 CP 118R",
+      axleLoadKg: 2000,
+      tyresOnAxle: 2,
+      axle: "rear"
+    });
+    assert.equal(rear.ok, true);
+    assert.equal(rear.path, "cp-databook");
+    assert.equal(rear.table.loadIndex, 118);
+    assert.equal(rear.column, "rear");
+    assert.equal(rear.tableBar, 4.25);
+    assert.equal(rear.bar, 5.5);
+    assert.equal(rear.recommendedBar, 5.5);
+    assert.equal(rear.appliedCpRearFloor, true);
+    assert.match(rear.note, /Databook table for your axle load: 4\.25 bar/);
+    assert.match(rear.note, /ETRTO CP single-rear camping minimum: 5\.5 bar/);
+    assert.match(rear.note, /We show the higher/);
+  });
+
+  it("keeps the RA S table value when CP single-rear already needs more than 5.5 bar", function () {
+    const rear = coldPressureForAxle({
+      sidewall: "225/75 R16 CP 118R",
+      axleLoadKg: 2500,
+      tyresOnAxle: 2,
+      axle: "rear"
+    });
+    assert.equal(rear.tableBar, 5.75);
+    assert.equal(rear.bar, 5.75);
+    assert.equal(rear.recommendedBar, 5.75);
+    assert.equal(rear.appliedCpRearFloor, false);
+    assert.match(rear.note, /Databook table for your axle load: 5\.75 bar/);
+    assert.match(rear.note, /ETRTO CP single-rear camping minimum: 5\.5 bar/);
+  });
+
+  it("leaves CP front on the FA S table with no 5.5 floor", function () {
+    const front = coldPressureForAxle({
+      sidewall: "225/75 R16 CP 118R",
+      axleLoadKg: 1800,
+      tyresOnAxle: 2,
+      axle: "front"
+    });
+    assert.equal(front.column, "front");
+    assert.equal(front.tableBar, 3.25);
+    assert.equal(front.bar, 3.25);
+    assert.equal(front.recommendedBar, 3.25);
+    assert.equal(front.appliedCpRearFloor, false);
+    assert.equal(front.note, undefined);
+  });
+
+  it("does not apply the 5.5 single-rear floor to CP dual rear", function () {
+    const dual = coldPressureForAxle({
+      sidewall: "225/75 R16 CP 118R",
+      axleLoadKg: 3500,
+      tyresOnAxle: 4,
+      axle: "rear"
+    });
+    assert.equal(dual.column, "dual");
+    assert.equal(dual.tableBar, 3.5);
+    assert.equal(dual.bar, 3.5);
+    assert.equal(dual.recommendedBar, 3.5);
+    assert.equal(dual.appliedCpRearFloor, false);
+    assert.match(dual.note, /RA T table only/);
+    assert.match(dual.note, /5\.5 bar ETRTO CP single-rear camping minimum does not apply/);
   });
 
   it("does not treat a CP size we do not have as a C tyre", function () {
@@ -1024,7 +1110,7 @@ describe("Continental / General coverage extras", function () {
     }));
   });
 
-  it("leaves a complementary hook for the CP rear 5.5 bar floor (PR #11)", function () {
+  it("applies the CP rear 5.5 bar floor on Conti camping rows", function () {
     assert.equal(ETRTO_CP_SINGLE_REAR_MIN_BAR, 5.5);
     const rear = coldPressureForAxle({
       sidewall: "225/75 R16 CP 118R",
@@ -1034,7 +1120,7 @@ describe("Continental / General coverage extras", function () {
     });
     assert.equal(rear.path, "cp-databook");
     assert.equal(rear.tableBar, 4.25);
-    assert.equal(rear.bar, 4.25);
+    assert.equal(rear.bar, 5.5);
   });
 });
 
@@ -1054,6 +1140,7 @@ describe("Michelin Agilis C/LT tables", function () {
   it("detects maker from the brand box or sidewall text", function () {
     assert.equal(detectMaker("Michelin Agilis", ""), "michelin");
     assert.equal(detectMaker("agilis crossclimate", ""), "michelin");
+    assert.equal(detectMaker("CrossClimate Camping", ""), "michelin");
     assert.equal(detectMaker("General Grabber", ""), "continental");
     assert.equal(detectMaker("", "Continental VanContact 225/75R16C"), "continental");
     assert.equal(detectMaker("Goodyear Wrangler", ""), "goodyear");
@@ -1126,11 +1213,42 @@ describe("Michelin Agilis C/LT tables", function () {
     assert.equal(r.capacityKg, 1615);
   });
 
-  it("refuses Michelin-branded CP instead of using Agilis C or Conti CP", function () {
-    const r = coldPressureForAxle({
+  it("uses Conti CP load steps for Michelin CrossClimate Camping when size+LI match, plus 5.5 rear floor", function () {
+    const front = coldPressureForAxle({
+      sidewall: "225/75 R16 CP 118R",
+      brand: "Michelin CrossClimate Camping",
+      axleLoadKg: 1800,
+      tyresOnAxle: 2,
+      axle: "front"
+    });
+    const rear = coldPressureForAxle({
       sidewall: "225/75 R16 CP 118R",
       brand: "Michelin CrossClimate Camping",
       axleLoadKg: 2000,
+      tyresOnAxle: 2,
+      axle: "rear"
+    });
+    assert.equal(front.ok, true);
+    assert.equal(front.path, "cp-databook");
+    assert.equal(front.pathInfo.maker, "michelin");
+    assert.equal(front.pathInfo.cpLoadSource, "continental");
+    assert.equal(front.table.maker, "continental");
+    assert.equal(front.bar, 3.25);
+    assert.equal(front.appliedCpRearFloor, false);
+    assert.equal(rear.ok, true);
+    assert.equal(rear.tableBar, 4.25);
+    assert.equal(rear.bar, 5.5);
+    assert.equal(rear.appliedCpRearFloor, true);
+    assert.match(rear.pathInfo.source, /Continental Tyre Databook/);
+    assert.match(rear.pathInfo.source, /Michelin does not publish/);
+    assert.match(rear.pathInfo.source, /5\.5 bar/);
+  });
+
+  it("refuses Michelin Camping CP when there is no matching Conti camping row", function () {
+    const r = coldPressureForAxle({
+      sidewall: "215/75 R16 CP 116R",
+      brand: "Michelin CrossClimate Camping",
+      axleLoadKg: 1800,
       tyresOnAxle: 2,
       axle: "rear"
     });
@@ -1138,7 +1256,7 @@ describe("Michelin Agilis C/LT tables", function () {
     assert.equal(r.reason, "michelin-cp-no-table");
   });
 
-  it("still uses Conti CP when the brand is not Michelin", function () {
+  it("still uses Conti CP when the brand is not Michelin, with the same 5.5 rear floor", function () {
     const r = coldPressureForAxle({
       sidewall: "225/75 R16 CP 118R",
       brand: "Continental VanContact Camper",
@@ -1148,7 +1266,8 @@ describe("Michelin Agilis C/LT tables", function () {
     });
     assert.equal(r.path, "cp-databook");
     assert.equal(r.table.maker, "continental");
-    assert.equal(r.bar, 4.25);
+    assert.equal(r.tableBar, 4.25);
+    assert.equal(r.bar, 5.5);
   });
 
   it("refuses a Michelin brand on a Conti-only Grabber size", function () {

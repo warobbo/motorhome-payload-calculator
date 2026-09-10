@@ -193,7 +193,7 @@
       var rows = [];
       rows.push(row("Size", text.size));
       var familyNote = " — no inflation table on this page";
-      var mic = path.table && path.table.maker === "michelin";
+      var mic = path.maker === "michelin" || (path.table && path.table.maker === "michelin");
       if (path.path === "lt-databook") {
         familyNote = mic
           ? " — Michelin Agilis CrossClimate LT table (15–18″)"
@@ -202,11 +202,14 @@
         familyNote = mic
           ? " — Michelin Agilis CrossClimate C-Metric table (15–18″)"
           : " — Continental Van / ETRTO C table (15–18″)";
-      } else if (path.path === "cp-databook") familyNote = " — Continental CP / camping table (15–18″)";
-      else if (path.path === "c-etrto") familyNote = " — ETRTO C-type chart";
+      } else if (path.path === "cp-databook") {
+        familyNote = path.maker === "michelin"
+          ? " — Conti CP load steps for this size + LI; ETRTO / Michelin UK 5.5 bar rear floor"
+          : " — Continental CP / camping table (15–18″)";
+      } else if (path.path === "c-etrto") familyNote = " — ETRTO C-type chart";
       else if (path.path === "no-matching-li") familyNote = " — that load index is not in our table";
       else if (path.path === "unsupported-rim") familyNote = " — only 15–18″ wheels are in this table";
-      else if (path.reason === "michelin-cp-no-table") familyNote = " — Michelin has no CP camping grid on this page";
+      else if (path.reason === "michelin-cp-no-table") familyNote = " — no published Michelin Camping load table for this size";
       else if (path.reason === "brand-later") familyNote = " — that brand is not in the book yet";
       rows.push(row("Family", parsed.family + familyNote));
       rows.push(row("C / LT mark", text.service));
@@ -308,10 +311,10 @@
           return "That LT size is not in our table yet, so this page will not invent a pressure. Only listed 15–18″ Continental / General and Michelin Agilis rows are embedded.";
         }
         if (result.reason === "cp-size-unknown") {
-          return "That CP camping size is not in our table yet, so this page will not invent a pressure. Only listed 15–18″ Continental CP rows are embedded — not the plain C table, and not a Michelin CP grid.";
+          return "That CP camping size is not in our table yet, so this page will not invent a pressure. Only listed 15–18″ Continental CP rows are embedded — not the plain C table, and not a made-up Michelin CP grid.";
         }
         if (result.reason === "michelin-cp-no-table") {
-          return "Michelin does not publish a size-by-size Camping CP grid like Continental. This page will not treat an Agilis C table as CP, so it refuses a number. A fitter and Michelin still win.";
+          return "No published Michelin Camping load table for this size, and we do not have a matching Continental CP row. This page will not invent a pressure or treat an Agilis C table as Camping CP. A fitter and Michelin still win.";
         }
         if (result.reason === "brand-later") {
           return "That brand is not in our book yet (Goodyear, BFGoodrich and Yokohama come later). This page will not invent a pressure.";
@@ -319,7 +322,7 @@
         if (result.reason === "p-metric") {
           return "P-metric size — this page has no published inflation table for it, so it will not invent a pressure.";
         }
-        return "Not in our table yet — only listed 15–18″ Continental / General (LT, C, CP) and Michelin Agilis (C, LT) sizes are supported.";
+        return "Not in our table yet — only listed 15–18″ Continental / General (LT, C, CP) and Michelin Agilis (C, LT) sizes are supported. Michelin CrossClimate Camping CP needs a matching Conti camping row.";
       }
       if (result.error === "unrecognised") return "Paste a sidewall such as LT265/65R17 120/117S.";
       if (result.error === "tyres") return "Tyres on the axle must be 2 or 4.";
@@ -337,6 +340,9 @@
     }
     if (result.status === "over-pressure") {
       return "Would need more than the chart maximum to carry this load. No pressure suggested.";
+    }
+    if (result.note) {
+      return result.note;
     }
     var bits = [];
     if (result.path === "lt-databook" || result.path === "c-databook" || result.path === "cp-databook") {
@@ -362,6 +368,9 @@
   }
 
   function sourceHtml(result) {
+    if (result && result.pathInfo && result.pathInfo.source) {
+      return result.pathInfo.source;
+    }
     if (result && (result.path === "lt-databook" || result.path === "c-databook" || result.path === "cp-databook") && result.table) {
       return result.table.source;
     }
@@ -397,9 +406,12 @@
       var sizeLabel = parsed.sizeKey + (path.table && path.table.family === "CP" ? " CP" : "") +
         (path.table && path.table.loadRange ? " LR" + path.table.loadRange : "") +
         (path.table && path.table.loadIndex != null ? " LI " + path.table.loadIndex : "");
-      var book = path.table && path.table.maker === "michelin"
-        ? "Michelin Agilis table"
-        : "Continental databook";
+      var book = "Continental databook";
+      if (path.table && path.table.family === "CP" && path.maker === "michelin") {
+        book = "Conti CP load steps + ETRTO 5.5 rear floor";
+      } else if (path.maker === "michelin" || (path.table && path.table.maker === "michelin")) {
+        book = "Michelin Agilis table";
+      }
       badge.textContent = (brand ? brand + " · " : "") + sizeLabel + " · " + book;
     } else if (path.path === "no-matching-li") {
       badge.textContent = T.formatLiMismatch(path) || "That load index is not in our table.";
@@ -436,7 +448,7 @@
     }
     if ($("rearDifferent").checked) extras.push("Front and rear tyres are set separately.");
     if (path && path.family === "CP") {
-      extras.push("CP camping tyre: driving cold pressure from the book’s front and rear columns. Parked / site load can allow a temporary higher load at a higher pressure — the maker’s camping table and a fitter still win.");
+      extras.push("CP camping tyre: load steps from the Continental camping book when that size and load index are listed. On a single rear (2 tyres) we never show less than 5.5 bar — ETRTO / Michelin UK camping practice — even if the table step is lower. The table figure is still shown. Michelin does not publish its own size-by-size Camping CP grid — we will not invent one or use an Agilis C table. Front stays on the table. Rear dual uses RA T only, with no 5.5 floor. Parked / site load can allow a temporary higher load at a higher pressure. A fitter still wins.");
     }
     $("answerNotes").textContent = extras.join(" ");
 
