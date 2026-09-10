@@ -12,14 +12,14 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
 
   <title>Motorhome Tyre Pressure | Cold Front &amp; Rear from the Databook</title>
-  <meta name="description" content="Cold front and rear motorhome tyre pressure from your sidewall and axle loads. LT 265/65 R 17 uses the Continental / General Tyre Databook 2025. For non-OEM tyres. Planner only.">
+  <meta name="description" content="Cold front and rear motorhome tyre pressure from your sidewall and axle loads. LT and C sizes on 15–18″ wheels use the Continental / General TRA-standard databook. Planner only.">
   <meta name="keywords" content="motorhome tyre pressure, LT265/65R17, General Grabber, Continental Tyre Databook, non-OEM tyre pressure, axle load, UK motorhome tyres">
   <meta name="author" content="Motorhome Payload Calculator">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://motorhomepayload.co.uk/tyres.html">
 
   <meta property="og:title" content="Motorhome Tyre Pressure | Cold Front &amp; Rear from the Databook">
-  <meta property="og:description" content="Paste the sidewall, add front and rear axle kg, read cold bar and PSI from the Continental / General Databook for LT 265/65 R 17.">
+  <meta property="og:description" content="Paste the sidewall, add front and rear axle kg, read cold bar and PSI from the Continental TRA-standard table for 15–18″ LT and C sizes.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://motorhomepayload.co.uk/tyres.html">
   <meta property="og:image" content="https://motorhomepayload.co.uk/og-image.png">
@@ -48,7 +48,7 @@
       "@type": "WebApplication",
       "name": "Motorhome Tyre Pressure",
       "url": "https://motorhomepayload.co.uk/tyres.html",
-      "description": "Estimate cold front and rear motorhome tyre pressure from axle loads and the fitted tyre. LT 265/65 R 17 uses the General / Continental Tyre Databook 2025 (kg per axle).",
+      "description": "Estimate cold front and rear motorhome tyre pressure from axle loads and the fitted tyre. LT and C sizes on 15–18″ use Continental TRA-standard / ETRTO van tables (kg per axle).",
       "applicationCategory": "UtilitiesApplication",
       "operatingSystem": "Any",
       "inLanguage": "en-GB",
@@ -68,7 +68,7 @@
           "name": "Where do these cold pressures come from?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "For LT 265/65 R 17, from the General / Continental Tyre Databook 2025 LT table for this size (TRA-standard values as published for Continental brands including General). Not the old US lb/PSI extract. Figures are kg per axle. For C-marked van tyres, from the ETRTO C-type load/pressure relationship. A fitter and the maker’s own chart still win."
+            "text": "TRA-standard values as published in Continental Tyre Databook (General/Continental brands). 2025 row used for LT265/65R17 where it differs from older books. Figures are kg per axle on 15–18″ wheels. C-marked van tyres use the same book’s Van steps when that size is listed, otherwise the ETRTO C-type relationship. A fitter and the maker’s own chart still win."
           }
         },
         {
@@ -101,8 +101,8 @@
 }
   </script>
 
-  <!-- ASSET_VERSION=20260910db1 — bump this query on CSS/JS below to force-refresh cached assets. -->
-  <link rel="stylesheet" href="styles.css?v=20260910db1">
+  <!-- ASSET_VERSION=20260910tra — bump this query on CSS/JS below to force-refresh cached assets. -->
+  <link rel="stylesheet" href="styles.css?v=20260910tra">
 </head>
 <body>
   <a class="skip" href="#tyres">Skip to tyre tool</a>
@@ -168,7 +168,7 @@
         <li>This is for <strong>non-OEM sizes</strong>. The door sticker is for the old size.</li>
         <li>Paste the <strong>sidewall</strong> (example already filled: <code>LT265/65R17 120/117S</code>). The page detects LT vs C vs P-metric.</li>
         <li>Enter <strong>front and rear axle loads in kg</strong> from a weighbridge. Or use the clearly labelled estimate from total laden weight + front/rear split % — that still becomes axle loads, not “payload remaining”.</li>
-        <li>Read the headline: <strong>Front cold</strong> and <strong>Rear cold</strong> in bar and PSI. The LT table is <strong>kg per axle</strong> — compare your axle load to the Single column. Over 2800 kg on a two-tyre axle → <strong>Fail</strong>.</li>
+        <li>Read the headline: <strong>Front cold</strong> and <strong>Rear cold</strong> in bar and PSI. The table is <strong>kg per axle</strong> — compare your axle load to the Single column. Only <strong>15–18″</strong> wheels. If the size is not in the table, or the axle is over the last step → <strong>Fail</strong>, no invented pressure.</li>
       </ol>
     </section>
 
@@ -193,7 +193,7 @@
         <div class="field">
           <label for="brandLabel">Tyre brand / model <span class="hint">(label only)</span></label>
           <input id="brandLabel" type="text" spellcheck="false" autocomplete="off" placeholder="e.g. General Grabber">
-          <span class="hint">A name on the page only. For LT 265/65 R 17 the pressure comes from the Continental / General Databook 2025 (kg per axle).</span>
+          <span class="hint">A name on the page only. Pressures come from the Continental TRA-standard table (kg per axle). 15–18″ LT and C sizes only.</span>
         </div>
         <div id="decodeOut" class="decode-out" hidden></div>
         <div class="grid-2" style="margin-top:0.85rem">
@@ -370,9 +370,9 @@
         <summary>Where do these cold pressures come from?</summary>
         <p>From the <strong>published table for that tyre family</strong>:</p>
         <ul>
-          <li><strong>LT 265/65 R 17</strong> (including General Grabber <code>LT265/65R17 120/117S</code>): the <strong>General / Continental Tyre Databook 2025 LT table for this size</strong> (TRA-standard values as published for Continental brands including General). Not the old US lb/PSI extract. The table is <strong>kg per axle</strong>. A typical motorhome uses the Single (S) column — two tyres on the axle. Compare your axle load in kg directly to that column. Cold pressure is the lowest bar step that covers the load. PSI is shown as 1 bar ≈ 14.5038.</li>
-          <li><strong>C or CP</strong> van tyres only: the ETRTO C-type load/pressure relationship (load index at 3.75 bar, or 4.50 bar if you switch).</li>
-          <li>Other LT sizes are refused until we have their databook rows. No mixing of wrong tables.</li>
+          <li><strong>LT 15–18″</strong> (including General Grabber <code>LT265/65R17 120/117S</code>): TRA-standard values as published in Continental Tyre Databook (General/Continental brands). <strong>2025 row used for LT265/65R17</strong> where it differs from older books. The table is <strong>kg per axle</strong>. A typical motorhome uses the Single (S) column. Cold pressure is the lowest bar step that covers the load.</li>
+          <li><strong>C or CP</strong> van tyres on 15–18″: the same book’s Van (ETRTO C) steps when that size is listed. Otherwise the ETRTO C-type load/pressure relationship (load index at 3.75 bar, or 4.50 bar if you switch).</li>
+          <li>Rim not 15–18″, or a size we do not have → refused. No invented pressure. No mixing of wrong tables.</li>
         </ul>
         <p>Official LT 265/65 R 17 Load Range E, LI 120/117 S, measuring rim 8J — load capacity <strong>kg per axle</strong>:</p>
         <ul>
@@ -400,7 +400,7 @@
       </details>
       <details>
         <summary>What if the tyre cannot carry the axle load?</summary>
-        <p>This page shows a clear fail and will <strong>not</strong> suggest a pressure if the axle load is over 2800 kg on the Single column (5.5 bar). Fit a higher-capacity tyre, or lose weight. A fitter and the vehicle plate win.</p>
+        <p>This page shows a clear fail and will <strong>not</strong> suggest a pressure if the axle load is over the last published step for that size (for Wayne’s Grabber that is 2800 kg on the Single column at 5.5 bar). Fit a higher-capacity tyre, or lose weight. A fitter and the vehicle plate win.</p>
       </details>
       <details>
         <summary>What does 120/117 mean?</summary>
@@ -418,7 +418,7 @@
 
     <section class="prose" id="about">
       <h2>About</h2>
-      <p>Tyres tool on the Motorhome Payload hub. Figures stay on this device. LT 265/65 R 17 uses the General / Continental Tyre Databook 2025 LT table (kg per axle). C-marked van tyres use the ETRTO C-type path. Other LT sizes are refused until we have their rows.</p>
+      <p>Tyres tool on the Motorhome Payload hub. Figures stay on this device. LT and C sizes on 15–18″ use the Continental Tyre Databook (TRA-standard / ETRTO van steps, kg per axle). The 2025 row is used for LT265/65R17 where it differs from older books.</p>
     </section>
 
     <section class="prose" id="privacy">
@@ -449,7 +449,8 @@
     </div>
   </footer>
 
-  <script src="lib/tyre-calc.js?v=20260910db1"></script>
-  <script src="tyres-app.js?v=20260910db1"></script>
+  <script src="lib/tyre-tra-db.js?v=20260910tra"></script>
+  <script src="lib/tyre-calc.js?v=20260910tra"></script>
+  <script src="tyres-app.js?v=20260910tra"></script>
 </body>
 </html>

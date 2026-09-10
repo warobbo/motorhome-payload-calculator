@@ -26,7 +26,7 @@ Then visit [http://localhost:4173](http://localhost:4173) (payload) or [http://l
 - Typical 3.5t Ducato/Boxer and light-weekend presets
 - “What if I empty the water?” comparison
 - Printable results and a weighbridge disclaimer
-- **Tyres tool** (`tyres.html`): cold front and rear pressure from the sidewall plus axle loads. **LT 265/65 R 17** (General Grabber 120/117S) uses the General / Continental Tyre Databook 2025 LT table — kg per axle at bar, Single column for a typical motorhome. **C-marked** van tyres use the ETRTO C-type path. Other LT sizes are refused until their databook rows are embedded. Sidewall decoder, bar ↔ PSI converter, and an optional notepad are helpers. Refuses a number if the tyre is outside the table or overloaded.
+- **Tyres tool** (`tyres.html`): cold front and rear pressure from the sidewall plus axle loads. **LT and C sizes on 15–18″** use an embedded Continental TRA-standard / ETRTO van table (kg per axle at bar). The **2025 row is used for LT265/65R17** where it differs from older books. A typical motorhome uses the Single column. Rim not 15–18″, or a size we do not have, is refused. Sidewall decoder, bar ↔ PSI converter, and an optional notepad are helpers. Refuses a number if the tyre is outside the table or overloaded.
 
 ## How the numbers work
 
