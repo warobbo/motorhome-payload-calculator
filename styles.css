@@ -737,6 +737,11 @@ footer.site-footer {
   color: #e7efe9;
   padding: 1.4rem 1rem 2rem;
 }
+@media (max-width: 979px) {
+  footer.site-footer {
+    padding-bottom: calc(7.5rem + env(safe-area-inset-bottom, 0px));
+  }
+}
 .footer-inner { max-width: 1180px; margin: 0 auto; }
 .footer-inner a { color: #f3d2bc; }
 .disclaimer {

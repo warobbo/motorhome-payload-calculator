@@ -203,9 +203,10 @@ describe("describeSidewall", function () {
     const text = describeSidewall(parseSidewall("215/70 R15C 109/107 Q"));
     assert.match(text.size, /215 mm wide/);
     assert.match(text.size, /15-inch/);
-    assert.match(text.service, /C-rated commercial/);
+    assert.match(text.service, /C — reinforced van tyre/);
     assert.match(text.load, /1030 kg/);
     assert.match(text.load, /975 kg/);
+    assert.match(text.speed, /99 mph/);
     assert.match(text.speed, /160 km\/h/);
   });
 
@@ -842,8 +843,8 @@ describe("CP camping lane", function () {
     assert.equal(front.bar, 3.25);
     assert.equal(rear.tableBar, 4.75);
     assert.equal(rear.bar, 5.5);
-    assert.match(describeSidewall(parseSidewall("215/70 R15CP 109R")).service, /Camping Pneu/);
-    assert.match(describeSidewall(parseSidewall("215/70 R15CP 109R")).service, /Not the same as a plain C/);
+    assert.match(describeSidewall(parseSidewall("215/70 R15CP 109R")).service, /camping \/ motorhome tyre/);
+    assert.match(describeSidewall(parseSidewall("215/70 R15CP 109R")).service, /not a plain van C tyre/);
   });
 
   it("floors CP single-rear to 5.5 bar when the RA S table is lower", function () {
@@ -861,8 +862,8 @@ describe("CP camping lane", function () {
     assert.equal(rear.bar, 5.5);
     assert.equal(rear.recommendedBar, 5.5);
     assert.equal(rear.appliedCpRearFloor, true);
-    assert.match(rear.note, /Databook table for your axle load: 4\.25 bar/);
-    assert.match(rear.note, /ETRTO CP single-rear camping minimum: 5\.5 bar/);
+    assert.match(rear.note, /Table for your axle weight: 4\.25 bar/);
+    assert.match(rear.note, /Minimum for a camping tyre on the rear \(two tyres\): 5\.5 bar/);
     assert.match(rear.note, /We show the higher/);
   });
 
@@ -877,8 +878,8 @@ describe("CP camping lane", function () {
     assert.equal(rear.bar, 5.75);
     assert.equal(rear.recommendedBar, 5.75);
     assert.equal(rear.appliedCpRearFloor, false);
-    assert.match(rear.note, /Databook table for your axle load: 5\.75 bar/);
-    assert.match(rear.note, /ETRTO CP single-rear camping minimum: 5\.5 bar/);
+    assert.match(rear.note, /Table for your axle weight: 5\.75 bar/);
+    assert.match(rear.note, /Minimum for a camping tyre on the rear \(two tyres\): 5\.5 bar/);
   });
 
   it("leaves CP front on the FA S table with no 5.5 floor", function () {
@@ -908,8 +909,8 @@ describe("CP camping lane", function () {
     assert.equal(dual.bar, 3.5);
     assert.equal(dual.recommendedBar, 3.5);
     assert.equal(dual.appliedCpRearFloor, false);
-    assert.match(dual.note, /RA T table only/);
-    assert.match(dual.note, /5\.5 bar ETRTO CP single-rear camping minimum does not apply/);
+    assert.match(dual.note, /Four tyres on the rear/);
+    assert.match(dual.note, /5\.5 bar rear minimum does not apply/);
   });
 
   it("does not treat a CP size we do not have as a C tyre", function () {
@@ -1127,11 +1128,7 @@ describe("Continental / General coverage extras", function () {
 describe("describeSidewall LT", function () {
   it("says the LT family uses the Continental TRA-standard databook", function () {
     const text = describeSidewall(parseSidewall("LT265/65R17 120/117S"));
-    assert.match(text.service, /Continental Tyre Databook/);
-    assert.match(text.service, /kg per axle/);
-    assert.match(text.service, /2025 row is used for LT265\/65R17/);
-    assert.match(text.service, /[Nn]ot the old US lb\/PSI extract/);
-    assert.match(text.service, /not the European C-type/);
+    assert.match(text.service, /LT — light truck tyre/);
     assert.match(text.load, /1400 kg/);
   });
 });

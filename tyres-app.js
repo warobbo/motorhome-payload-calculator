@@ -5,28 +5,28 @@
 (function () {
   "use strict";
 
-  var STORAGE_KEY = "mh-tyres-v4";
+  var STORAGE_KEY = "mh-tyres-v5";
   var T = window.TyreCalc;
   if (!T) return;
 
-  var EXAMPLE = T.WAYNE_EXAMPLE || {
-    brand: "General Grabber",
-    sidewall: "LT265/65R17 120/117S",
+  var EXAMPLE = {
+    brand: "Continental",
+    sidewall: "225/75 R16C 118R",
     frontAxleKg: 1800,
-    rearAxleKg: 2100,
+    rearAxleKg: 2000,
     tyresOnAxle: 2
   };
 
   var DEFAULTS = {
-    frontAxleKg: EXAMPLE.frontAxleKg,
-    rearAxleKg: EXAMPLE.rearAxleKg,
+    frontAxleKg: "",
+    rearAxleKg: "",
     totalKg: "",
     frontPct: 46,
-    sidewall: EXAMPLE.sidewall,
-    brandLabel: EXAMPLE.brand,
+    sidewall: "",
+    brandLabel: "",
     loadIndex: "",
     dualLoadIndex: "",
-    tyresOnAxle: EXAMPLE.tyresOnAxle,
+    tyresOnAxle: 2,
     chartId: "c375",
     rearDifferent: false,
     rearSidewall: "",
@@ -185,7 +185,7 @@
         } else if (parsed.error === "unknown-speed") {
           err = "Size read OK, but that speed letter is not one this page explains.";
         }
-        out.innerHTML = "<p>" + err + " Try <code>LT265/65R17 120/117S</code>.</p>";
+        out.innerHTML = "<p>" + err + " Try a size such as <code>225/75R16C 118R</code>.</p>";
         return parsed;
       }
       var text = T.describeSidewall(parsed);
@@ -195,26 +195,14 @@
       dualLoadIndex: $("dualLoadIndex").value
     });
       var rows = [];
+      rows.push("<h4 class=\"field-heading\">Your tyre summary</h4>");
       rows.push(row("Size", text.size));
-      var familyNote = " — no inflation table on this page";
-      var mic = path.maker === "michelin" || (path.table && path.table.maker === "michelin");
-      if (path.path === "lt-databook") {
-        familyNote = mic
-          ? " — Michelin Agilis CrossClimate LT table (15–18″)"
-          : " — Continental TRA-standard LT table (15–18″)";
-      } else if (path.path === "c-databook") {
-        familyNote = mic
-          ? " — Michelin Agilis CrossClimate C-Metric table (15–18″)"
-          : " — Continental Van / ETRTO C table (15–18″)";
-      } else if (path.path === "cp-databook") {
-        familyNote = path.maker === "michelin"
-          ? " — Conti CP load steps for this size + LI; ETRTO / Michelin UK 5.5 bar rear floor"
-          : " — Continental CP / camping table (15–18″)";
-      } else if (path.path === "c-etrto") familyNote = " — ETRTO C-type chart";
-      else if (path.path === "no-matching-li") familyNote = " — that load index is not in our table";
-      else if (path.path === "unsupported-rim") familyNote = " — only 15–18″ wheels are in this table";
-      else if (path.reason === "michelin-cp-no-table") familyNote = " — no published Michelin Camping load table for this size";
-      else if (path.reason === "brand-later") familyNote = " — that brand is not in the book yet";
+      var familyNote = "";
+      if (path.path === "no-matching-li") familyNote = " — that load index is not in our table";
+      else if (path.path === "unsupported-rim") familyNote = " — only 15–18″ wheels";
+      else if (path.reason === "michelin-cp-no-table") familyNote = " — no table for this camping size";
+      else if (path.reason === "brand-later") familyNote = " — that brand is not covered yet";
+      else if (path.path === "no-table") familyNote = " — not in our table yet";
       rows.push(row("Family", parsed.family + familyNote));
       rows.push(row("C / LT mark", text.service));
       if (text.extraLoad) rows.push(row("Reinforced", text.extraLoad));
@@ -294,9 +282,9 @@
   }
 
   function formatNote(result, axleName) {
-    if (!result) return "Add " + axleName + " axle load and the fitted tyre.";
+    if (!result) return "Add " + axleName + " axle weight and the fitted tyre.";
     if (!result.ok) {
-      if (result.error === "need-load") return "Type the " + axleName + " axle load in kg.";
+      if (result.error === "need-load") return "Type the " + axleName + " axle weight in kg.";
       if (result.error === "load-index" || result.error === "dual-load-index") {
         return "Need a load index for the " + axleName + " tyre — paste the sidewall.";
       }
@@ -308,27 +296,27 @@
           "″ rim is not supported, so this page will not invent a pressure.";
       }
       if (result.error === "ambiguous" || result.error === "no-matching-li") {
-        return T.formatLiMismatch(result) || "Paste the load index from the sidewall. We will not use a different LI.";
+        return T.formatLiMismatch(result) || "Paste the load index from the sidewall.";
       }
       if (result.error === "no-table") {
         if (result.reason === "lt-size-unknown") {
-          return "That LT size is not in our table yet, so this page will not invent a pressure. Only listed 15–18″ Continental / General and Michelin Agilis rows are embedded.";
+          return "That LT size is not in our table yet, so this page will not invent a pressure.";
         }
         if (result.reason === "cp-size-unknown") {
-          return "That CP camping size is not in our table yet, so this page will not invent a pressure. Only listed 15–18″ Continental CP rows are embedded — not the plain C table, and not a made-up Michelin CP grid.";
+          return "That camping tyre size is not in our table yet, so this page will not invent a pressure.";
         }
         if (result.reason === "michelin-cp-no-table") {
-          return "No published Michelin Camping load table for this size, and we do not have a matching Continental CP row. This page will not invent a pressure or treat an Agilis C table as Camping CP. A fitter and Michelin still win.";
+          return "No published Michelin camping load table for this size. This page will not invent a pressure.";
         }
         if (result.reason === "brand-later") {
-          return "That brand is not in our book yet (Goodyear, BFGoodrich and Yokohama come later). This page will not invent a pressure.";
+          return "That brand is not in our tables yet. This page will not invent a pressure.";
         }
         if (result.reason === "p-metric") {
           return "P-metric size — this page has no published inflation table for it, so it will not invent a pressure.";
         }
-        return "Not in our table yet — only listed 15–18″ Continental / General (LT, C, CP) and Michelin Agilis (C, LT) sizes are supported. Michelin CrossClimate Camping CP needs a matching Conti camping row.";
+        return "Not in our table yet — this page will not invent a pressure. See Sources we use.";
       }
-      if (result.error === "unrecognised") return "Paste a sidewall such as LT265/65R17 120/117S.";
+      if (result.error === "unrecognised") return "Paste a sidewall such as 225/75R16C 118R.";
       if (result.error === "tyres") return "Tyres on the axle must be 2 or 4.";
       return "Not enough to calculate the " + axleName + ".";
     }
@@ -372,16 +360,10 @@
   }
 
   function sourceHtml(result) {
-    if (result && result.pathInfo && result.pathInfo.source) {
-      return result.pathInfo.source;
+    if (result && result.ok && (result.path === "lt-databook" || result.path === "c-databook" || result.path === "cp-databook" || result.path === "c-etrto")) {
+      return "From the published table for this tyre. See <a href=\"#sources\">Sources we use</a>.";
     }
-    if (result && (result.path === "lt-databook" || result.path === "c-databook" || result.path === "cp-databook") && result.table) {
-      return result.table.source;
-    }
-    if (result && result.path === "c-etrto" && result.chart) {
-      return result.chart.label + " — " + result.chart.source;
-    }
-    return T.LT_DATABOOK_SOURCE || "";
+    return "";
   }
 
   var lastFront = null;
@@ -418,11 +400,13 @@
       var sizeLabel = parsed.sizeKey + (path.table && path.table.family === "CP" ? " CP" : "") +
         (path.table && path.table.loadRange ? " LR" + path.table.loadRange : "") +
         (path.table && path.table.loadIndex != null ? " LI " + path.table.loadIndex : "");
-      var book = "Continental databook";
-      if (path.table && path.table.family === "CP" && path.maker === "michelin") {
-        book = "Conti CP load steps + ETRTO 5.5 rear floor";
+      var book = "Continental / General table";
+      if (path.table && path.table.family === "CP") {
+        book = path.maker === "michelin"
+          ? "camping tyre · 5.5 bar rear minimum"
+          : "camping tyre table";
       } else if (path.maker === "michelin" || (path.table && path.table.maker === "michelin")) {
-        book = "Michelin Agilis table";
+        book = "Michelin table";
       }
       badge.textContent = (brand ? brand + " · " : "") + sizeLabel + " · " + book;
     } else if (path.path === "no-matching-li") {
@@ -454,14 +438,7 @@
     $("chartNote").innerHTML = cite;
 
     var extras = [];
-    var brand = $("brandLabel").value.trim();
-    if (brand && path && (path.path === "lt-databook" || path.path === "c-databook" || path.path === "cp-databook")) {
-      extras.push(brand + " — " + (path.table && path.table.source ? path.table.source : (T.LT_DATABOOK_SOURCE || "Continental TRA-standard table, kg per axle.")));
-    }
     if ($("rearDifferent").checked) extras.push("Front and rear tyres are set separately.");
-    if (path && path.family === "CP") {
-      extras.push("CP camping tyre: load steps from the Continental camping book when that size and load index are listed. On a single rear (2 tyres) we never show less than 5.5 bar — ETRTO / Michelin UK camping practice — even if the table step is lower. The table figure is still shown. Michelin does not publish its own size-by-size Camping CP grid — we will not invent one or use an Agilis C table. Front stays on the table. Rear dual uses RA T only, with no 5.5 floor. Parked / site load can allow a temporary higher load at a higher pressure. A fitter still wins.");
-    }
     $("answerNotes").textContent = extras.join(" ");
 
     if (lastFront && lastFront.bar != null && lastRear && lastRear.bar != null) {
@@ -514,12 +491,12 @@
     saveState();
   }
 
-  function applyWayneExample() {
+  function applyExample() {
     fillFromState(DEFAULTS);
     decodeInto("sidewall", { sync: true });
     renderAnswers();
     saveState();
-    setSaveNote("Wayne’s General Grabber example loaded — 3.5 bar front / 4.0 bar rear.");
+    setSaveNote("Example size loaded.");
   }
 
   function copyAnswers() {
@@ -563,7 +540,7 @@
     decodeInto("sidewall");
     renderAnswers();
     try { localStorage.removeItem(STORAGE_KEY); } catch (err) { /* ignore */ }
-    setSaveNote("Cleared on this device. Use “Try Wayne’s example” to put the numbers back.");
+    setSaveNote("Cleared on this device.");
   }
 
   var year = $("yearNow");
@@ -603,14 +580,14 @@
     saveState();
   });
   $("rearDifferent").addEventListener("change", afterChange);
-  $("wayneExample").addEventListener("click", applyWayneExample);
+  if ($("loadExample")) $("loadExample").addEventListener("click", applyExample);
   $("copyAnswers").addEventListener("click", copyAnswers);
   $("clearTyres").addEventListener("click", clearSaved);
 
   decodeInto("sidewall", { sync: true });
   renderAnswers();
   try {
-    setSaveNote(localStorage.getItem(STORAGE_KEY) ? "Saved on this device only." : "Wayne’s example is prefilled so the page is never empty.");
+    setSaveNote(localStorage.getItem(STORAGE_KEY) ? "Saved on this device only." : "Nothing saved yet.");
   } catch (err) {
     setSaveNote("Figures stay on this phone if storage is available.");
   }
