@@ -210,6 +210,18 @@ describe("describeSidewall", function () {
     assert.match(text.load, /975 kg/);
     assert.match(text.speed, /99 mph/);
     assert.match(text.speed, /160 km\/h/);
+    assert.match(text.speed, /up to about 99 mph \(160 km\/h\)/);
+    assert.equal(/up to \d+ km\/h/.test(text.speed), false);
+  });
+
+  it("leads speed ratings with mph, then km/h", function () {
+    const r = describeSidewall(parseSidewall("225/75 R16C 118R"));
+    assert.equal(r.speed, "Speed rating R — up to about 106 mph (170 km/h)");
+    const zr = describeSidewall(parseSidewall("265/65 R17 120 ZR"));
+    if (zr && zr.speed) {
+      assert.match(zr.speed, /149 mph \(240 km\/h\)/);
+      assert.equal(zr.speed.indexOf("mph") < zr.speed.indexOf("km/h"), true);
+    }
   });
 
   it("uses one short line for CP and LT marks", function () {
