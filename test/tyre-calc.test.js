@@ -17,6 +17,7 @@ const {
   PRESSURE_EXPONENT,
   LT_TABLES,
   LT_DATABOOK_SOURCE,
+  TraDb,
   WAYNE_EXAMPLE,
   getChart,
   suggestChartId,
@@ -26,7 +27,8 @@ const {
   ltCapacityAtBar,
   ltColdBarForAxleLoad,
   coldPressureForLoad,
-  coldPressureForAxle
+  coldPressureForAxle,
+  formatLiMismatch
 } = require("../lib/tyre-calc");
 
 describe("bar ↔ PSI", function () {
@@ -145,8 +147,12 @@ describe("parseSidewall", function () {
     const p = parseSidewall("225/70 R15CP 115/113 Q");
     assert.equal(p.ok, true);
     assert.equal(p.service, "CP");
+    assert.equal(p.family, "CP");
     assert.equal(p.loadIndex, 115);
     assert.equal(p.dualLoadIndex, 113);
+    const trailing = parseSidewall("225/75R16 116R CP");
+    assert.equal(trailing.family, "CP");
+    assert.equal(trailing.loadIndex, 116);
   });
 
   it("still reads size when load and speed are missing", function () {
@@ -278,9 +284,17 @@ describe("checkAxleCapacity", function () {
 });
 
 describe("suggestChartId", function () {
-  it("picks the ETRTO C-type 3.75 bar chart for C and CP only", function () {
-    assert.equal(suggestChartId(parseSidewall("215/70 R15C 109/107 Q")), "c375");
-    assert.equal(suggestChartId(parseSidewall("225/70 R15CP 115/113 Q")), "c375");
+  it("picks the book C table when that 15–18″ size is embedded", function () {
+    assert.equal(suggestChartId(parseSidewall("215/70 R15C 109/107 Q")), "c-databook");
+  });
+
+  it("falls back to the ETRTO C-type 3.75 bar chart for a C size not in the book", function () {
+    assert.equal(suggestChartId(parseSidewall("195/75 R15C 110/108 R")), "c375");
+  });
+
+  it("picks the CP camping table for a CP marking, not the plain C chart", function () {
+    assert.equal(suggestChartId(parseSidewall("225/75 R16 CP 116R")), "cp-databook");
+    assert.equal(suggestChartId(parseSidewall("215/70 R15CP 109R")), "cp-databook");
   });
 
   it("picks the Continental LT databook for LT-metric markings, not the C-type formula", function () {
@@ -442,7 +456,7 @@ describe("coldPressureForAxle", function () {
     });
     assert.equal(lt.path, "lt-databook");
     assert.equal(lt.bar, 3.5);
-    assert.equal(cType.path, "c-etrto");
+    assert.equal(cType.path, "c-databook");
     assert.notEqual(lt.bar, cType.bar);
   });
 });
@@ -450,10 +464,10 @@ describe("coldPressureForAxle", function () {
 describe("LT265/65R17 Continental Databook 2025", function () {
   it("embeds the official kg-per-axle Single and Dual rows", function () {
     const rows = LT_TABLES["265/65R17"].rows;
-    assert.match(LT_DATABOOK_SOURCE, /Continental Tyre Databook 2025/);
-    assert.match(LT_DATABOOK_SOURCE, /Not the old US lb\/PSI extract/);
+    assert.match(LT_DATABOOK_SOURCE, /TRA-standard values as published in Continental Tyre Databook/);
+    assert.match(LT_DATABOOK_SOURCE, /2025 row used for LT265\/65R17/);
     assert.equal(LT_TABLES["265/65R17"].loadRange, "E");
-    assert.equal(LT_TABLES["265/65R17"].measuringRim, "8J");
+    assert.equal(LT_TABLES["265/65R17"].sourceYear, 2025);
     assert.equal(rows[0].bar, 2.5);
     assert.equal(rows[0].singleKg, 1490);
     assert.equal(rows[0].dualKg, 2735);
@@ -474,7 +488,7 @@ describe("LT265/65R17 Continental Databook 2025", function () {
     const dual = ltCapacityAtBar({ bar: 5.5, column: "dual", sizeKey: "265/65R17" });
     assert.equal(dual.capacityKg, 5140);
     assert.equal(ltCapacityAtBar({ bar: 3.25, column: "single", sizeKey: "265/65R17" }).error, "outside-table");
-    assert.equal(ltCapacityAtBar({ bar: 3.5, column: "single", sizeKey: "275/70R18" }).error, "unknown-table");
+    assert.equal(ltCapacityAtBar({ bar: 3.5, column: "single", sizeKey: "275/70R19" }).error, "unknown-table");
   });
 
   it("steps to the lowest bar whose Single kg/axle covers the axle load", function () {
@@ -577,12 +591,27 @@ describe("LT265/65R17 Continental Databook 2025", function () {
 });
 
 describe("C vs LT path", function () {
-  it("keeps C-marked van tyres on the ETRTO path", function () {
+  it("uses the Continental Van table for a listed 15–18″ C size", function () {
     const parsed = parseSidewall("215/70 R15C 109/107 Q");
+    assert.equal(parsed.family, "C");
+    assert.equal(resolvePressurePath(parsed).path, "c-databook");
+    const r = coldPressureForAxle({
+      sidewall: "215/70 R15C 109/107 Q",
+      axleLoadKg: 1600,
+      tyresOnAxle: 2
+    });
+    assert.equal(r.path, "c-databook");
+    assert.equal(r.status, "ok");
+    assert.equal(r.bar, 3.5);
+    assert.equal(r.capacityKg, 1685);
+  });
+
+  it("keeps the ETRTO path for a C size that is not in the book", function () {
+    const parsed = parseSidewall("195/75 R15C 110/108 R");
     assert.equal(parsed.family, "C");
     assert.equal(resolvePressurePath(parsed).path, "c-etrto");
     const r = coldPressureForAxle({
-      sidewall: "215/70 R15C 109/107 Q",
+      sidewall: "195/75 R15C 110/108 R",
       axleLoadKg: 1600,
       tyresOnAxle: 2
     });
@@ -603,24 +632,302 @@ describe("C vs LT path", function () {
     }).error, "no-table");
   });
 
-  it("refuses an LT size that is not in the embedded Continental databook", function () {
-    const parsed = parseSidewall("LT245/75R16 120/116S");
+  it("refuses an LT size that is not in the embedded 15–18″ table", function () {
+    const parsed = parseSidewall("LT255/70R17 121/118S");
     assert.equal(parsed.family, "LT");
     assert.equal(resolvePressurePath(parsed).reason, "lt-size-unknown");
     assert.equal(coldPressureForAxle({
-      sidewall: "LT245/75R16 120/116S",
+      sidewall: "LT255/70R17 121/118S",
       axleLoadKg: 1800,
       tyresOnAxle: 2
     }).error, "no-table");
   });
 });
 
+describe("TRA 15–18″ database", function () {
+  it("looks up several other LT sizes from the 2020–2021 book", function () {
+    const a = coldPressureForAxle({
+      sidewall: "LT245/75R16 120/116S",
+      axleLoadKg: 2000,
+      tyresOnAxle: 2
+    });
+    assert.equal(a.path, "lt-databook");
+    assert.equal(a.bar, 3.5);
+    assert.equal(a.capacityKg, 2000);
+
+    const b = coldPressureForAxle({
+      sidewall: "LT215/85R16 115/112S",
+      axleLoadKg: 1800,
+      tyresOnAxle: 2
+    });
+    assert.equal(b.bar, 4.0);
+    assert.equal(b.capacityKg, 1930);
+
+    const c = coldPressureForAxle({
+      sidewall: "LT225/70R17 115/112S",
+      axleLoadKg: 1750,
+      tyresOnAxle: 2
+    });
+    assert.equal(c.bar, 3.5);
+    assert.equal(c.capacityKg, 1750);
+
+    const d = coldPressureForAxle({
+      sidewall: "LT275/70R18 125/122S",
+      axleLoadKg: 2500,
+      tyresOnAxle: 2
+    });
+    assert.equal(d.bar, 4.0);
+    assert.equal(d.capacityKg, 2680);
+  });
+
+  it("picks the matching load range when a size has more than one row", function () {
+    const lrd = coldPressureForAxle({
+      sidewall: "LT225/75R16 110/107S",
+      axleLoadKg: 2120,
+      tyresOnAxle: 2
+    });
+    assert.equal(lrd.table.loadRange, "D");
+    assert.equal(lrd.bar, 4.5);
+    assert.equal(lrd.status, "ok");
+
+    const overLrd = coldPressureForAxle({
+      sidewall: "LT225/75R16 110/107S",
+      axleLoadKg: 2121,
+      tyresOnAxle: 2
+    });
+    assert.equal(overLrd.status, "over-capacity");
+
+    const lre = coldPressureForAxle({
+      sidewall: "LT225/75R16 LRE 115/112S",
+      axleLoadKg: 2280,
+      tyresOnAxle: 2
+    });
+    assert.equal(lre.table.loadRange, "E");
+    assert.equal(lre.bar, 5.0);
+  });
+
+  it("refuses a 19″ rim instead of inventing a pressure", function () {
+    const parsed = parseSidewall("LT275/70R19 125/122S");
+    assert.equal(parsed.ok, true);
+    assert.equal(parsed.rimIn, 19);
+    assert.equal(resolvePressurePath(parsed).path, "unsupported-rim");
+    const r = coldPressureForAxle({
+      sidewall: "LT275/70R19 125/122S",
+      axleLoadKg: 1800,
+      tyresOnAxle: 2
+    });
+    assert.equal(r.ok, false);
+    assert.equal(r.error, "unsupported-rim");
+    assert.equal(r.bar, undefined);
+  });
+
+  it("fails when an LT axle load is over the last published step", function () {
+    const r = coldPressureForAxle({
+      sidewall: "LT215/85R16 115/112S",
+      axleLoadKg: 2431,
+      tyresOnAxle: 2
+    });
+    assert.equal(r.status, "over-capacity");
+    assert.equal(r.bar, null);
+    assert.equal(r.maxKg, 2430);
+    assert.equal(r.maxBar, 5.5);
+  });
+
+  it("does not use the older 2020 mid-pressure figures for LT265/65R17", function () {
+    const mid = TraDb.LT_ENTRIES.filter(function (row) {
+      return row.sizeKey === "265/65R17";
+    });
+    assert.equal(mid.length, 1);
+    assert.equal(mid[0].sourceYear, 2025);
+    assert.equal(mid[0].rows[2].singleKg, 1950);
+    assert.notEqual(mid[0].rows[2].singleKg, 2060);
+    assert.equal(mid[0].rows[1].singleKg, 1720);
+    assert.notEqual(mid[0].rows[1].singleKg, 1860);
+  });
+
+  it("reads a flotation LT size on a 15″ rim", function () {
+    const p = parseSidewall("31x10.50R15LT");
+    assert.equal(p.ok, true);
+    assert.equal(p.family, "LT");
+    assert.equal(p.flotation, true);
+    assert.equal(p.sizeKey, "31X10.50R15");
+    const r = coldPressureForAxle({
+      sidewall: "31x10.50R15LT",
+      axleLoadKg: 1600,
+      tyresOnAxle: 2
+    });
+    assert.equal(r.path, "lt-databook");
+    assert.equal(r.bar, 2.5);
+  });
+});
+
+describe("CP camping lane", function () {
+  it("uses the Continental CP front/rear columns, not the plain C table", function () {
+    const parsed = parseSidewall("225/75 R16 CP 116R");
+    assert.equal(parsed.family, "CP");
+    const path = resolvePressurePath(parsed);
+    assert.equal(path.path, "cp-databook");
+    assert.equal(path.family, "CP");
+    assert.equal(path.table.family, "CP");
+    assert.equal(path.table.loadIndex, 116);
+
+    const front = coldPressureForAxle({
+      sidewall: "225/75 R16 CP 116R",
+      axleLoadKg: 2100,
+      tyresOnAxle: 2,
+      axle: "front"
+    });
+    assert.equal(front.path, "cp-databook");
+    assert.equal(front.bar, 4.0);
+    assert.equal(front.column, "front");
+    assert.equal(front.capacityKg, 2180);
+
+    const rear = coldPressureForAxle({
+      sidewall: "225/75 R16 CP 116R",
+      axleLoadKg: 2400,
+      tyresOnAxle: 2,
+      axle: "rear"
+    });
+    assert.equal(rear.path, "cp-databook");
+    assert.equal(rear.bar, 5.25);
+    assert.equal(rear.column, "rear");
+    assert.equal(rear.capacityKg, 2410);
+
+    const cRear = coldPressureForAxle({
+      sidewall: "225/75 R16C 116/114R",
+      axleLoadKg: 2400,
+      tyresOnAxle: 2,
+      axle: "rear"
+    });
+    assert.equal(cRear.path, "c-databook");
+    assert.equal(cRear.bar, 4.75);
+    assert.notEqual(cRear.bar, rear.bar);
+  });
+
+  it("matches the published 215/70 R15 CP 109 front 1500 / rear 1800 steps", function () {
+    const front = coldPressureForAxle({
+      sidewall: "215/70 R15CP 109R",
+      axleLoadKg: 1500,
+      tyresOnAxle: 2,
+      axle: "front"
+    });
+    const rear = coldPressureForAxle({
+      sidewall: "215/70 R15CP 109R",
+      axleLoadKg: 1800,
+      tyresOnAxle: 2,
+      axle: "rear"
+    });
+    assert.equal(front.bar, 3.25);
+    assert.equal(rear.bar, 4.75);
+    assert.match(describeSidewall(parseSidewall("215/70 R15CP 109R")).service, /Camping Pneu/);
+    assert.match(describeSidewall(parseSidewall("215/70 R15CP 109R")).service, /Not the same as a plain C/);
+  });
+
+  it("does not treat a CP size we do not have as a C tyre", function () {
+    const parsed = parseSidewall("215/65 R16 CP 109R");
+    assert.equal(parsed.family, "CP");
+    assert.equal(resolvePressurePath(parsed).path, "no-table");
+    assert.equal(resolvePressurePath(parsed).reason, "cp-size-unknown");
+    assert.equal(coldPressureForAxle({
+      sidewall: "215/65 R16 CP 109R",
+      axleLoadKg: 1600,
+      tyresOnAxle: 2,
+      axle: "front"
+    }).error, "no-table");
+  });
+});
+
+describe("load index is a separate row", function () {
+  it("uses different cold pressures for the same C size at two load indexes", function () {
+    const li116 = coldPressureForAxle({
+      sidewall: "225/75 R16C 116/114R",
+      axleLoadKg: 2500,
+      tyresOnAxle: 2
+    });
+    const li118 = coldPressureForAxle({
+      sidewall: "225/75 R16C 118/116R",
+      axleLoadKg: 2500,
+      tyresOnAxle: 2
+    });
+    const li121 = coldPressureForAxle({
+      sidewall: "225/75 R16C 121/120R",
+      axleLoadKg: 2500,
+      tyresOnAxle: 2
+    });
+    assert.equal(li116.table.loadIndex, 116);
+    assert.equal(li118.table.loadIndex, 118);
+    assert.equal(li121.table.loadIndex, 121);
+    assert.equal(li116.bar, 4.75);
+    assert.equal(li118.bar, 5.0);
+    assert.equal(li121.bar, 5.0);
+    assert.equal(li116.capacityKg, 2500);
+    assert.equal(li118.capacityKg, 2540);
+    assert.equal(li121.capacityKg, 2595);
+    assert.notEqual(li116.bar, li118.bar);
+    assert.notEqual(li116.table.id, li118.table.id);
+    assert.notEqual(li118.table.id, li121.table.id);
+  });
+
+  it("refuses a load index we do not have and lists the ones we do", function () {
+    const parsed = parseSidewall("225/75 R16C 114/112R");
+    const path = resolvePressurePath(parsed);
+    assert.equal(path.path, "no-matching-li");
+    assert.ok(path.available.some(function (row) { return /LI 116/.test(row); }));
+    assert.ok(path.available.some(function (row) { return /LI 118/.test(row); }));
+    assert.ok(path.available.some(function (row) { return /LI 121/.test(row); }));
+    const r = coldPressureForAxle({
+      sidewall: "225/75 R16C 114/112R",
+      axleLoadKg: 2000,
+      tyresOnAxle: 2
+    });
+    assert.equal(r.error, "no-matching-li");
+    assert.equal(r.bar, undefined);
+    const msg = formatLiMismatch(r);
+    assert.match(msg, /225\/75R16C/);
+    assert.match(msg, /not LI 114/);
+    assert.match(msg, /LI 116/);
+  });
+
+  it("does not silently use another LI when the sidewall LI is wrong for a known LT size", function () {
+    const parsed = parseSidewall("LT245/70R16 119/116S");
+    assert.equal(parsed.family, "LT");
+    const path = resolvePressurePath(parsed);
+    assert.equal(path.path, "no-matching-li");
+    assert.ok(path.available.some(function (row) { return /LI 113/.test(row); }));
+    assert.equal(coldPressureForAxle({
+      sidewall: "LT245/70R16 119/116S",
+      axleLoadKg: 1800,
+      tyresOnAxle: 2
+    }).error, "no-matching-li");
+  });
+
+  it("honours a typed load-index override and still refuses an unknown override", function () {
+    const use121 = coldPressureForAxle({
+      sidewall: "225/75 R16C 116/114R",
+      loadIndex: 121,
+      axleLoadKg: 2500,
+      tyresOnAxle: 2
+    });
+    assert.equal(use121.table.loadIndex, 121);
+    assert.equal(use121.capacityKg, 2595);
+    const nope = coldPressureForAxle({
+      sidewall: "225/75 R16C 116/114R",
+      loadIndex: 114,
+      axleLoadKg: 2000,
+      tyresOnAxle: 2
+    });
+    assert.equal(nope.error, "no-matching-li");
+    assert.equal(nope.wantedLoadIndex, 114);
+  });
+});
+
 describe("describeSidewall LT", function () {
-  it("says the LT family uses the Continental / General databook", function () {
+  it("says the LT family uses the Continental TRA-standard databook", function () {
     const text = describeSidewall(parseSidewall("LT265/65R17 120/117S"));
-    assert.match(text.service, /Continental Tyre Databook 2025/);
+    assert.match(text.service, /Continental Tyre Databook/);
     assert.match(text.service, /kg per axle/);
-    assert.match(text.service, /not the old US lb\/PSI extract/);
+    assert.match(text.service, /2025 row is used for LT265\/65R17/);
+    assert.match(text.service, /[Nn]ot the old US lb\/PSI extract/);
     assert.match(text.service, /not the European C-type/);
     assert.match(text.load, /1400 kg/);
   });
