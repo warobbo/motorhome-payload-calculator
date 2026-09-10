@@ -265,10 +265,7 @@
       valueEl.textContent = "Fail";
       altEl.textContent = "Over this chart";
       if ((result.path === "lt-databook" || result.path === "c-databook" || result.path === "cp-databook") && result.maxKg != null) {
-        var overCol = result.column === "dual" ? "Dual" : (result.column === "front" ? "Front" : (result.column === "rear" ? "Rear" : "Single"));
-        altEl.textContent = "Over " + result.maxBar + " bar " +
-          overCol +
-          " (" + Math.round(result.maxKg) + " kg/axle)";
+        altEl.textContent = "Over the last published step";
       }
       return;
     }
@@ -312,7 +309,7 @@
           return "That brand is not in our tables yet. This page will not invent a pressure.";
         }
         if (result.reason === "p-metric") {
-          return "P-metric size — this page has no published inflation table for it, so it will not invent a pressure.";
+          return "That size is not in our table, so this page will not invent a pressure.";
         }
         return "Not in our table yet — this page will not invent a pressure. See Sources we use.";
       }
@@ -320,36 +317,16 @@
       if (result.error === "tyres") return "Tyres on the axle must be 2 or 4.";
       return "Not enough to calculate the " + axleName + ".";
     }
-    if (result.status === "over-capacity") {
-      if (result.path === "lt-databook" || result.path === "c-databook" || result.path === "cp-databook") {
-        var colName = result.column === "dual" ? "Dual" : (result.column === "front" ? "Front" : (result.column === "rear" ? "Rear" : "Single"));
-        return "Over the published table " + colName + " column at " + result.maxBar + " bar (" +
-          Math.round(result.axleLoadKg) + " kg on the axle; max " + Math.round(result.maxKg) +
-          " kg/axle). No safe pressure from this chart.";
-      }
-      return "Over load-index capacity (" + Math.round(result.loadKg) + " kg on each tyre; index " +
-        result.usedIndex + " is " + result.lref + " kg). No safe pressure from this chart.";
+    if (result.status === "over-capacity" || result.status === "over-pressure") {
+      return "This axle weight is over the last published step. No safe pressure.";
     }
-    if (result.status === "over-pressure") {
-      return "Would need more than the chart maximum to carry this load. No pressure suggested.";
-    }
-    if (result.note) {
+    if (result.note && result.appliedCpRearFloor) {
       return result.note;
     }
-    var bits = [];
-    if (result.path === "lt-databook" || result.path === "c-databook" || result.path === "cp-databook") {
-      var usedCol = result.column === "dual" ? "Dual" : (result.column === "front" ? "Front" : (result.column === "rear" ? "Rear" : "Single"));
-      bits.push(Math.round(result.axleLoadKg) + " kg on the axle");
-      bits.push(usedCol + " column " +
-        Math.round(result.capacityKg) + " kg/axle covers it");
-      bits.push("lowest published bar step");
-    } else {
-      bits.push(Math.round(result.loadKg) + " kg on each of " + result.tyresOnAxle + " tyres");
-      bits.push("index " + result.usedIndex + " = " + result.lref + " kg");
-      if (result.useDual) bits.push("dual-wheel figure");
-      if (result.status === "min-pressure") bits.push("raised to the chart minimum cold pressure");
+    if (result.axleLoadKg != null && result.bar != null) {
+      return Math.round(result.axleLoadKg) + " kg on the axle is covered at this pressure.";
     }
-    return bits.join(" · ") + ".";
+    return "";
   }
 
   function resultClass(result) {
@@ -360,6 +337,7 @@
   }
 
   function sourceHtml(result) {
+    // Never dump table.source — those strings are databook/ETRTO essays for code only.
     if (result && result.ok && (result.path === "lt-databook" || result.path === "c-databook" || result.path === "cp-databook" || result.path === "c-etrto")) {
       return "From the published table for this tyre. See <a href=\"#sources\">Sources we use</a>.";
     }
@@ -412,7 +390,7 @@
     } else if (path.path === "no-matching-li") {
       badge.textContent = T.formatLiMismatch(path) || "That load index is not in our table.";
     } else if (path.path === "c-etrto") {
-      badge.textContent = path.label;
+      badge.textContent = "van C tyre table";
     } else if (path.path === "unsupported-rim") {
       badge.textContent = "Only 15–18″ supported — this is a " + parsed.rimIn + "″ rim.";
     } else {

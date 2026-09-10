@@ -878,8 +878,7 @@ describe("CP camping lane", function () {
     assert.equal(rear.bar, 5.75);
     assert.equal(rear.recommendedBar, 5.75);
     assert.equal(rear.appliedCpRearFloor, false);
-    assert.match(rear.note, /Table for your axle weight: 5\.75 bar/);
-    assert.match(rear.note, /Minimum for a camping tyre on the rear \(two tyres\): 5\.5 bar/);
+    assert.equal(rear.note, undefined);
   });
 
   it("leaves CP front on the FA S table with no 5.5 floor", function () {
@@ -909,8 +908,7 @@ describe("CP camping lane", function () {
     assert.equal(dual.bar, 3.5);
     assert.equal(dual.recommendedBar, 3.5);
     assert.equal(dual.appliedCpRearFloor, false);
-    assert.match(dual.note, /Four tyres on the rear/);
-    assert.match(dual.note, /5\.5 bar rear minimum does not apply/);
+    assert.equal(dual.note, undefined);
   });
 
   it("does not treat a CP size we do not have as a C tyre", function () {
