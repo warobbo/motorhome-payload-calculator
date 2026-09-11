@@ -57,21 +57,49 @@
     };
   }
 
-  function loadState() {
+  function savedLooksUseful(saved) {
+    if (!saved || typeof saved !== "object") return false;
+    return !!(saved.sidewall || saved.loadIndex || saved.frontAxleKg || saved.rearAxleKg);
+  }
+
+  function mergeSaved(saved) {
     var state = Object.assign({}, DEFAULTS);
+    Object.keys(DEFAULTS).forEach(function (key) {
+      if (saved[key] !== undefined && saved[key] !== null) state[key] = saved[key];
+    });
+    return state;
+  }
+
+  function readSavedTyres() {
     try {
       var raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        var saved = JSON.parse(raw);
-        var hasTyre = saved.sidewall || saved.loadIndex;
-        var hasLoad = saved.frontAxleKg || saved.rearAxleKg;
-        if (hasTyre || hasLoad) {
-          Object.keys(DEFAULTS).forEach(function (key) {
-            if (saved[key] !== undefined && saved[key] !== null) state[key] = saved[key];
-          });
-        }
-      }
-    } catch (err) { /* ignore */ }
+      if (!raw) return null;
+      var saved = JSON.parse(raw);
+      return savedLooksUseful(saved) ? mergeSaved(saved) : null;
+    } catch (err) {
+      return null;
+    }
+  }
+
+  function hasSavedTyres() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return false;
+      return savedLooksUseful(JSON.parse(raw));
+    } catch (err) {
+      return false;
+    }
+  }
+
+  function emptyState() {
+    return Object.assign({}, DEFAULTS);
+  }
+
+  /* Payload deep-link ?front=&rear= (or frontAxleKg/rearAxleKg) still applies
+     on first paint. That is an intentional weighbridge handoff, not a silent
+     restore of this page’s localStorage. */
+  function initialPaintState() {
+    var state = emptyState();
     var fromTicket = weighbridgeFromQuery();
     if (fromTicket.frontAxleKg) state.frontAxleKg = fromTicket.frontAxleKg;
     if (fromTicket.rearAxleKg) state.rearAxleKg = fromTicket.rearAxleKg;
@@ -103,13 +131,58 @@
     };
   }
 
+  var persistEnabled = false;
+  var restoredThisVisit = false;
+  var booting = true;
+  var pageLoadSnapshot = readSavedTyres();
+  var lastKnown = "";
+
+  function snapshotForm() {
+    return JSON.stringify(collectState());
+  }
+
+  function formChanged() {
+    var now = snapshotForm();
+    if (now === lastKnown) return false;
+    lastKnown = now;
+    return true;
+  }
+
+  function enablePersist() {
+    if (booting) return;
+    persistEnabled = true;
+  }
+
   function saveState() {
+    if (booting || !persistEnabled) return;
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(collectState()));
       setSaveNote("Saved on this device only.");
     } catch (err) {
       setSaveNote("Could not save on this device.");
     }
+    syncSavedTyresBanner();
+  }
+
+  function syncSavedTyresBanner() {
+    var banner = $("savedTyresBanner");
+    var restoreBtn = $("restoreTyres");
+    if (!banner) return;
+    banner.hidden = !(pageLoadSnapshot || hasSavedTyres());
+    if (restoreBtn) restoreBtn.hidden = !pageLoadSnapshot || restoredThisVisit;
+  }
+
+  function restoreLastTyres() {
+    if (!pageLoadSnapshot) return;
+    persistEnabled = true;
+    restoredThisVisit = true;
+    fillFromState(pageLoadSnapshot);
+    decodeInto("sidewall", { sync: true });
+    renderAnswers();
+    lastKnown = snapshotForm();
+    saveState();
+    setSaveNote("Restored last tyres on this phone.");
+    syncSavedTyresBanner();
   }
 
   function setSaveNote(text) {
@@ -721,6 +794,7 @@
   function afterChange() {
     decodeInto("sidewall", { sync: true });
     renderAnswers();
+    if (formChanged()) enablePersist();
     saveState();
   }
 
@@ -734,6 +808,8 @@
     }));
     decodeInto("sidewall", { sync: true });
     renderAnswers();
+    lastKnown = snapshotForm();
+    enablePersist();
     saveState();
     setSaveNote("Example size loaded.");
   }
@@ -749,43 +825,28 @@
     } else if (lastRear && lastRear.bar != null) {
       setPairFromBar($("noteRearBar"), $("noteRearPsi"), lastRear.bar);
     }
+    if (lastFront || lastRear) enablePersist();
     saveState();
     setSaveNote("Copied the calculated cold pressures onto this phone.");
   }
 
   function clearSaved() {
-    fillFromState({
-      frontAxleKg: "",
-      rearAxleKg: "",
-      totalKg: "",
-      frontPct: 46,
-      sidewall: "",
-      brandLabel: "",
-      loadIndex: "",
-      dualLoadIndex: "",
-      tyresOnAxle: 2,
-      chartId: "c375",
-      rearDifferent: false,
-      rearSidewall: "",
-      rearLoadIndex: "",
-      rearDualLoadIndex: "",
-      rearTyresOnAxle: 2,
-      rearChartId: "c375",
-      convBar: "",
-      convPsi: "",
-      noteFrontBar: "",
-      noteRearBar: ""
-    });
+    persistEnabled = false;
+    restoredThisVisit = false;
+    pageLoadSnapshot = null;
+    fillFromState(emptyState());
     decodeInto("sidewall");
     renderAnswers();
+    lastKnown = snapshotForm();
     try { localStorage.removeItem(STORAGE_KEY); } catch (err) { /* ignore */ }
     setSaveNote("Cleared on this device.");
+    syncSavedTyresBanner();
   }
 
   var year = $("yearNow");
   if (year) year.textContent = String(new Date().getFullYear());
 
-  fillFromState(loadState());
+  fillFromState(initialPaintState());
   bindPair("convBar", "convPsi");
   bindPair("noteFrontBar", "noteFrontPsi");
   bindPair("noteRearBar", "noteRearPsi");
@@ -808,20 +869,18 @@
     afterChange();
   });
 
-  $("sidewall").addEventListener("input", function () {
-    decodeInto("sidewall", { sync: true });
-    renderAnswers();
-    saveState();
-  });
+  $("sidewall").addEventListener("input", afterChange);
   $("rearSidewall").addEventListener("input", function () {
     decodeInto("rearSidewall", { sync: true });
     renderAnswers();
+    if (formChanged()) enablePersist();
     saveState();
   });
   $("rearDifferent").addEventListener("change", afterChange);
   if ($("loadExample")) $("loadExample").addEventListener("click", applyExample);
   $("copyAnswers").addEventListener("click", copyAnswers);
-  $("clearTyres").addEventListener("click", clearSaved);
+  if ($("restoreTyres")) $("restoreTyres").addEventListener("click", restoreLastTyres);
+  if ($("clearTyres")) $("clearTyres").addEventListener("click", clearSaved);
   if ($("missingSizeForm")) $("missingSizeForm").addEventListener("submit", submitCapture);
   if ($("captureCopy")) $("captureCopy").addEventListener("click", copySidewallLine);
   ["captureSize", "captureLoadIndex", "captureSpeed", "captureBrand", "captureNote", "captureEmail"].forEach(function (id) {
@@ -830,10 +889,11 @@
 
   decodeInto("sidewall", { sync: true });
   renderAnswers();
+  lastKnown = snapshotForm();
   loadMailtoConfig();
-  try {
-    setSaveNote(localStorage.getItem(STORAGE_KEY) ? "Saved on this device only." : "Nothing saved yet.");
-  } catch (err) {
-    setSaveNote("Figures stay on this phone if storage is available.");
-  }
+  syncSavedTyresBanner();
+  if (!pageLoadSnapshot) setSaveNote("Nothing saved yet.");
+  window.requestAnimationFrame(function () {
+    booting = false;
+  });
 })();

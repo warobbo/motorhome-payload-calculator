@@ -125,7 +125,7 @@
 }
   </script>
 
-  <!-- ASSET_VERSION=20260911restore1 — bump this query on CSS/JS below to force-refresh cached assets. -->
+  <!-- ASSET_VERSION=20260911tyres1 — bump this query on CSS/JS below to force-refresh cached assets. -->
   <link rel="stylesheet" href="styles.css?v=20260911restore1">
 </head>
 <body>
@@ -156,14 +156,14 @@
   <main class="wrap" id="tyres">
     <div class="intro">
       <h2>Use this when you’ve fitted a different size to the ones that came on the van.</h2>
-      <p>The usual recommended pressures are usually on a sticker inside the driver’s door. Those match the original factory size, not a replacement size.</p>
+      <p>Recommended pressures are usually on a sticker inside the driver’s door. Those match the original factory size, not a replacement size.</p>
       <p>Enter the tyre specification information found on the sidewall of the tyre. Add front and rear axle weights in kg from a public weighbridge (best — today’s weight), the Payload calculator (an estimate), or the VIN plate (often axle maximums, not today’s weight).</p>
     </div>
 
     <section class="prose how-to-use" id="how-to-use">
       <h2>How to use</h2>
       <ol>
-        <li>Use this when your tyres are a <strong>different size</strong> to the ones that came on the van. The usual pressures are usually on a sticker inside the driver’s door — those match the original size.</li>
+        <li>Use this when your tyres are a <strong>different size</strong> to the ones that came on the van. Recommended pressures are usually on a sticker inside the driver’s door — those match the original size.</li>
         <li>Enter the tyre specification from the <strong>sidewall</strong> (fields start empty; a faint example is shown in the box, such as <code>225/75R16C 118R</code>).</li>
         <li>Add front and rear axle <strong>weights</strong> in kg from a public weighbridge (best — today’s weight), the Payload calculator (an estimate), or the VIN plate (often axle maximums, not today’s weight).</li>
         <li>Read <strong>cold front</strong> and <strong>cold rear</strong> in bar and PSI. If your size or load index isn’t covered, the tool refuses — no guessed pressure. You can send the size so we can look it up in a manufacturer book.</li>
@@ -174,6 +174,14 @@
     <div class="warn warn-over show banner-disclaimer" role="note">
       <strong>Planning estimate only — cold pressures.</strong>
       Wrong pressure or an overloaded tyre can be dangerous. The tyre maker’s own chart and a fitter always win. This page will not invent a number outside the table.
+    </div>
+
+    <div class="saved-van" id="savedTyresBanner" hidden>
+      <p class="saved-van-trust">Saved on this phone only. We don’t upload your tyres.</p>
+      <div class="saved-van-actions">
+        <button type="button" class="btn btn-primary" id="restoreTyres">Restore last tyres</button>
+        <button type="button" class="btn" id="clearTyres">Clear saved</button>
+      </div>
     </div>
 
     <section class="results pressure-hero" id="answers" aria-live="polite">
@@ -441,7 +449,6 @@
           </div>
         </div>
         <div class="result-actions">
-          <button type="button" class="btn btn-ghost" id="clearTyres">Clear saved figures</button>
           <span class="hint" id="saveNote">Nothing saved yet.</span>
         </div>
       </div>
@@ -497,12 +504,12 @@
 
     <section class="prose" id="about">
       <h2>About</h2>
-      <p>This tyre pressure tool sits on the Motorhome Payload hub. Enter the sidewall of the tyre you fitted and your front and rear axle weights to get cold pressures in bar and PSI. Your figures stay on this device — nothing is sent away to calculate. We only use published manufacturer tables for the brands and sizes listed under <a href="#sources">Sources we use</a>; if your size or load index isn’t covered, the tool refuses a number rather than guessing. You can then send that size as research. This is a guide — check pressures cold, don’t exceed the wheel’s maximum air pressure, and ask a tyre fitter if unsure.</p>
+      <p>This tyre pressure tool sits on the Motorhome Payload hub. Enter the sidewall of the tyre you fitted and your front and rear axle weights to get cold pressures in bar and PSI. Your figures stay on this device and are not filled in until you restore them — nothing is sent away to calculate. We only use published manufacturer tables for the brands and sizes listed under <a href="#sources">Sources we use</a>; if your size or load index isn’t covered, the tool refuses a number rather than guessing. You can then send that size as research. This is a guide — check pressures cold, don’t exceed the wheel’s maximum air pressure, and ask a tyre fitter if unsure.</p>
     </section>
 
     <section class="prose" id="privacy">
       <h2>Privacy</h2>
-      <p>No account and no advertising cookies. Numbers stay in this browser’s local storage to calculate. Nothing you type is sent to the payload lookup server. If you send a missing-size note, that form (size, load index, and anything you typed) is posted to this site so we can research a manufacturer table. Optional email is only used if we need to ask about that size — we will not email a pressure.</p>
+      <p>No account and no advertising cookies. Numbers stay in this browser’s local storage and are not filled in until you restore them. Nothing you type is sent to the payload lookup server. If you send a missing-size note, that form (size, load index, and anything you typed) is posted to this site so we can research a manufacturer table. Optional email is only used if we need to ask about that size — we will not email a pressure. We don’t upload your tyres.</p>
     </section>
   </main>
 
@@ -532,6 +539,6 @@
   <script src="lib/tyre-tra-db.js?v=20260910copy12"></script>
   <script src="lib/tyre-michelin-db.js?v=20260910copy12"></script>
   <script src="lib/tyre-calc.js?v=20260911miss1"></script>
-  <script src="tyres-app.js?v=20260911miss1"></script>
+  <script src="tyres-app.js?v=20260911tyres1"></script>
 </body>
 </html>

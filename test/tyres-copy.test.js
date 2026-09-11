@@ -43,12 +43,41 @@ describe("tyres missing-size capture copy", function () {
   });
 
   it("bumps cache-bust and keeps the sticky bar off the form footer", function () {
-    assert.match(html, /ASSET_VERSION=20260911restore1/);
+    assert.match(html, /ASSET_VERSION=20260911tyres1/);
     assert.match(html, /styles\.css\?v=20260911restore1/);
     assert.match(html, /tyre-calc\.js\?v=20260911miss1/);
-    assert.match(html, /tyres-app\.js\?v=20260911miss1/);
+    assert.match(html, /tyres-app\.js\?v=20260911tyres1/);
     assert.match(css, /Keep the last fields and Send above the sticky cold-pressure bar/);
     assert.match(css, /\.missing-size/);
     assert.match(css, /\[hidden\] \{ display: none !important; \}/);
+  });
+});
+
+describe("tyres opt-in restore", function () {
+  it("does not silently auto-fill saved tyres and offers Restore / Clear on this device", function () {
+    assert.match(html, /id="savedTyresBanner"[^>]*hidden/);
+    assert.match(html, /id="restoreTyres"/);
+    assert.match(html, />Restore last tyres</);
+    assert.match(html, /id="clearTyres"/);
+    assert.match(html, />Clear saved</);
+    assert.match(html, /Saved on this phone only\. We don’t upload your tyres\./);
+    assert.match(html, /are not filled in until you restore them/);
+    assert.match(html, /tyres-app\.js\?v=20260911tyres1/);
+    assert.match(app, /function restoreLastTyres/);
+    assert.match(app, /function clearSaved/);
+    assert.match(app, /if \(booting \|\| !persistEnabled\) return;/);
+    assert.match(app, /if \(formChanged\(\)\) enablePersist\(\)/);
+    assert.match(app, /fillFromState\(initialPaintState\(\)\)/);
+    assert.match(app, /weighbridgeFromQuery/);
+    assert.doesNotMatch(app, /fillFromState\(loadState\(\)\)/);
+    assert.doesNotMatch(html, /Clear saved figures/);
+    assert.doesNotMatch(html, /usual recommended pressures are usually/);
+    assert.doesNotMatch(html, /usual pressures are usually/);
+  });
+
+  it("keeps axle sources as weighbridge, Payload estimate, and VIN plate maximums", function () {
+    assert.match(html, /public weighbridge \(best — today’s weight\)/);
+    assert.match(html, /Payload calculator \(an estimate\)/);
+    assert.match(html, /VIN plate \(often axle maximums, not today’s weight\)/);
   });
 });
