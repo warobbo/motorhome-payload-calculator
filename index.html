@@ -67,7 +67,7 @@
         "Weighbridge-first empty ticket, or V5 Mass in Service",
         "Metric and imperial units",
         "People, fluids, gas, batteries, solar, gear and custom kit lines",
-        "Plate axle ratings plus Empty or Loaded weighbridge axle check",
+        "VIN plate axle ratings plus Empty or Loaded weighbridge axle check",
         "UK registration lookup for make and plated weight",
         "Local storage of last vehicle details",
         "Link to the Tyres tool for non-original sizes"
@@ -169,7 +169,7 @@
           "name": "Does the driver count towards payload?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Mass in Service from the V5 usually assumes a 75 kg driver. Enter your real weight — only the extra kilograms above 75 are added. Extra adults, children and pets are additional. If you enter a weighbridge empty weight of the van only, the full driver weight is added."
+            "text": "Mass in Service already includes a 75 kg driver. Enter your real weight — we only add the extra (or subtract if you’re lighter), so the driver isn’t counted twice. Extra adults, children and pets are additional. If you enter a weighbridge empty weight of the van only, the full driver weight is added."
           }
         },
         {
@@ -201,7 +201,7 @@
           "name": "Can I look up my motorhome by registration?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Yes. A UK plate lookup fills make and year, plus the DVLA revenue weight (often the plated MAM). DVLA does not supply model or Mass in Service. Model stays blank unless MOT history gives an exact van-maker model — coachbuilts such as Hymer are not filled with Ducato. Pick the platform from the list, and enter an empty weighbridge ticket or Mass in Service from the V5. You can also choose make, model and year to apply typical catalogue figures (often 3.5 t examples)."
+            "text": "Yes. A UK registration lookup fills make and year, plus the DVLA revenue weight (often the plated MAM). DVLA does not supply model or Mass in Service. Model stays blank unless MOT history gives an exact van-maker model — coachbuilts such as Hymer are not filled with Ducato. Pick the platform from the list, and enter an empty weighbridge ticket or Mass in Service from the V5. You can also choose make, model and year to apply typical catalogue figures (often 3.5 t examples)."
           }
         },
         {
@@ -217,7 +217,7 @@
           "name": "How does the axle weighbridge check work?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Plate axle ratings are limits, not today's load. Enter front and rear kg from a weighbridge ticket — Empty for the base van, Loaded for a roadside check (Loaded is the default). We only pass or fail when both the plate limits and those ticket weights are present. We never invent an axle split from people or kit. A rear axle over the plate is a fail even if total MAM is OK."
+            "text": "VIN plate axle ratings are limits, not today's load. Enter front and rear kg from a weighbridge ticket — Empty for the base van, Loaded for a roadside check (Loaded is the default). We only pass or fail when both the VIN plate limits and those ticket weights are present. We never invent an axle split from people or kit. A rear axle over the VIN plate is a fail even if total MAM is OK."
           }
         },
         {
@@ -234,8 +234,8 @@
 }
   </script>
 
-  <!-- ASSET_VERSION=20260911clip1 — bump this query on CSS/JS below to force-refresh cached assets. -->
-  <link rel="stylesheet" href="styles.css?v=20260911clip1">
+  <!-- ASSET_VERSION=20260911amend1 — bump this query on CSS/JS below to force-refresh cached assets. -->
+  <link rel="stylesheet" href="styles.css?v=20260911amend1">
 
 </head>
 <body>
@@ -272,13 +272,14 @@
 
   <main class="wrap" id="calculator">
     <div class="intro">
-      <h2>Is your motorhome still legal under its plated Maximum Authorised Mass (MAM)?</h2>
+      <h2>Is your motorhome still legally under its plated Maximum Authorised Mass (MAM)?</h2>
       <p>Maximum Authorised Mass (MAM) — the heaviest your van is allowed to be on the road (the plated weight). For UK campervans and motorhomes at any plated weight — light vans around 2800–3200&nbsp;kg (e.g. VW Transporter-style), motorhomes at 3500, 3850, 4500&nbsp;kg and up.</p>
       <div class="path-card">
         <ol>
           <li><strong>Best:</strong> an empty weighbridge ticket (van only), then today’s people, fluids and kit.</li>
           <li><strong>Second best:</strong> Mass in Service from the V5. Handbook MIRO can be optimistic (options, tolerance) — a weighbridge is more honest.</li>
         </ol>
+        <p class="path-also"><strong>Also from the VIN plate:</strong> MAM and front/rear axle limits (allowed weights — not today’s load).</p>
       </div>
       <div class="axle-block weighbridge-axle-card" id="weighbridge-axle">
         <h3 class="field-heading">Weighbridge axle weights</h3>
@@ -289,17 +290,17 @@
           <input type="radio" name="axleMode" id="axleModeEmpty" value="empty">
           <label for="axleModeEmpty">Empty weighbridge</label>
         </div>
-        <p class="hint" id="axleModeHint">As driven — front/rear vs plate</p>
+        <p class="hint" id="axleModeHint">As driven — front/rear vs VIN plate</p>
         <div class="grid-2">
           <div class="field">
             <label for="wbFrontAxle">Front axle kg</label>
             <input id="wbFrontAxle" type="number" inputmode="decimal" min="0" step="1" data-key="wbFrontAxle">
-            <span class="hint">kg on the ticket — today’s weight, not the plate limit</span>
+            <span class="hint">kg on the ticket — today’s weight, not the VIN plate limit</span>
           </div>
           <div class="field">
             <label for="wbRearAxle">Rear axle kg</label>
             <input id="wbRearAxle" type="number" inputmode="decimal" min="0" step="1" data-key="wbRearAxle">
-            <span class="hint">kg on the ticket — today’s weight, not the plate limit</span>
+            <span class="hint">kg on the ticket — today’s weight, not the VIN plate limit</span>
           </div>
         </div>
       </div>
@@ -310,9 +311,9 @@
       <ol>
         <li>Best: weigh the empty van (no people, empty water) and enter that ticket.</li>
         <li>Or enter Mass in Service from the V5 (second best — it can be optimistic).</li>
-        <li>Confirm MAM and both axle ratings from the <a href="#weight-plate">weight plate or VIN plate</a>.</li>
+        <li>Confirm MAM and both axle ratings from the <a href="#weight-plate">VIN plate</a>.</li>
         <li>Add today’s people, tank levels, gas and kit — including your own extra items.</li>
-        <li>Watch remaining payload. Add weighbridge front and rear kg to check each axle against the plate. If those figures are blank, that is a MAM check only. Use “What if I empty the water?” to see the cheapest weight saving.</li>
+        <li>Watch remaining payload. Add weighbridge front and rear kg to check each axle against the VIN plate. If those figures are blank, that is a MAM check only. Use “What if I empty the water?” to see the cheapest weight saving.</li>
       </ol>
     </section>
 
@@ -331,36 +332,36 @@
             </span>
           </summary>
           <div class="body">
-            <p class="lede">Look up a UK registration if you can. Then use an empty weighbridge ticket if you have one. Mass in Service from the V5 is second best. Confirm MAM and both axle ratings from the plate — we do not invent those figures.</p>
+            <p class="lede">Look up a UK registration if you can. Then use an empty weighbridge ticket if you have one. Mass in Service from the V5 is second best. Confirm MAM and both axle ratings from the VIN plate — we do not invent those figures.</p>
             <div class="lookup">
               <div class="lookup-row">
                 <div class="field">
                   <span class="field-row">
                     <label for="vrm">UK registration</label>
-                    <span class="tip" tabindex="0" data-tip="A plate lookup fills make and year, plus DVLA revenue weight as MAM. Model stays blank unless MOT history gives an exact van-maker model — converter brands are not guessed as Ducato or similar. Pick the platform from the list. DVLA never supplies Mass in Service.">?</span>
+                    <span class="tip" tabindex="0" data-tip="A UK registration lookup fills make and year, plus DVLA revenue weight as MAM. Model stays blank unless MOT history gives an exact van-maker model — converter brands are not guessed as Ducato or similar. Pick the platform from the list. DVLA never supplies Mass in Service.">?</span>
                   </span>
                   <input id="vrm" class="vrm-input" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="10" placeholder="e.g. WN67 DSO or DEMO3500" data-key="vrm">
                 </div>
                 <button type="button" class="btn btn-primary" id="lookupBtn">Look up vehicle</button>
               </div>
-              <p class="lookup-status" id="lookupStatus" role="status" aria-live="polite">Look up a UK plate, or type make, model and year.</p>
+              <p class="lookup-status" id="lookupStatus" role="status" aria-live="polite">Look up a UK registration, or type make, model and year.</p>
               <div class="identity" id="identityCard">
                 <h4 id="identityTitle">Vehicle</h4>
                 <p id="identityMeta"></p>
               </div>
               <aside class="still-need" id="stillNeed" hidden role="status">
                 <p class="still-need-title" id="stillNeedTitle">Still need</p>
-                <p class="still-need-lead">A plate lookup is not the finished check. We do not invent these figures.</p>
+                <p class="still-need-lead">A registration lookup is not the finished check. We do not invent these figures.</p>
                 <ul class="still-need-list" id="stillNeedList">
                   <li data-need="base"><span class="still-need-mark" aria-hidden="true"></span><span>Mass in Service or empty weighbridge total</span></li>
-                  <li data-need="limits"><span class="still-need-mark" aria-hidden="true"></span><span>Plate axle limits (front/rear)</span></li>
+                  <li data-need="limits"><span class="still-need-mark" aria-hidden="true"></span><span>VIN plate axle limits (front/rear)</span></li>
                   <li data-need="loaded"><span class="still-need-mark" aria-hidden="true"></span><span>Loaded axle weights if you have a ticket (for the roadside axle check)</span></li>
                 </ul>
               </aside>
               <div class="grid-3" style="margin-top:0.7rem">
                 <div class="field">
                   <label for="make">Make</label>
-                  <input id="make" type="text" list="make-list" data-key="make" placeholder="Fiat" autocomplete="off">
+                  <input id="make" type="text" list="make-list" data-key="make" autocomplete="off">
                 </div>
                 <div class="field">
                   <label for="model">Model / platform</label>
@@ -380,7 +381,7 @@
                 </div>
                 <div class="field">
                   <label for="yearOfManufacture">Year</label>
-                  <input id="yearOfManufacture" type="number" inputmode="numeric" min="1985" max="2027" step="1" data-key="yearOfManufacture" placeholder="2018">
+                  <input id="yearOfManufacture" type="number" inputmode="numeric" min="1985" max="2027" step="1" data-key="yearOfManufacture">
                 </div>
               </div>
               <datalist id="make-list">
@@ -395,7 +396,7 @@
                 <option value="Iveco"></option>
                 <option value="Hymer"></option>
               </datalist>
-              <p class="hint" style="margin-top:0.35rem">Coachbuilt converters (Hymer and similar) are left blank after a plate lookup — pick the chassis platform if you know it.</p>
+              <p class="hint" style="margin-top:0.35rem">Coachbuilt converters (Hymer and similar) are left blank after a registration lookup — pick the chassis platform if you know it.</p>
               <div class="presets" style="margin-top:0.65rem">
                 <button type="button" class="btn" id="lookupSpecBtn">Look up make / model / year</button>
               </div>
@@ -415,10 +416,10 @@
               <div class="field">
                 <span class="field-row">
                   <label for="mam">MAM / GVM / MTPLM</label>
-                  <span class="tip" tabindex="0" data-tip="Maximum Authorised Mass — the heaviest your van is allowed to be on the road (the plated weight). Light vans around 2800–3200 kg (e.g. VW Transporter-style) and motorhomes at 3500, 3850, 4500 kg and up are all valid. Read your plate.">?</span>
+                  <span class="tip" tabindex="0" data-tip="Maximum Authorised Mass — the heaviest your van is allowed to be on the road (the plated weight). Light vans around 2800–3200 kg (e.g. VW Transporter-style) and motorhomes at 3500, 3850, 4500 kg and up are all valid. Read your VIN plate.">?</span>
                 </span>
                 <input id="mam" type="number" inputmode="decimal" min="0" step="1" data-key="mam" data-kind="weight">
-                <span class="hint"><span class="u-weight">kg</span> on the <a href="#weight-plate">VIN / weight plate</a></span>
+                <span class="hint"><span class="u-weight">kg</span> on the <a href="#weight-plate">VIN plate</a></span>
               </div>
               <div class="field">
                 <span class="field-row">
@@ -434,34 +435,34 @@
                   <span class="tip" tabindex="0" data-tip="The empty-van figure on your UK V5. Also called MIRO in handbooks. Usually includes the driver and 90% fuel; fresh water is usually empty. Options and tolerance can make this optimistic.">?</span>
                 </span>
                 <input id="miro" type="number" inputmode="decimal" min="0" step="1" data-key="miro" data-kind="weight">
-                <span class="hint">Second best. Also called MIRO in handbooks. Can be optimistic — a weighbridge is more honest. A plate lookup leaves this blank; DVLA never supplies it.</span>
+                <span class="hint">Second best. Also called MIRO in handbooks. Can be optimistic — a weighbridge is more honest. A registration lookup leaves this blank; DVLA never supplies it.</span>
               </div>
               <div class="field" id="driverWeightField">
                 <label for="driverKg">Driver weight</label>
                 <input id="driverKg" type="number" inputmode="decimal" min="0" step="1" data-key="driverKg" data-kind="weight">
-                <span class="hint" id="driverHint">Mass in Service usually assumes a 75 kg driver. Enter your real weight — only the difference is added.</span>
+                <span class="hint" id="driverHint">Mass in Service already includes a 75 kg driver. Enter your real weight — we only add the extra (or subtract if you’re lighter), so the driver isn’t counted twice.</span>
               </div>
             </div>
             <div class="axle-block">
-              <h4 class="field-heading">Axle ratings from the plate</h4>
+              <h4 class="field-heading">Axle ratings from the VIN plate</h4>
               <p class="lede">Front and rear limits on the VIN plate. If either is blank, this is a MAM check only — we do not invent axle loads.</p>
               <div class="grid-2">
                 <div class="field">
                   <label for="frontAxle">Front axle rating</label>
                   <input id="frontAxle" type="number" inputmode="decimal" min="0" step="1" data-key="frontAxle" data-kind="weight">
-                  <span class="hint"><span class="u-weight">kg</span> from the plate — a limit, not today’s load</span>
+                  <span class="hint"><span class="u-weight">kg</span> from the VIN plate — a limit, not today’s load</span>
                 </div>
                 <div class="field">
                   <label for="rearAxle">Rear axle rating</label>
                   <input id="rearAxle" type="number" inputmode="decimal" min="0" step="1" data-key="rearAxle" data-kind="weight">
-                  <span class="hint"><span class="u-weight">kg</span> from the plate — a limit, not today’s load</span>
+                  <span class="hint"><span class="u-weight">kg</span> from the VIN plate — a limit, not today’s load</span>
                 </div>
               </div>
             </div>
             <p class="hint" id="weighedEmptyNote" hidden>Weighed empty is the van only — the driver and the full fuel tank from Fluids are added on top.</p>
             <details class="plate-find" id="plate-find">
-              <summary>Where to find your weight plate, or VIN plate</summary>
-              <p>Your motorhome’s weight plate is usually found in one of these places. Look for “Maximum Authorised Mass” or “Gross Vehicle Weight” — this is the number you need.</p>
+              <summary>Where to find your VIN plate</summary>
+              <p>Your motorhome’s VIN plate is usually found in one of these places. Look for “Maximum Authorised Mass” or “Gross Vehicle Weight” — this is the number you need.</p>
               <ol class="plate-spots">
                 <li>
                   <span class="mark" aria-hidden="true">1</span>
@@ -477,7 +478,7 @@
                 </li>
                 <li>
                   <span class="mark" aria-hidden="true">4</span>
-                  <div><strong>Vehicle handbook</strong><span>Listed as MAM, GVW or MTPLM — still confirm on the metal plate.</span></div>
+                  <div><strong>Vehicle handbook</strong><span>Listed as MAM, GVW or MTPLM — still confirm on the VIN plate.</span></div>
                 </li>
               </ol>
               <p><a href="#weight-plate">How to find GVW in the FAQ</a></p>
@@ -549,7 +550,7 @@
             </span>
           </summary>
           <div class="body">
-            <p class="lede">Water is 1 kg per litre and is usually empty in Mass in Service, so a full tank is extra. Mass in Service usually already includes most diesel (about 90%); this page only adds the top-up — on a 90 L tank filled to 100% that is about 8 <span class="u-weight">kg</span>, not the whole 76 <span class="u-weight">kg</span>.</p>
+            <p class="lede">Water is 1 kg per litre and is usually empty in Mass in Service, so a full tank is extra. Mass in Service includes most diesel (about 90%); this page only adds the top-up — on a 90 L tank filled to 100% that is about 8 <span class="u-weight">kg</span>, not the whole 76 <span class="u-weight">kg</span>.</p>
             <div class="grid-2">
               <div class="field">
                 <label for="freshCap">Fresh water capacity</label>
@@ -590,7 +591,7 @@
                 <label for="fuelFill">Fuel fill level (%)</label>
                 <input id="fuelFill" type="number" inputmode="decimal" min="0" max="100" step="1" data-key="fuelFill">
               </div>
-              <p class="assumption assumption-fuel">Mass in Service already includes 90% fuel (usual). Only the difference from 90% is added.</p>
+              <p class="assumption assumption-fuel">Mass in Service includes 90% fuel. Only the difference over 90% is added.</p>
               <div class="field">
                 <label for="fuelDensity">Diesel density</label>
                 <input id="fuelDensity" type="number" inputmode="decimal" min="0.7" max="1" step="0.01" data-key="fuelDensity">
@@ -736,7 +737,7 @@
           <div class="body">
             <p class="lede">Tick what you actually carry and edit the weights. Defaults are typical UK touring kit, not brochure minimums. Add your own extra items below if they are not already listed.</p>
             <div class="item">
-              <label class="check"><input type="checkbox" id="awning" data-key="awning"><span>Cassette awning</span></label>
+              <label class="check"><input type="checkbox" id="awning" data-key="awning"><span>Awning</span></label>
               <div class="field"><label for="awningKg">Weight</label><input id="awningKg" type="number" min="0" step="0.1" data-key="awningKg" data-kind="weight"></div>
             </div>
             <div class="item">
@@ -806,7 +807,7 @@
         <section class="block" id="presets" style="padding:1rem 1.05rem">
           <span class="eyebrow">Presets</span>
           <h3 style="margin:0 0 0.55rem">Start from a typical van, not a blank page</h3>
-          <p class="lede">These do not replace your VIN plate. The 3.5&nbsp;t preset is a common UK example — change MAM to match your plate.</p>
+          <p class="lede">These do not replace your VIN plate. The 3.5&nbsp;t preset is a common UK example — change MAM to match your VIN plate.</p>
           <div class="presets">
             <button type="button" class="btn preset-btn" id="preset-typical" aria-pressed="false">Typical 3.5t Motorhome setup</button>
             <button type="button" class="btn preset-btn" id="preset-light" aria-pressed="false">Light weekend setup based on 2 adults</button>
@@ -829,7 +830,7 @@
           <div class="remaining axle-status status-tight" id="axleStatusBox">
             <div class="label" id="axleStatusLabel">Axle check</div>
             <div class="value" id="axleStatusValue">—</div>
-            <div class="sub" id="axleStatusSub">MAM check only until plate limits and weighbridge weights are both entered</div>
+            <div class="sub" id="axleStatusSub">MAM check only until VIN plate limits and weighbridge weights are both entered</div>
           </div>
         </div>
         <p class="note axle-mam-note" id="axleMamNote">Under MAM but over on an axle is still a fail / roadside risk.</p>
@@ -837,16 +838,16 @@
         <div class="stat-row"><span>Maximum allowed (MAM)</span><b id="mamOut">—</b></div>
         <div class="stat-row"><span>Manufacturer payload (MAM − Mass in Service)</span><b id="platedPayload">—</b></div>
         <p class="note" id="platedPayloadNote">This is the brochure gap, not your real remaining if Mass in Service is optimistic.</p>
-        <div class="stat-row"><span>Front axle rating (plate)</span><b id="frontAxleOut">—</b></div>
-        <div class="stat-row"><span>Rear axle rating (plate)</span><b id="rearAxleOut">—</b></div>
+        <div class="stat-row"><span>Front axle rating (VIN plate)</span><b id="frontAxleOut">—</b></div>
+        <div class="stat-row"><span>Rear axle rating (VIN plate)</span><b id="rearAxleOut">—</b></div>
         <div class="stat-row" id="wbFrontRow" hidden><span>Front axle weighbridge</span><b id="wbFrontOut">—</b></div>
         <div class="stat-row" id="wbRearRow" hidden><span>Rear axle weighbridge</span><b id="wbRearOut">—</b></div>
         <div class="stat-row"><span>Payload used</span><b id="payloadPct">—</b></div>
         <div class="meter" aria-hidden="true"><span id="meterFill"></span></div>
         <div class="warn warn-over" id="warnOver">Overweight: estimated total exceeds MAM. Do not drive until you lose weight — water, gear and passengers are the fastest levers.</div>
-        <div class="warn warn-over" id="warnAxleOver">Rear axle over the plate limit — fail even if total MAM is OK. Do not drive until you lose rear weight.</div>
+        <div class="warn warn-over" id="warnAxleOver">Rear axle over the VIN plate limit — fail even if total MAM is OK. Do not drive until you lose rear weight.</div>
         <div class="warn warn-low" id="warnLow">Low payload remaining. There is little margin for weighing error, extra shopping or a full waste tank on the way home.</div>
-        <div class="warn warn-low" id="warnAxleIncomplete">MAM check only — axle check incomplete. Enter both axle ratings from the plate. We do not invent axle loads.</div>
+        <div class="warn warn-low" id="warnAxleIncomplete">MAM check only — axle check incomplete. Enter both axle ratings from the VIN plate. We do not invent axle loads.</div>
         <div class="warn warn-low" id="warnAxleSanity">Front plus rear is a long way from the total mass you entered. Check the ticket figures.</div>
         <div class="breakdown">
           <h3>Where the weight is coming from</h3>
@@ -855,7 +856,7 @@
         <p class="note" id="waterWhatIf"></p>
         <p class="note">Mass in Service usually assumes <strong>empty fresh water</strong>, the driver, and about 90% fuel. This breakdown only adds water and any fuel above that 90% — not the diesel already in the van figure.</p>
         <p class="note" id="axleNote"></p>
-        <p class="tyres-link" id="tyresLink">Fitted different tyres? Use the <a href="tyres.html">Tyres tool</a> with your axle weights (weighbridge figures, not the plate ratings).</p>
+        <p class="tyres-link" id="tyresLink">Fitted different tyres? Use the <a href="tyres.html">Tyres tool</a> with your axle weights (weighbridge figures, not the VIN plate ratings).</p>
         <div class="result-actions">
           <button type="button" class="btn btn-warn" id="emptyWater">What if I empty the water?</button>
           <button type="button" class="btn" id="printResults">Print results</button>
@@ -908,7 +909,7 @@
       </details>
       <details>
         <summary>Does the driver count towards payload?</summary>
-        <p>Mass in Service from the V5 usually assumes a 75 kg driver. Enter your real weight — only the extra kilograms above 75 are added. Extra adults, children and pets are additional. If you enter a weighbridge empty weight of the van only, the full driver weight is added.</p>
+        <p>Mass in Service already includes a 75 kg driver. Enter your real weight — we only add the extra (or subtract if you’re lighter), so the driver isn’t counted twice. Extra adults, children and pets are additional. If you enter a weighbridge empty weight of the van only, the full driver weight is added.</p>
       </details>
       <details>
         <summary>How should I treat fuel, gas and water in this calculator?</summary>
@@ -924,7 +925,7 @@
       </details>
       <details>
         <summary>Can I look up my motorhome by registration?</summary>
-        <p>Yes. A UK plate lookup fills make and year, plus the DVLA revenue weight (often the plated MAM). DVLA does not supply model or Mass in Service. Model stays blank unless MOT history gives an exact van-maker model — coachbuilts such as Hymer are not filled with Ducato. Pick the platform from the list, and enter an empty weighbridge ticket or Mass in Service from the V5. You can also choose make, model and year to apply typical catalogue figures (often 3.5 t examples). Always confirm weights on the VIN plate and handbook.</p>
+        <p>Yes. A UK registration lookup fills make and year, plus the DVLA revenue weight (often the plated MAM). DVLA does not supply model or Mass in Service. Model stays blank unless MOT history gives an exact van-maker model — coachbuilts such as Hymer are not filled with Ducato. Pick the platform from the list, and enter an empty weighbridge ticket or Mass in Service from the V5. You can also choose make, model and year to apply typical catalogue figures (often 3.5 t examples). Always confirm weights on the VIN plate and handbook.</p>
       </details>
       <details id="faq-under-mam-over-axle">
         <summary>Is under MAM enough if an axle is over?</summary>
@@ -932,7 +933,7 @@
       </details>
       <details id="faq-axle-check">
         <summary>How does the axle weighbridge check work?</summary>
-        <p>Plate axle ratings are limits, not today’s load. Enter front and rear kg from a weighbridge ticket — Empty for the base van, Loaded for a roadside check (Loaded is the default). We only pass or fail when both the plate limits and those ticket weights are present. We never invent an axle split from people or kit. A rear axle over the plate is a fail even if total MAM is OK.</p>
+        <p>VIN plate axle ratings are limits, not today’s load. Enter front and rear kg from a weighbridge ticket — Empty for the base van, Loaded for a roadside check (Loaded is the default). We only pass or fail when both the VIN plate limits and those ticket weights are present. We never invent an axle split from people or kit. A rear axle over the VIN plate is a fail even if total MAM is OK.</p>
       </details>
       <details id="faq-tyres">
         <summary>What about tyre pressure if I change away from the original tyres?</summary>
@@ -986,7 +987,7 @@
         <a href="tyres.html">Tyres</a>
         <a href="#how-to-use">How to use</a>
         <a href="#faq">FAQ</a>
-        <a href="#weight-plate">Weight plate</a>
+        <a href="#weight-plate">VIN plate</a>
         <a href="#about">About</a>
         <a href="#privacy">Privacy</a>
       </nav>
@@ -998,8 +999,8 @@
   <script src="lib/driver-payload.js?v=20260910need1"></script>
   <script src="lib/mass-in-service.js?v=20260910need1"></script>
   <script src="lib/custom-kit.js?v=20260910need1"></script>
-  <script src="lib/axle-check.js?v=20260910need1"></script>
-  <script src="lib/still-need.js?v=20260910need1"></script>
-  <script src="app.js?v=20260910need1"></script>
+  <script src="lib/axle-check.js?v=20260911amend1"></script>
+  <script src="lib/still-need.js?v=20260911amend1"></script>
+  <script src="app.js?v=20260911amend1"></script>
 </body>
 </html>

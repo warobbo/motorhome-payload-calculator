@@ -50,7 +50,7 @@ describe("still-need checklist", function () {
     assert.equal(stillNeed.title(list), "Still need");
     assert.match(stillNeed.lead(), /do not invent/);
     assert.equal(list[0].label, "Mass in Service or empty weighbridge total");
-    assert.equal(list[1].label, "Plate axle limits (front/rear)");
+    assert.equal(list[1].label, "VIN plate axle limits (front/rear)");
     assert.match(list[2].label, /Loaded axle weights if you have a ticket/);
     assert.match(stillNeed.dockLine(list), /^Still need:/);
   });

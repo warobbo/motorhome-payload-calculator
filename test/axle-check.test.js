@@ -82,7 +82,7 @@ describe("axle check", function () {
     });
     assert.equal(result.status, "incomplete");
     assert.equal(result.incompleteKind, "weights-only");
-    assert.equal(result.detail, "Enter plate axle limits to check");
+    assert.equal(result.detail, "Enter VIN plate axle limits to check");
   });
 
   it("keeps the MAM-only pattern when both pairs are missing", function () {
@@ -103,7 +103,7 @@ describe("axle check", function () {
     });
     assert.equal(result.status, "pass");
     assert.equal(result.label, "Pass");
-    assert.equal(result.modeNote, "As driven — front/rear vs plate");
+    assert.equal(result.modeNote, "As driven — front/rear vs VIN plate");
     assert.equal(result.loudFail, false);
     assert.match(result.tyresLink, /Use these weights in the Tyres tool/);
   });

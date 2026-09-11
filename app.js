@@ -207,13 +207,13 @@
       modeNote: function (mode) {
         return mode === "empty"
           ? "Base van — does not prove trip legality; use Loaded for roadside check"
-          : "As driven — front/rear vs plate";
+          : "As driven — front/rear vs VIN plate";
       },
       evaluate: function () {
         return {
           status: "incomplete",
           incompleteKind: "mam-only",
-          modeNote: "As driven — front/rear vs plate",
+          modeNote: "As driven — front/rear vs VIN plate",
           frontOver: false,
           rearOver: false,
           loudFail: false,
@@ -221,7 +221,7 @@
           detail: "Enter both front and rear axle ratings from the VIN plate. This page does not invent axle loads.",
           sanityFlag: false,
           sanityDetail: "",
-          tyresLink: "Fitted different tyres? Use the Tyres tool with your axle weights (weighbridge figures, not the plate ratings)."
+          tyresLink: "Fitted different tyres? Use the Tyres tool with your axle weights (weighbridge figures, not the VIN plate ratings)."
         };
       }
     };
@@ -231,7 +231,7 @@
       isVanPath: function () { return false; },
       items: function () { return []; },
       title: function () { return "Still need"; },
-      lead: function () { return "A plate lookup is not the finished check. We do not invent these figures."; },
+      lead: function () { return "A registration lookup is not the finished check. We do not invent these figures."; },
       dockLine: function () { return ""; }
     };
   var lookupSucceeded = false;
@@ -566,8 +566,8 @@
         "&rear=" + encodeURIComponent(String(Math.round(num(state.wbRearAxle))));
     }
     el.innerHTML = hasWeights
-      ? 'Use these weights in the <a href="' + href + '">Tyres tool</a> (weighbridge figures, not the plate ratings).'
-      : 'Fitted different tyres? Use the <a href="' + href + '">Tyres tool</a> with your axle weights (weighbridge figures, not the plate ratings).';
+      ? 'Use these weights in the <a href="' + href + '">Tyres tool</a> (weighbridge figures, not the VIN plate ratings).'
+      : 'Fitted different tyres? Use the <a href="' + href + '">Tyres tool</a> with your axle weights (weighbridge figures, not the VIN plate ratings).';
   }
 
   function axleStatusClass(result) {
@@ -734,7 +734,7 @@
       document.getElementById("emptyWater").textContent = waterBackup
         ? "Restore water levels"
         : "What if I empty the water?";
-      document.getElementById("peopleNote").textContent = "Mass in Service is blank after the plate lookup \u2014 the V5 figure is not guessed.";
+      document.getElementById("peopleNote").textContent = "Mass in Service is blank after the registration lookup \u2014 the V5 figure is not guessed.";
       syncWeighedEmptyUi();
       updateIdentityCard();
       updateStillNeed();
@@ -800,7 +800,7 @@
 
     document.getElementById("peopleNote").textContent = usingActualEmpty()
       ? "Weighed empty is the van only \u2014 the full driver weight is added."
-      : "Mass in Service assumes a 75 kg driver \u2014 only any extra is added. Additional adults are passengers only.";
+      : "Mass in Service already includes a 75 kg driver \u2014 we only add the extra (or subtract if you\u2019re lighter). Additional adults are passengers only.";
     syncWeighedEmptyUi();
     updateIdentityCard();
     updateStillNeed();
@@ -916,9 +916,9 @@
   var lookupLiveDvla = false;
   function defaultLookupHint() {
     if (lookupLiveDvla || (readStored(DVLA_KEY_STORAGE) || "").trim()) {
-      return "Look up a UK plate for make and plated weight, or type make, model and year.";
+      return "Look up a UK registration for make and plated weight, or type make, model and year.";
     }
-    return "Look up a UK plate, or type make, model and year.";
+    return "Look up a UK registration, or type make, model and year.";
   }
   function applyDefaultLookupHint() {
     var el = document.getElementById("lookupStatus");
@@ -964,9 +964,9 @@
           state.yearOfManufacture = data.yearFromPlate;
           fillForm();
           saveState();
-          extra = " Year " + data.yearFromPlate + " taken from the UK plate age identifier.";
+          extra = " Year " + data.yearFromPlate + " taken from the UK registration age identifier.";
         }
-        setLookupStatus((data.message || "Couldn't look up that plate.") + extra, "err");
+        setLookupStatus((data.message || "Couldn't look up that registration.") + extra, "err");
         return;
       }
       applyLookup(data.vehicle);

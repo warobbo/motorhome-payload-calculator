@@ -15,9 +15,9 @@ describe("payload page identity and honesty", function () {
     assert.ok(introStart > 0, "intro block should exist");
     assert.match(
       intro,
-      /Is your motorhome still legal under its plated Maximum Authorised Mass \(MAM\)\?/
+      /Is your motorhome still legally under its plated Maximum Authorised Mass \(MAM\)\?/
     );
-    const heroAt = intro.indexOf("Is your motorhome still legal under its plated Maximum Authorised Mass (MAM)?");
+    const heroAt = intro.indexOf("Is your motorhome still legally under its plated Maximum Authorised Mass (MAM)?");
     const defAt = intro.indexOf("the heaviest your van is allowed to be on the road (the plated weight)");
     assert.ok(heroAt >= 0 && defAt > heroAt, "hero should spell out MAM, then give the plated-weight meaning");
   });
@@ -69,16 +69,16 @@ describe("payload page identity and honesty", function () {
   it("puts axle status beside remaining payload and keeps plate limits separate", function () {
     assert.match(html, /id="axleStatusBox"/);
     assert.match(html, /class="result-hero"/);
-    assert.match(html, /Axle ratings from the plate/);
+    assert.match(html, /Axle ratings from the VIN plate/);
     assert.match(html, /Weighbridge axle weights/);
     assert.match(html, /id="warnAxleOver"/);
   });
 
   it("links to the Tyres tool without treating plate ratings as today’s axle weights", function () {
     assert.match(html, /href="tyres.html"/);
-    assert.match(html, /weighbridge figures, not the plate ratings/);
+    assert.match(html, /weighbridge figures, not the VIN plate ratings/);
     assert.match(app, /Use these weights in the/);
-    assert.match(app, /weighbridge figures, not the plate ratings/);
+    assert.match(app, /weighbridge figures, not the VIN plate ratings/);
   });
 
   it("lets people add custom kit rows and keeps setup off the public page", function () {
@@ -96,7 +96,7 @@ describe("payload page identity and honesty", function () {
   it("shows a still-need checklist after the van path starts and does not invent values", function () {
     assert.match(html, /id="stillNeed"/);
     assert.match(html, /Mass in Service or empty weighbridge total/);
-    assert.match(html, /Plate axle limits \(front\/rear\)/);
+    assert.match(html, /VIN plate axle limits \(front\/rear\)/);
     assert.match(html, /Loaded axle weights if you have a ticket/);
     assert.match(app, /updateStillNeed/);
     assert.match(app, /stillNeed\.items/);
@@ -106,5 +106,25 @@ describe("payload page identity and honesty", function () {
     assert.match(html, /id="faq-under-mam-over-axle"/);
     assert.match(html, /Under MAM but over on an axle is still a fail \/ roadside risk\./);
     assert.match(html, /id="axleMamNote"/);
+  });
+
+  it("locks Wayne’s payload copy: legally, VIN plate path, empty make/year, driver and fuel helpers", function () {
+    assert.match(html, /Also from the VIN plate:<\/strong> MAM and front\/rear axle limits \(allowed weights — not today’s load\)\./);
+    assert.doesNotMatch(html, /<li><strong>Third best:/);
+    assert.match(html, /id="make"[^>]*autocomplete="off"/);
+    assert.doesNotMatch(html, /id="make"[^>]*placeholder=/);
+    assert.doesNotMatch(html, /id="yearOfManufacture"[^>]*placeholder=/);
+    assert.match(html, /placeholder="e\.g\. WN67 DSO or DEMO3500"/);
+    assert.match(
+      html,
+      /Mass in Service already includes a 75 kg driver\. Enter your real weight — we only add the extra \(or subtract if you’re lighter\), so the driver isn’t counted twice\./
+    );
+    assert.match(html, /Mass in Service includes most diesel \(about 90%\)/);
+    assert.doesNotMatch(html, /Mass in Service usually already includes most diesel/);
+    assert.match(html, /Mass in Service includes 90% fuel\. Only the difference over 90% is added\./);
+    assert.doesNotMatch(html, /difference from 90%/);
+    assert.doesNotMatch(html, /90% fuel \(usual\)/);
+    assert.match(html, /<span>Awning<\/span>/);
+    assert.doesNotMatch(html, /Cassette awning/);
   });
 });
