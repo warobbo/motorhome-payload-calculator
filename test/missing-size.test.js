@@ -46,6 +46,7 @@ describe("missing-size research intake", function () {
     assert.equal(auto.ok, true);
     assert.equal(auto.record.source, "auto");
     assert.equal(auto.record.bar, undefined);
+    assert.ok(missing.MAX.reason >= 400);
     assert.match(missing.sidewallLine(built.record), /245\/70 R19\.5/);
     assert.match(missing.formatMailtoBody(built.record), /do not invent a pressure/);
     assert.doesNotMatch(missing.formatMailtoBody(built.record), /we will email you a pressure/i);
