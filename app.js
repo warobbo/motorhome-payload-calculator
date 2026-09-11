@@ -238,6 +238,7 @@
   var presetStarted = false;
   var persistEnabled = false;
   var restoredThisVisit = false;
+  var booting = true;
   var state = freshState();
   var pageLoadSnapshot = readSavedVan();
   var waterBackup = null;
@@ -300,11 +301,12 @@
   }
 
   function enablePersist() {
+    if (booting) return;
     persistEnabled = true;
   }
 
   function saveState() {
-    if (!persistEnabled) return;
+    if (booting || !persistEnabled) return;
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
     syncSavedVanBanner();
   }
@@ -477,10 +479,10 @@
   }
 
   function readForm(el) {
-    if (syncing) return;
-    enablePersist();
+    if (syncing || booting) return;
     var key = el.getAttribute("data-key");
     var kind = el.getAttribute("data-kind");
+    var before = state[key];
     if (el.type === "checkbox") {
       state[key] = el.checked;
     } else if (kind === "weight") {
@@ -494,6 +496,7 @@
     } else {
       state[key] = el.value === "" ? "" : num(el.value);
     }
+    if (state[key] !== before) enablePersist();
     toggleCustomFields();
     syncSteppers();
     saveState();
@@ -1347,6 +1350,9 @@
   fillForm();
   calculate();
   syncSavedVanBanner();
+  window.requestAnimationFrame(function () {
+    booting = false;
+  });
   probeLookupStatus();
 
   /* Hidden check for converter-brand DVLA shape (no API key required). */
