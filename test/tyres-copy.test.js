@@ -45,8 +45,8 @@ describe("tyres missing-size capture copy", function () {
   });
 
   it("bumps cache-bust and keeps the sticky bar off the form footer", function () {
-    assert.match(html, /ASSET_VERSION=20260911tyres2/);
-    assert.match(html, /styles\.css\?v=20260911restore1/);
+    assert.match(html, /ASSET_VERSION=20260911logos1/);
+    assert.match(html, /styles\.css\?v=20260911logos1/);
     assert.match(html, /tyre-calc\.js\?v=20260911tyres2/);
     assert.match(html, /tyres-app\.js\?v=20260911tyres3/);
     assert.match(css, /Keep the last fields and Send above the sticky cold-pressure bar/);

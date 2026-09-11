@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Payload - motorhome tools">
+  <!-- Shared family: pine tile + white glyph. Green matches site pine #1e4f43. -->
+  <rect width="32" height="32" rx="8" fill="#1e4f43"/>
+  <!-- Coachbuilt motorhome, facing right: high living box and sloped cab. -->
+  <path fill="#fff" d="M5.55 19.75V11.05c0-1.2.95-2.2 2.15-2.2h11.05c.82 0 1.58.42 2.02 1.12L25.55 16c.32.5.5 1.08.5 1.68v2.07H5.55z"/>
+  <rect x="8.55" y="10.4" width="7.6" height="2.45" rx=".55" fill="#1e4f43"/>
+  <path fill="#1e4f43" d="M20.55 11.55c.18-.28.5-.42.82-.42.22 0 .42.08.58.22l2.55 3.35H20.7c-.28 0-.5-.22-.5-.5v-2.1c0-.2.06-.4.35-.55z"/>
+  <circle cx="10.6" cy="22.55" r="2.4" fill="#fff"/>
+  <circle cx="21.85" cy="22.55" r="2.4" fill="#fff"/>
+  <circle cx="10.6" cy="22.55" r=".85" fill="#1e4f43"/>
+  <circle cx="21.85" cy="22.55" r=".85" fill="#1e4f43"/>
+</svg>
