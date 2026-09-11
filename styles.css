@@ -30,9 +30,17 @@
 
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+  /* Stop iPhone rubber-band sideways page shift; clip keeps position:sticky working. */
+  overflow-x: hidden;
+  overscroll-behavior-x: none;
+}
 body {
   margin: 0;
+  max-width: 100%;
+  overflow-x: hidden;
+  overscroll-behavior-x: none;
   font-family: var(--font);
   color: var(--ink);
   background:
@@ -42,6 +50,9 @@ body {
   line-height: 1.5;
   font-size: 1.02rem;
 }
+@supports (overflow: clip) {
+  html, body { overflow-x: clip; }
+}
 
 img, svg { max-width: 100%; display: block; }
 button, input, select { font-family: inherit; }
@@ -49,14 +60,30 @@ a { color: var(--pine); }
 
 .skip {
   position: absolute;
-  left: -999px;
-  top: 0;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
   background: var(--pine);
   color: #fff;
-  padding: 0.6rem 1rem;
   z-index: 100;
 }
-.skip:focus { left: 0.75rem; top: 0.75rem; }
+.skip:focus {
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 0.6rem 1rem;
+  clip: auto;
+  clip-path: none;
+  left: 0.75rem;
+  top: 0.75rem;
+  white-space: normal;
+}
 
 /* Header */
 .site-header {
@@ -75,6 +102,7 @@ a { color: var(--pine); }
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
+  min-width: 0;
 }
 
 .hub-nav {
@@ -165,6 +193,7 @@ a { color: var(--pine); }
   max-width: 1180px;
   margin: 0 auto;
   padding: 1rem 1rem 6.5rem;
+  min-width: 0;
 }
 .intro {
   margin: 0.4rem 0 1.1rem;
@@ -249,6 +278,7 @@ a { color: var(--pine); }
 .layout {
   display: grid;
   gap: 1rem;
+  min-width: 0;
 }
 @media (min-width: 980px) {
   .layout {
@@ -432,7 +462,7 @@ input:focus, select:focus, textarea:focus, button:focus-visible {
 
 .item {
   display: grid;
-  grid-template-columns: 1.4fr 0.9fr;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.9fr);
   gap: 0.55rem;
   align-items: end;
   padding: 0.55rem 0;
@@ -463,7 +493,8 @@ input:focus, select:focus, textarea:focus, button:focus-visible {
   position: absolute;
   left: 50%;
   bottom: calc(100% + 8px);
-  width: min(240px, 70vw);
+  width: min(240px, calc(100% + 8rem));
+  max-width: min(240px, calc(100vw - 2.5rem));
   background: var(--ink);
   color: #fff;
   font-size: 0.75rem;
@@ -541,15 +572,14 @@ input:focus, select:focus, textarea:focus, button:focus-visible {
   margin: 0.6rem 0 0.85rem;
 }
 @media (min-width: 360px) {
-  .result-hero { grid-template-columns: 1fr 1fr; }
+  .result-hero { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
 }
 .result-hero .remaining { margin: 0; }
 .result-hero .remaining .value {
   font-size: clamp(1.55rem, 6vw, 2.35rem);
 }
 .axle-status .value {
-  word-break: normal;
-  overflow-wrap: normal;
+  overflow-wrap: anywhere;
   font-size: clamp(1.45rem, 5.2vw, 2.1rem);
 }
 .remaining {
@@ -583,7 +613,9 @@ input:focus, select:focus, textarea:focus, button:focus-visible {
   padding: 0.35rem 0;
   font-size: 0.92rem;
   border-bottom: 1px solid var(--line);
+  min-width: 0;
 }
+.stat-row span { min-width: 0; }
 .stat-row b { font-variant-numeric: tabular-nums; }
 #platedPayloadNote {
   margin: 0.2rem 0 0.45rem;
@@ -785,10 +817,15 @@ input:focus, select:focus, textarea:focus, button:focus-visible {
 .missing-size .field { margin-top: 0.7rem; }
 .missing-size .hp {
   position: absolute;
-  left: -9999px;
   width: 1px;
   height: 1px;
+  padding: 0;
+  margin: -1px;
   overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }
 .missing-size-actions {
   display: flex;
@@ -942,12 +979,15 @@ footer.site-footer {
 .footer-links { display: flex; flex-wrap: wrap; gap: 0.9rem; font-size: 0.88rem; }
 .fine { opacity: 0.8; font-size: 0.78rem; margin: 0.8rem 0 0; }
 
-/* Mobile dock */
+/* Mobile dock — body child, so full-bleed without negative margins (those overflow iPhone). */
 .dock {
   position: sticky;
   bottom: 0;
   z-index: 30;
-  margin: 0 -1rem 0;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  min-width: 0;
   background: var(--paper);
   border-top: 1px solid var(--line);
   padding: 0.65rem 1rem calc(0.7rem + env(safe-area-inset-bottom));
@@ -957,6 +997,7 @@ footer.site-footer {
   gap: 0.7rem;
   box-shadow: 0 -8px 24px rgba(26, 22, 18, 0.08);
 }
+.dock > * { min-width: 0; }
 .dock strong {
   font-family: var(--display);
   font-size: 1.55rem;
@@ -1079,7 +1120,8 @@ footer.site-footer {
   font-size: 0.78rem;
   font-weight: 700;
   color: var(--amber);
-  max-width: 16rem;
+  max-width: 100%;
+  overflow-wrap: anywhere;
   line-height: 1.3;
 }
 .dock-need:not([hidden]) { display: block; }
