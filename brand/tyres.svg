@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Tyres - motorhome tools">
+  <!-- Shared family: pine tile + white glyph. Green matches site pine #1e4f43. -->
+  <rect width="32" height="32" rx="8" fill="#1e4f43"/>
+  <!-- Front-facing motorhome wheel: tyre wall, rim, five spokes, hub. -->
+  <circle cx="16" cy="16" r="9.85" fill="#fff"/>
+  <circle cx="16" cy="16" r="6.55" fill="#1e4f43"/>
+  <g fill="#fff" transform="translate(16 16)">
+    <rect x="-1.05" y="-6.45" width="2.1" height="4.55" rx=".7"/>
+    <rect x="-1.05" y="-6.45" width="2.1" height="4.55" rx=".7" transform="rotate(72)"/>
+    <rect x="-1.05" y="-6.45" width="2.1" height="4.55" rx=".7" transform="rotate(144)"/>
+    <rect x="-1.05" y="-6.45" width="2.1" height="4.55" rx=".7" transform="rotate(216)"/>
+    <rect x="-1.05" y="-6.45" width="2.1" height="4.55" rx=".7" transform="rotate(288)"/>
+  </g>
+  <circle cx="16" cy="16" r="2.35" fill="#fff"/>
+  <circle cx="16" cy="16" r=".85" fill="#1e4f43"/>
+</svg>

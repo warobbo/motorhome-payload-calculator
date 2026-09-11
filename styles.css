@@ -148,9 +148,8 @@ a { color: var(--pine); }
   height: 42px;
   border-radius: 12px;
   background: var(--pine);
-  color: #f4ead8;
-  display: grid;
-  place-items: center;
+  display: block;
+  overflow: hidden;
 }
 .brand h1 {
   margin: 0;
