@@ -57,21 +57,49 @@
     };
   }
 
-  function loadState() {
+  function savedLooksUseful(saved) {
+    if (!saved || typeof saved !== "object") return false;
+    return !!(saved.sidewall || saved.loadIndex || saved.frontAxleKg || saved.rearAxleKg);
+  }
+
+  function mergeSaved(saved) {
     var state = Object.assign({}, DEFAULTS);
+    Object.keys(DEFAULTS).forEach(function (key) {
+      if (saved[key] !== undefined && saved[key] !== null) state[key] = saved[key];
+    });
+    return state;
+  }
+
+  function readSavedTyres() {
     try {
       var raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        var saved = JSON.parse(raw);
-        var hasTyre = saved.sidewall || saved.loadIndex;
-        var hasLoad = saved.frontAxleKg || saved.rearAxleKg;
-        if (hasTyre || hasLoad) {
-          Object.keys(DEFAULTS).forEach(function (key) {
-            if (saved[key] !== undefined && saved[key] !== null) state[key] = saved[key];
-          });
-        }
-      }
-    } catch (err) { /* ignore */ }
+      if (!raw) return null;
+      var saved = JSON.parse(raw);
+      return savedLooksUseful(saved) ? mergeSaved(saved) : null;
+    } catch (err) {
+      return null;
+    }
+  }
+
+  function hasSavedTyres() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return false;
+      return savedLooksUseful(JSON.parse(raw));
+    } catch (err) {
+      return false;
+    }
+  }
+
+  function emptyState() {
+    return Object.assign({}, DEFAULTS);
+  }
+
+  /* Payload deep-link ?front=&rear= (or frontAxleKg/rearAxleKg) still applies
+     on first paint. That is an intentional weighbridge handoff, not a silent
+     restore of this page’s localStorage. */
+  function initialPaintState() {
+    var state = emptyState();
     var fromTicket = weighbridgeFromQuery();
     if (fromTicket.frontAxleKg) state.frontAxleKg = fromTicket.frontAxleKg;
     if (fromTicket.rearAxleKg) state.rearAxleKg = fromTicket.rearAxleKg;
@@ -103,13 +131,58 @@
     };
   }
 
+  var persistEnabled = false;
+  var restoredThisVisit = false;
+  var booting = true;
+  var pageLoadSnapshot = readSavedTyres();
+  var lastKnown = "";
+
+  function snapshotForm() {
+    return JSON.stringify(collectState());
+  }
+
+  function formChanged() {
+    var now = snapshotForm();
+    if (now === lastKnown) return false;
+    lastKnown = now;
+    return true;
+  }
+
+  function enablePersist() {
+    if (booting) return;
+    persistEnabled = true;
+  }
+
   function saveState() {
+    if (booting || !persistEnabled) return;
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(collectState()));
       setSaveNote("Saved on this device only.");
     } catch (err) {
       setSaveNote("Could not save on this device.");
     }
+    syncSavedTyresBanner();
+  }
+
+  function syncSavedTyresBanner() {
+    var banner = $("savedTyresBanner");
+    var restoreBtn = $("restoreTyres");
+    if (!banner) return;
+    banner.hidden = !(pageLoadSnapshot || hasSavedTyres());
+    if (restoreBtn) restoreBtn.hidden = !pageLoadSnapshot || restoredThisVisit;
+  }
+
+  function restoreLastTyres() {
+    if (!pageLoadSnapshot) return;
+    persistEnabled = true;
+    restoredThisVisit = true;
+    fillFromState(pageLoadSnapshot);
+    decodeInto("sidewall", { sync: true });
+    renderAnswers();
+    lastKnown = snapshotForm();
+    saveState();
+    setSaveNote("Restored last tyres on this phone.");
+    syncSavedTyresBanner();
   }
 
   function setSaveNote(text) {
@@ -321,7 +394,8 @@
           return "That camping tyre size is not in our table yet, so this page will not invent a pressure.";
         }
         if (result.reason === "michelin-cp-no-table") {
-          return "No published Michelin camping load table for this size. This page will not invent a pressure.";
+          return T.MICHELIN_CP_REFUSE ||
+            "We don’t have Michelin’s Camping CP load/pressure table for this size. We won’t invent one or copy another brand’s camping table and call it Michelin.";
         }
         if (result.reason === "brand-later") {
           return "That brand is not in our tables yet. This page will not invent a pressure.";
@@ -411,6 +485,10 @@
       badge.textContent = "van C tyre table";
     } else if (path.path === "unsupported-rim") {
       badge.textContent = "Only 15–18″ supported — this is a " + parsed.rimIn + "″ rim.";
+    } else if (path.reason === "michelin-cp-no-table") {
+      badge.textContent = "Michelin Camping CP — no official table on this page.";
+    } else if (path.reason === "brand-later") {
+      badge.textContent = "That brand is not in our tables yet.";
     } else {
       badge.textContent = "Detected " + (parsed.family || "unknown") + " — not in our table yet / only 15–18″ supported.";
     }
@@ -467,7 +545,8 @@
       return "That brand is not in our tables yet.";
     }
     if (result.reason === "michelin-cp-no-table") {
-      return "No published Michelin camping load table for this size.";
+      return T.MICHELIN_CP_REFUSE ||
+        "We don’t have Michelin’s Camping CP load/pressure table for this size.";
     }
     if (result.reason === "lt-size-unknown") {
       return "That LT size is not in our table yet.";
@@ -508,6 +587,87 @@
   var capturePrefillKey = "";
   var captureSubmittedKey = "";
   var captureMailtoTo = "";
+  var autoNoteTimer = 0;
+  var AUTO_NOTE_STORE = "mh-tyres-autonote-v1";
+
+  function autoNoteKey(target) {
+    return [target.size, target.loadIndex, target.brand, target.reason].join("|");
+  }
+
+  function alreadyAutoNoted(key) {
+    try {
+      var raw = sessionStorage.getItem(AUTO_NOTE_STORE);
+      var list = raw ? JSON.parse(raw) : [];
+      return list.indexOf(key) !== -1;
+    } catch (err) {
+      return false;
+    }
+  }
+
+  function markAutoNoted(key) {
+    try {
+      var raw = sessionStorage.getItem(AUTO_NOTE_STORE);
+      var list = raw ? JSON.parse(raw) : [];
+      if (list.indexOf(key) === -1) {
+        list.push(key);
+        if (list.length > 40) list = list.slice(-40);
+        sessionStorage.setItem(AUTO_NOTE_STORE, JSON.stringify(list));
+      }
+    } catch (err) { /* ignore */ }
+  }
+
+  function showAutoNoteLine(visible) {
+    var el = $("autoNoteLine");
+    if (el) el.hidden = !visible;
+  }
+
+  function postAutoNote(target) {
+    if (!target || !String(target.size || "").trim()) return;
+    var key = autoNoteKey(target);
+    if (key === captureSubmittedKey || alreadyAutoNoted(key)) {
+      showAutoNoteLine(true);
+      return;
+    }
+    fetch("/api/missing-size", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        size: target.size,
+        loadIndex: target.loadIndex,
+        speedRating: target.speed,
+        brand: target.brand,
+        reason: target.reasonText || target.reason,
+        auto: true
+      })
+    }).then(function (res) {
+      return res.json().then(function (data) {
+        return { res: res, data: data };
+      }).catch(function () {
+        return { res: res, data: {} };
+      });
+    }).then(function (out) {
+      if (out.res && out.res.ok && out.data && out.data.ok) {
+        markAutoNoted(key);
+        showAutoNoteLine(true);
+      }
+    }).catch(function () { /* offline — form still works */ });
+  }
+
+  function scheduleAutoNote(target) {
+    if (!target) {
+      showAutoNoteLine(false);
+      return;
+    }
+    var key = autoNoteKey(target);
+    if (alreadyAutoNoted(key) || key === captureSubmittedKey) {
+      showAutoNoteLine(true);
+      return;
+    }
+    clearTimeout(autoNoteTimer);
+    autoNoteTimer = setTimeout(function () {
+      postAutoNote(target);
+    }, 800);
+  }
 
   function capturePayload() {
     return {
@@ -566,9 +726,12 @@
     var target = uncoveredTarget();
     if (!target) {
       panel.hidden = true;
+      clearTimeout(autoNoteTimer);
+      showAutoNoteLine(false);
       return;
     }
     panel.hidden = false;
+    scheduleAutoNote(target);
     var key = [target.size, target.loadIndex, target.reason].join("|");
     if (key === captureSubmittedKey) {
       form.hidden = true;
@@ -721,6 +884,7 @@
   function afterChange() {
     decodeInto("sidewall", { sync: true });
     renderAnswers();
+    if (formChanged()) enablePersist();
     saveState();
   }
 
@@ -734,6 +898,8 @@
     }));
     decodeInto("sidewall", { sync: true });
     renderAnswers();
+    lastKnown = snapshotForm();
+    enablePersist();
     saveState();
     setSaveNote("Example size loaded.");
   }
@@ -749,43 +915,28 @@
     } else if (lastRear && lastRear.bar != null) {
       setPairFromBar($("noteRearBar"), $("noteRearPsi"), lastRear.bar);
     }
+    if (lastFront || lastRear) enablePersist();
     saveState();
     setSaveNote("Copied the calculated cold pressures onto this phone.");
   }
 
   function clearSaved() {
-    fillFromState({
-      frontAxleKg: "",
-      rearAxleKg: "",
-      totalKg: "",
-      frontPct: 46,
-      sidewall: "",
-      brandLabel: "",
-      loadIndex: "",
-      dualLoadIndex: "",
-      tyresOnAxle: 2,
-      chartId: "c375",
-      rearDifferent: false,
-      rearSidewall: "",
-      rearLoadIndex: "",
-      rearDualLoadIndex: "",
-      rearTyresOnAxle: 2,
-      rearChartId: "c375",
-      convBar: "",
-      convPsi: "",
-      noteFrontBar: "",
-      noteRearBar: ""
-    });
+    persistEnabled = false;
+    restoredThisVisit = false;
+    pageLoadSnapshot = null;
+    fillFromState(emptyState());
     decodeInto("sidewall");
     renderAnswers();
+    lastKnown = snapshotForm();
     try { localStorage.removeItem(STORAGE_KEY); } catch (err) { /* ignore */ }
     setSaveNote("Cleared on this device.");
+    syncSavedTyresBanner();
   }
 
   var year = $("yearNow");
   if (year) year.textContent = String(new Date().getFullYear());
 
-  fillFromState(loadState());
+  fillFromState(initialPaintState());
   bindPair("convBar", "convPsi");
   bindPair("noteFrontBar", "noteFrontPsi");
   bindPair("noteRearBar", "noteRearPsi");
@@ -808,20 +959,18 @@
     afterChange();
   });
 
-  $("sidewall").addEventListener("input", function () {
-    decodeInto("sidewall", { sync: true });
-    renderAnswers();
-    saveState();
-  });
+  $("sidewall").addEventListener("input", afterChange);
   $("rearSidewall").addEventListener("input", function () {
     decodeInto("rearSidewall", { sync: true });
     renderAnswers();
+    if (formChanged()) enablePersist();
     saveState();
   });
   $("rearDifferent").addEventListener("change", afterChange);
   if ($("loadExample")) $("loadExample").addEventListener("click", applyExample);
   $("copyAnswers").addEventListener("click", copyAnswers);
-  $("clearTyres").addEventListener("click", clearSaved);
+  if ($("restoreTyres")) $("restoreTyres").addEventListener("click", restoreLastTyres);
+  if ($("clearTyres")) $("clearTyres").addEventListener("click", clearSaved);
   if ($("missingSizeForm")) $("missingSizeForm").addEventListener("submit", submitCapture);
   if ($("captureCopy")) $("captureCopy").addEventListener("click", copySidewallLine);
   ["captureSize", "captureLoadIndex", "captureSpeed", "captureBrand", "captureNote", "captureEmail"].forEach(function (id) {
@@ -830,10 +979,11 @@
 
   decodeInto("sidewall", { sync: true });
   renderAnswers();
+  lastKnown = snapshotForm();
   loadMailtoConfig();
-  try {
-    setSaveNote(localStorage.getItem(STORAGE_KEY) ? "Saved on this device only." : "Nothing saved yet.");
-  } catch (err) {
-    setSaveNote("Figures stay on this phone if storage is available.");
-  }
+  syncSavedTyresBanner();
+  if (!pageLoadSnapshot) setSaveNote("Nothing saved yet.");
+  window.requestAnimationFrame(function () {
+    booting = false;
+  });
 })();

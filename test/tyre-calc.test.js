@@ -32,7 +32,8 @@ const {
   coldPressureForAxle,
   formatLiMismatch,
   isUncoveredRefuse,
-  ETRTO_CP_SINGLE_REAR_MIN_BAR
+  ETRTO_CP_SINGLE_REAR_MIN_BAR,
+  MICHELIN_CP_REFUSE
 } = require("../lib/tyre-calc");
 
 describe("bar ↔ PSI", function () {
@@ -1234,7 +1235,7 @@ describe("Michelin Agilis C/LT tables", function () {
     assert.equal(r.capacityKg, 1615);
   });
 
-  it("uses Conti CP load steps for Michelin CrossClimate Camping when size+LI match, plus 5.5 rear floor", function () {
+  it("refuses Michelin CrossClimate Camping CP instead of copying a Conti camping row", function () {
     const front = coldPressureForAxle({
       sidewall: "225/75 R16 CP 118R",
       brand: "Michelin CrossClimate Camping",
@@ -1249,23 +1250,19 @@ describe("Michelin Agilis C/LT tables", function () {
       tyresOnAxle: 2,
       axle: "rear"
     });
-    assert.equal(front.ok, true);
-    assert.equal(front.path, "cp-databook");
-    assert.equal(front.pathInfo.maker, "michelin");
-    assert.equal(front.pathInfo.cpLoadSource, "continental");
-    assert.equal(front.table.maker, "continental");
-    assert.equal(front.bar, 3.25);
-    assert.equal(front.appliedCpRearFloor, false);
-    assert.equal(rear.ok, true);
-    assert.equal(rear.tableBar, 4.25);
-    assert.equal(rear.bar, 5.5);
-    assert.equal(rear.appliedCpRearFloor, true);
-    assert.match(rear.pathInfo.source, /Continental Tyre Databook/);
-    assert.match(rear.pathInfo.source, /Michelin does not publish/);
-    assert.match(rear.pathInfo.source, /5\.5 bar/);
+    assert.equal(front.ok, false);
+    assert.equal(front.bar, undefined);
+    assert.equal(front.psi, undefined);
+    assert.equal(front.error, "no-table");
+    assert.equal(front.reason, "michelin-cp-no-table");
+    assert.equal(isUncoveredRefuse(front), true);
+    assert.equal(rear.ok, false);
+    assert.equal(rear.reason, "michelin-cp-no-table");
+    assert.match(MICHELIN_CP_REFUSE, /won’t invent one or copy another brand’s camping table/);
+    assert.match(MICHELIN_CP_REFUSE, /Michelin UK has been asked/);
   });
 
-  it("says the load index is wrong when Michelin Camping CP size exists but LI does not", function () {
+  it("still refuses Michelin Camping CP when the load index would not match a Conti row", function () {
     const r = coldPressureForAxle({
       sidewall: "225/75 R16 CP 118R",
       brand: "Michelin CrossClimate Camping",
@@ -1274,11 +1271,12 @@ describe("Michelin Agilis C/LT tables", function () {
       tyresOnAxle: 2,
       axle: "rear"
     });
-    assert.equal(r.error, "no-matching-li");
-    assert.equal(r.reason, "wrong-load-index");
+    assert.equal(r.error, "no-table");
+    assert.equal(r.reason, "michelin-cp-no-table");
+    assert.equal(r.ok, false);
   });
 
-  it("refuses Michelin Camping CP when there is no matching Conti camping row", function () {
+  it("refuses Michelin Camping CP when there is no Conti camping row either", function () {
     const r = coldPressureForAxle({
       sidewall: "215/75 R16 CP 116R",
       brand: "Michelin CrossClimate Camping",
