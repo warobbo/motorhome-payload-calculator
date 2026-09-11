@@ -133,7 +133,8 @@ describe("payload page identity and honesty", function () {
     assert.match(html, /id="make"[^>]*autocomplete="off"/);
     assert.doesNotMatch(html, /id="make"[^>]*placeholder=/);
     assert.doesNotMatch(html, /id="yearOfManufacture"[^>]*placeholder=/);
-    assert.match(html, /placeholder="e\.g\. WN67 DSO or DEMO3500"/);
+    assert.match(html, /placeholder="e\.g\. WN67 DSO"/);
+    assert.doesNotMatch(html, /DEMO3500/);
     assert.match(
       html,
       /Mass in Service already includes a 75 kg driver\. Enter your real weight — we only add the extra \(or subtract if you’re lighter\), so the driver isn’t counted twice\./
