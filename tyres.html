@@ -125,8 +125,8 @@
 }
   </script>
 
-  <!-- ASSET_VERSION=20260910need1 — bump this query on CSS/JS below to force-refresh cached assets. -->
-  <link rel="stylesheet" href="styles.css?v=20260910need1">
+  <!-- ASSET_VERSION=20260911miss1 — bump this query on CSS/JS below to force-refresh cached assets. -->
+  <link rel="stylesheet" href="styles.css?v=20260911miss1">
 </head>
 <body>
   <a class="skip" href="#tyres">Skip to tyre tool</a>
@@ -166,7 +166,7 @@
         <li>Use this when your tyres are a <strong>different size</strong> to the ones that came on the van. The usual pressures are usually on a sticker inside the driver’s door — those match the original size.</li>
         <li>Enter the tyre specification from the <strong>sidewall</strong> (fields start empty; a faint example is shown in the box, such as <code>225/75R16C 118R</code>).</li>
         <li>Add front and rear axle <strong>weights</strong> in kg from a public weighbridge (best — today’s weight), the Payload calculator (an estimate), or the VIN plate (often axle maximums, not today’s weight).</li>
-        <li>Read <strong>cold front</strong> and <strong>cold rear</strong> in bar and PSI. If your size or load index isn’t covered, the tool refuses — no guessed pressure.</li>
+        <li>Read <strong>cold front</strong> and <strong>cold rear</strong> in bar and PSI. If your size or load index isn’t covered, the tool refuses — no guessed pressure. You can send the size so we can look it up in a manufacturer book.</li>
         <li>See <a href="#sources">Sources we use</a> — that box names the manufacturer tables we use.</li>
       </ol>
     </section>
@@ -198,13 +198,60 @@
       <p class="note" id="answerNotes"></p>
     </section>
 
+    <aside class="missing-size" id="missingSize" hidden>
+      <h2>We don’t have this size yet</h2>
+      <p id="missingSizeReason">This size is not in our tables yet. This page will not invent a pressure.</p>
+      <form id="missingSizeForm">
+        <div class="hp" aria-hidden="true">
+          <label for="captureWebsite">Website</label>
+          <input id="captureWebsite" type="text" name="website" tabindex="-1" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="captureSize">Tyre size</label>
+          <input id="captureSize" type="text" spellcheck="false" autocomplete="off" autocapitalize="characters" required>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label for="captureLoadIndex">Load index</label>
+            <input id="captureLoadIndex" type="text" inputmode="numeric" autocomplete="off" placeholder="e.g. 118">
+          </div>
+          <div class="field">
+            <label for="captureSpeed">Speed rating <span class="hint">(optional)</span></label>
+            <input id="captureSpeed" type="text" spellcheck="false" autocomplete="off" maxlength="3" placeholder="e.g. R">
+          </div>
+        </div>
+        <div class="field">
+          <label for="captureBrand">Brand / model if known <span class="hint">(optional)</span></label>
+          <input id="captureBrand" type="text" spellcheck="false" autocomplete="off" placeholder="e.g. brand and model">
+        </div>
+        <div class="field">
+          <label for="captureNote">Note <span class="hint">(optional — sidewall paste welcome)</span></label>
+          <textarea id="captureNote" rows="3" maxlength="1000" placeholder="Anything else from the sidewall"></textarea>
+        </div>
+        <div class="field">
+          <label for="captureEmail">Email if a reply would help <span class="hint">(optional)</span></label>
+          <input id="captureEmail" type="email" autocomplete="email" inputmode="email">
+          <span class="hint">Only if useful for a question about this size. We will not email a pressure.</span>
+        </div>
+        <div class="missing-size-actions">
+          <button type="submit" class="btn btn-primary" id="captureSend">Send this size</button>
+          <button type="button" class="btn btn-ghost" id="captureCopy">Copy the sidewall line</button>
+          <a class="btn btn-ghost" id="captureMailto" hidden href="#">Email this instead</a>
+        </div>
+        <p class="missing-size-status" id="captureStatus"></p>
+      </form>
+      <div class="missing-size-thanks" id="missingSizeThanks" hidden>
+        <p>Thank you. We only add sizes from manufacturer databooks — no invented pressures.</p>
+      </div>
+    </aside>
+
     <aside class="sources-note" id="sources" aria-labelledby="sources-heading">
       <h2 id="sources-heading">Sources we use</h2>
       <p>Pressures come from published manufacturer tables — not guesses.</p>
       <ul>
         <li><strong>Covered today:</strong> Continental / General (listed LT, C and camping CP sizes) and Michelin (Agilis CrossClimate C and LT, plus CrossClimate Camping CP where we have a matching camping row — rear never below 5.5 bar).</li>
       </ul>
-      <p>If your size, brand or load index is not listed, the tool refuses a number. We will not invent one.</p>
+      <p>If your size, brand or load index is not listed, the tool refuses a number. We will not invent one. You can send that size as research — we only add sizes from manufacturer databooks.</p>
       <p>Don’t go above the maximum <strong>air pressure</strong> marked on the wheel (bar or PSI) — that limit is pressure, not weight. If you can’t find it, ask a tyre fitter. Also check pressures cold, and weigh the axles when you can.</p>
     </aside>
 
@@ -439,6 +486,10 @@
         <p>No. Planning estimate only. Confirm with the tyre maker’s published chart and a fitter. If the size is outside the tables on this page, it refuses to invent a number.</p>
       </details>
       <details>
+        <summary>What if you don’t have my size?</summary>
+        <p>The tool refuses a number. You can send the size and load index as research. We only add sizes from manufacturer databooks — we will not invent a pressure or email you one.</p>
+      </details>
+      <details>
         <summary>How does this sit with the payload calculator?</summary>
         <p>Use the <a href="index.html">payload calculator</a> for MAM and kit. Use this page once you know (or estimate) axle weights and have fitted a different tyre. For axle weights: a public weighbridge is best; the Payload calculator is an estimate; the VIN plate often shows axle maximums, not today’s weight. Do not use the V5 for front and rear axle weights.</p>
       </details>
@@ -446,12 +497,12 @@
 
     <section class="prose" id="about">
       <h2>About</h2>
-      <p>This tyre pressure tool sits on the Motorhome Payload hub. Enter the sidewall of the tyre you fitted and your front and rear axle weights to get cold pressures in bar and PSI. Your figures stay on this device — nothing is sent away to calculate. We only use published manufacturer tables for the brands and sizes listed under <a href="#sources">Sources we use</a>; if your size or load index isn’t covered, the tool refuses a number rather than guessing. This is a guide — check pressures cold, don’t exceed the wheel’s maximum air pressure, and ask a tyre fitter if unsure.</p>
+      <p>This tyre pressure tool sits on the Motorhome Payload hub. Enter the sidewall of the tyre you fitted and your front and rear axle weights to get cold pressures in bar and PSI. Your figures stay on this device — nothing is sent away to calculate. We only use published manufacturer tables for the brands and sizes listed under <a href="#sources">Sources we use</a>; if your size or load index isn’t covered, the tool refuses a number rather than guessing. You can then send that size as research. This is a guide — check pressures cold, don’t exceed the wheel’s maximum air pressure, and ask a tyre fitter if unsure.</p>
     </section>
 
     <section class="prose" id="privacy">
       <h2>Privacy</h2>
-      <p>No account and no advertising cookies. Numbers stay in this browser’s local storage. Nothing you type here is sent to the payload lookup server.</p>
+      <p>No account and no advertising cookies. Numbers stay in this browser’s local storage to calculate. Nothing you type is sent to the payload lookup server. If you send a missing-size note, that form (size, load index, and anything you typed) is posted to this site so we can research a manufacturer table. Optional email is only used if we need to ask about that size — we will not email a pressure.</p>
     </section>
   </main>
 
@@ -480,7 +531,7 @@
 
   <script src="lib/tyre-tra-db.js?v=20260910copy12"></script>
   <script src="lib/tyre-michelin-db.js?v=20260910copy12"></script>
-  <script src="lib/tyre-calc.js?v=20260910copy12"></script>
-  <script src="tyres-app.js?v=20260910axle1"></script>
+  <script src="lib/tyre-calc.js?v=20260911miss1"></script>
+  <script src="tyres-app.js?v=20260911miss1"></script>
 </body>
 </html>

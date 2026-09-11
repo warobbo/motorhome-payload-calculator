@@ -31,6 +31,7 @@ const {
   coldPressureForLoad,
   coldPressureForAxle,
   formatLiMismatch,
+  isUncoveredRefuse,
   ETRTO_CP_SINGLE_REAR_MIN_BAR
 } = require("../lib/tyre-calc");
 
@@ -1347,5 +1348,69 @@ describe("Michelin Agilis C/LT tables", function () {
     });
     assert.equal(r.error, "unsupported-rim");
     assert.equal(r.rimIn, 19);
+    assert.equal(isUncoveredRefuse(r), true);
+    assert.equal(r.bar, undefined);
+    assert.equal(r.psi, undefined);
+  });
+});
+
+describe("isUncoveredRefuse", function () {
+  it("is true for uncovered size, load index and later brands — still no pressure", function () {
+    const unknownLt = coldPressureForAxle({
+      sidewall: "LT255/70R17 121/118S",
+      axleLoadKg: 1800,
+      tyresOnAxle: 2
+    });
+    assert.equal(unknownLt.error, "no-table");
+    assert.equal(isUncoveredRefuse(unknownLt), true);
+    assert.ok(unknownLt.bar == null && unknownLt.psi == null);
+
+    const goodyear = coldPressureForAxle({
+      sidewall: "LT265/65R17 120/117S",
+      brand: "Goodyear Wrangler",
+      axleLoadKg: 1800,
+      tyresOnAxle: 2
+    });
+    assert.equal(goodyear.reason, "brand-later");
+    assert.equal(isUncoveredRefuse(goodyear), true);
+    assert.ok(goodyear.bar == null && goodyear.psi == null);
+
+    const wrongLi = coldPressureForAxle({
+      sidewall: "225/75 R16C 114/112R",
+      brand: "Continental",
+      axleLoadKg: 2000,
+      tyresOnAxle: 2
+    });
+    assert.equal(wrongLi.error, "no-matching-li");
+    assert.equal(isUncoveredRefuse(wrongLi), true);
+  });
+
+  it("is false when a table pressure exists or the axle is only overloaded", function () {
+    const covered = coldPressureForAxle({
+      sidewall: "225/75 R16C 118R",
+      brand: "Continental",
+      axleLoadKg: 1800,
+      tyresOnAxle: 2
+    });
+    assert.equal(covered.ok, true);
+    assert.ok(covered.bar != null);
+    assert.equal(isUncoveredRefuse(covered), false);
+
+    const needLoad = coldPressureForAxle({
+      sidewall: "225/75 R16C 118R",
+      brand: "Continental",
+      tyresOnAxle: 2
+    });
+    assert.equal(needLoad.error, "need-load");
+    assert.equal(isUncoveredRefuse(needLoad), false);
+
+    const over = coldPressureForAxle({
+      sidewall: "225/75 R16C 118R",
+      brand: "Continental",
+      axleLoadKg: 9000,
+      tyresOnAxle: 2
+    });
+    assert.ok(over.status === "over-capacity" || over.status === "over-pressure" || over.ok === false);
+    assert.equal(isUncoveredRefuse(over), false);
   });
 });

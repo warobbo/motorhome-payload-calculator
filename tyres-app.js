@@ -451,6 +451,243 @@
       $("dockHint").textContent = "Cold front / rear";
       $("dock").className = "dock";
     }
+
+    syncCapturePanel();
+  }
+
+  function captureReason(result) {
+    if (!result) return "This size is not in our tables yet. This page will not invent a pressure.";
+    if (result.error === "unsupported-rim") {
+      return "Only 15–18″ wheels are in the tables we have today.";
+    }
+    if (result.error === "no-matching-li" || result.error === "unknown-load-index") {
+      return T.formatLiMismatch(result) || "That load index is not in our table yet.";
+    }
+    if (result.reason === "brand-later") {
+      return "That brand is not in our tables yet.";
+    }
+    if (result.reason === "michelin-cp-no-table") {
+      return "No published Michelin camping load table for this size.";
+    }
+    if (result.reason === "lt-size-unknown") {
+      return "That LT size is not in our table yet.";
+    }
+    if (result.reason === "cp-size-unknown") {
+      return "That camping tyre size is not in our table yet.";
+    }
+    if (result.reason === "p-metric") {
+      return "That size is not in our table yet.";
+    }
+    return "This size is not in our tables yet. This page will not invent a pressure.";
+  }
+
+  function uncoveredFrom(result, which) {
+    if (!T.isUncoveredRefuse(result)) return null;
+    var rear = which === "rear" && $("rearDifferent").checked;
+    var raw = rear ? $("rearSidewall").value : $("sidewall").value;
+    var parsed = T.parseSidewall(raw);
+    var liField = rear ? $("rearLoadIndex").value : $("loadIndex").value;
+    var speed = "";
+    if (parsed && parsed.ok && parsed.speed && parsed.speed.code) speed = parsed.speed.code;
+    var size = String(raw).trim();
+    if (!size && result.sizeKey) size = result.sizeKey;
+    return {
+      size: size,
+      loadIndex: String(liField || result.wantedLoadIndex || (parsed && parsed.loadIndex) || "").trim(),
+      speed: speed,
+      brand: $("brandLabel").value.trim(),
+      reason: result.reason || result.error || "",
+      reasonText: captureReason(result)
+    };
+  }
+
+  function uncoveredTarget() {
+    return uncoveredFrom(lastFront, "front") || uncoveredFrom(lastRear, "rear");
+  }
+
+  var capturePrefillKey = "";
+  var captureSubmittedKey = "";
+  var captureMailtoTo = "";
+
+  function capturePayload() {
+    return {
+      size: $("captureSize").value,
+      loadIndex: $("captureLoadIndex").value,
+      speedRating: $("captureSpeed").value,
+      brand: $("captureBrand").value,
+      note: $("captureNote").value,
+      email: $("captureEmail").value,
+      reason: $("missingSizeReason").textContent,
+      website: $("captureWebsite").value
+    };
+  }
+
+  function captureSidewallLine() {
+    var parts = [$("captureSize").value.trim()];
+    if ($("captureLoadIndex").value.trim()) parts.push("LI " + $("captureLoadIndex").value.trim());
+    if ($("captureSpeed").value.trim()) parts.push($("captureSpeed").value.trim().toUpperCase());
+    if ($("captureBrand").value.trim()) parts.push($("captureBrand").value.trim());
+    return parts.join(" ");
+  }
+
+  function updateMailtoLink() {
+    var link = $("captureMailto");
+    if (!link) return;
+    if (!captureMailtoTo) {
+      link.hidden = true;
+      return;
+    }
+    var payload = capturePayload();
+    var subject = "Missing tyre size: " + (payload.size || "unknown");
+    var body = [
+      "Missing tyre size (research only — do not invent a pressure).",
+      "",
+      "Tyre size: " + (payload.size || ""),
+      "Load index: " + (payload.loadIndex || "(not given)"),
+      "Speed rating: " + (payload.speedRating || "(not given)"),
+      "Brand / model: " + (payload.brand || "(not given)"),
+      "Sidewall line: " + captureSidewallLine(),
+      "Note: " + (payload.note || "(none)"),
+      "Reply email: " + (payload.email || "(not given)"),
+      "",
+      "We only add sizes from manufacturer databooks."
+    ].join("\n");
+    link.href = "mailto:" + captureMailtoTo +
+      "?subject=" + encodeURIComponent(subject) +
+      "&body=" + encodeURIComponent(body);
+    link.hidden = false;
+  }
+
+  function syncCapturePanel() {
+    var panel = $("missingSize");
+    var form = $("missingSizeForm");
+    var thanks = $("missingSizeThanks");
+    if (!panel || !form || !thanks) return;
+    var target = uncoveredTarget();
+    if (!target) {
+      panel.hidden = true;
+      return;
+    }
+    panel.hidden = false;
+    var key = [target.size, target.loadIndex, target.reason].join("|");
+    if (key === captureSubmittedKey) {
+      form.hidden = true;
+      thanks.hidden = false;
+      return;
+    }
+    form.hidden = false;
+    thanks.hidden = true;
+    if (key !== capturePrefillKey) {
+      capturePrefillKey = key;
+      $("captureSize").value = target.size;
+      $("captureLoadIndex").value = target.loadIndex || "";
+      $("captureSpeed").value = target.speed || "";
+      $("captureBrand").value = target.brand || "";
+      $("missingSizeReason").textContent = target.reasonText;
+      $("captureStatus").textContent = "";
+      $("captureStatus").className = "missing-size-status";
+    }
+    updateMailtoLink();
+  }
+
+  function setCaptureStatus(text, isErr) {
+    var el = $("captureStatus");
+    if (!el) return;
+    el.textContent = text;
+    el.className = "missing-size-status" + (isErr ? " err" : "");
+  }
+
+  function copySidewallLine() {
+    var line = captureSidewallLine();
+    if (!line) {
+      setCaptureStatus("Add a tyre size first.", true);
+      return;
+    }
+    function done() {
+      setCaptureStatus("Copied the sidewall line.");
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(line).then(done).catch(function () {
+        fallbackCopy(line);
+      });
+      return;
+    }
+    fallbackCopy(line);
+
+    function fallbackCopy(text) {
+      var box = document.createElement("textarea");
+      box.value = text;
+      box.setAttribute("readonly", "");
+      box.style.position = "fixed";
+      box.style.left = "-9999px";
+      document.body.appendChild(box);
+      box.select();
+      try {
+        document.execCommand("copy");
+        done();
+      } catch (err) {
+        setCaptureStatus("Could not copy — select the tyre size instead.", true);
+      }
+      document.body.removeChild(box);
+    }
+  }
+
+  function showMailtoFallback(message) {
+    if (!captureMailtoTo) {
+      updateMailtoLink();
+    }
+    if (captureMailtoTo) {
+      $("captureMailto").hidden = false;
+      setCaptureStatus(message + " You can email the same note instead.", true);
+      return;
+    }
+    setCaptureStatus(message + " Copy the sidewall line if you want to send it yourself.", true);
+  }
+
+  function submitCapture(ev) {
+    ev.preventDefault();
+    var btn = $("captureSend");
+    var payload = capturePayload();
+    if (!String(payload.size).trim()) {
+      setCaptureStatus("Add the tyre size from the sidewall.", true);
+      return;
+    }
+    btn.disabled = true;
+    setCaptureStatus("Sending…");
+    fetch("/api/missing-size", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    }).then(function (res) {
+      return res.json().then(function (data) {
+        return { res: res, data: data };
+      }).catch(function () {
+        return { res: res, data: {} };
+      });
+    }).then(function (out) {
+      btn.disabled = false;
+      if (out.data && out.data.mailto) captureMailtoTo = out.data.mailto;
+      if (out.res.ok && out.data && out.data.ok) {
+        captureSubmittedKey = capturePrefillKey;
+        $("missingSizeForm").hidden = true;
+        $("missingSizeThanks").hidden = false;
+        setCaptureStatus("");
+        return;
+      }
+      showMailtoFallback(out.data && out.data.message ? out.data.message : "Could not send just now.");
+    }).catch(function () {
+      btn.disabled = false;
+      showMailtoFallback("Could not reach the server.");
+    });
+  }
+
+  function loadMailtoConfig() {
+    fetch("/api/missing-size").then(function (res) { return res.json(); }).then(function (data) {
+      if (data && data.mailto) {
+        captureMailtoTo = data.mailto;
+        updateMailtoLink();
+      }
+    }).catch(function () { /* file:// or offline — copy / mailto fallback still works */ });
   }
 
   function bindPair(barId, psiId) {
@@ -585,9 +822,15 @@
   if ($("loadExample")) $("loadExample").addEventListener("click", applyExample);
   $("copyAnswers").addEventListener("click", copyAnswers);
   $("clearTyres").addEventListener("click", clearSaved);
+  if ($("missingSizeForm")) $("missingSizeForm").addEventListener("submit", submitCapture);
+  if ($("captureCopy")) $("captureCopy").addEventListener("click", copySidewallLine);
+  ["captureSize", "captureLoadIndex", "captureSpeed", "captureBrand", "captureNote", "captureEmail"].forEach(function (id) {
+    if ($(id)) $(id).addEventListener("input", updateMailtoLink);
+  });
 
   decodeInto("sidewall", { sync: true });
   renderAnswers();
+  loadMailtoConfig();
   try {
     setSaveNote(localStorage.getItem(STORAGE_KEY) ? "Saved on this device only." : "Nothing saved yet.");
   } catch (err) {

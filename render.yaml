@@ -14,3 +14,7 @@ services:
         sync: false
       - key: MOT_API_KEY
         sync: false
+      - key: MISSING_SIZE_NOTIFY_EMAIL
+        sync: false
+      - key: MISSING_SIZE_LOG_PATH
+        sync: false

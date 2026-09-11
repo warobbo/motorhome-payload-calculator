@@ -6,6 +6,7 @@ const http = require("http");
 const fs = require("fs");
 const path = require("path");
 const handleLookup = require("./api/vehicle-lookup");
+const handleMissingSize = require("./api/missing-size");
 const { writeOgImage } = require("./scripts/write-og-image");
 
 const PORT = Number(process.env.PORT || 4173);
@@ -40,6 +41,15 @@ const server = http.createServer((req, res) => {
 
   if (urlPath === "/api/vehicle-lookup") {
     handleLookup(req, res);
+    return;
+  }
+
+  if (urlPath === "/api/missing-size") {
+    Promise.resolve(handleMissingSize(req, res)).catch(function (err) {
+      res.writeHead(500, { "Content-Type": "application/json; charset=utf-8" });
+      res.end(JSON.stringify({ ok: false, error: "server", message: "Could not save that note." }));
+      console.error("missing-size handler failed", err);
+    });
     return;
   }
 
@@ -94,5 +104,6 @@ server.listen(PORT, "0.0.0.0", () => {
   console.log("Motorhome Payload Calculator ready");
   console.log("  Local:   http://localhost:" + PORT + "/");
   console.log("  Lookup:  POST /api/vehicle-lookup");
+  console.log("  Missing: POST /api/missing-size");
   console.log("  DVLA:    " + (process.env.DVLA_API_KEY ? "live key present" : "not configured"));
 });
