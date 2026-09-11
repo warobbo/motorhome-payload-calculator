@@ -225,6 +225,17 @@
         };
       }
     };
+  var stillNeed = (typeof StillNeed !== "undefined" && StillNeed)
+    || (typeof globalThis !== "undefined" && globalThis.StillNeed)
+    || {
+      isVanPath: function () { return false; },
+      items: function () { return []; },
+      title: function () { return "Still need"; },
+      lead: function () { return "A plate lookup is not the finished check. We do not invent these figures."; },
+      dockLine: function () { return ""; }
+    };
+  var lookupSucceeded = false;
+  var presetStarted = false;
   var state = loadState();
   var waterBackup = null;
   var syncing = false;
@@ -726,6 +737,7 @@
       document.getElementById("peopleNote").textContent = "Mass in Service is blank after the plate lookup \u2014 the V5 figure is not guessed.";
       syncWeighedEmptyUi();
       updateIdentityCard();
+      updateStillNeed();
       return;
     }
 
@@ -791,6 +803,7 @@
       : "Mass in Service assumes a 75 kg driver \u2014 only any extra is added. Additional adults are passengers only.";
     syncWeighedEmptyUi();
     updateIdentityCard();
+    updateStillNeed();
   }
 
   function titleCase(value) {
@@ -824,6 +837,48 @@
     summary.textContent = name
       ? (name + (state.yearOfManufacture ? " " + state.yearOfManufacture : "") + (state.vrm ? " \u00b7 " + state.vrm : ""))
       : "";
+  }
+
+  function stillNeedInput() {
+    return {
+      vrm: state.vrm,
+      make: state.make,
+      model: state.model,
+      lookupSucceeded: lookupSucceeded,
+      presetStarted: presetStarted,
+      miro: state.miro,
+      actualEmpty: state.actualEmpty,
+      frontLimit: state.frontAxle,
+      rearLimit: state.rearAxle,
+      frontWeight: state.wbFrontAxle,
+      rearWeight: state.wbRearAxle,
+      axleMode: state.axleMode
+    };
+  }
+
+  function updateStillNeed() {
+    var card = document.getElementById("stillNeed");
+    var titleEl = document.getElementById("stillNeedTitle");
+    var dockNeed = document.getElementById("dockNeed");
+    var input = stillNeedInput();
+    var show = stillNeed.isVanPath(input);
+    var list = stillNeed.items(input);
+    if (card) {
+      card.hidden = !show;
+      card.classList.toggle("is-complete", show && list.every(function (item) { return item.done; }));
+    }
+    if (titleEl) titleEl.textContent = stillNeed.title(list);
+    list.forEach(function (item) {
+      var row = document.querySelector('#stillNeedList [data-need="' + item.id + '"]');
+      if (!row) return;
+      row.classList.toggle("is-done", item.done);
+      row.setAttribute("aria-checked", item.done ? "true" : "false");
+    });
+    if (dockNeed) {
+      var line = show ? stillNeed.dockLine(list) : "";
+      dockNeed.textContent = line;
+      dockNeed.hidden = !line;
+    }
   }
 
   function setLookupStatus(message, kind) {
@@ -923,6 +978,7 @@
   }
 
   function applyLookup(vehicle) {
+    lookupSucceeded = true;
     var plateLookup = vehicle.source === "dvla";
     state.vrm = vehicle.registrationNumber || state.vrm;
     state.make = titleCase(vehicle.make || "");
@@ -996,6 +1052,8 @@
   }
 
   function applyPreset(partial, presetId) {
+    lookupSucceeded = false;
+    presetStarted = presetId !== "preset-reset";
     Object.assign(state, clone(DEFAULTS), partial, { units: state.units });
     waterBackup = null;
     fillForm();

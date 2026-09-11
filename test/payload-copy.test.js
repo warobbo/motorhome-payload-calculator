@@ -92,4 +92,19 @@ describe("payload page identity and honesty", function () {
   it("warns that manufacturer payload is not real remaining if Mass in Service is optimistic", function () {
     assert.match(html, /brochure gap, not your real remaining if Mass in Service is optimistic/);
   });
+
+  it("shows a still-need checklist after the van path starts and does not invent values", function () {
+    assert.match(html, /id="stillNeed"/);
+    assert.match(html, /Mass in Service or empty weighbridge total/);
+    assert.match(html, /Plate axle limits \(front\/rear\)/);
+    assert.match(html, /Loaded axle weights if you have a ticket/);
+    assert.match(app, /updateStillNeed/);
+    assert.match(app, /stillNeed\.items/);
+  });
+
+  it("says under MAM but over on an axle is still a fail", function () {
+    assert.match(html, /id="faq-under-mam-over-axle"/);
+    assert.match(html, /Under MAM but over on an axle is still a fail \/ roadside risk\./);
+    assert.match(html, /id="axleMamNote"/);
+  });
 });

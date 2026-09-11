@@ -206,6 +206,14 @@
         },
         {
           "@type": "Question",
+          "name": "Is under MAM enough if an axle is over?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Under MAM but over on an axle is still a fail / roadside risk."
+          }
+        },
+        {
+          "@type": "Question",
           "name": "How does the axle weighbridge check work?",
           "acceptedAnswer": {
             "@type": "Answer",
@@ -226,8 +234,8 @@
 }
   </script>
 
-  <!-- ASSET_VERSION=20260910axle1 — bump this query on CSS/JS below to force-refresh cached assets. -->
-  <link rel="stylesheet" href="styles.css?v=20260910axle1">
+  <!-- ASSET_VERSION=20260910need1 — bump this query on CSS/JS below to force-refresh cached assets. -->
+  <link rel="stylesheet" href="styles.css?v=20260910need1">
 
 </head>
 <body>
@@ -340,6 +348,15 @@
                 <h4 id="identityTitle">Vehicle</h4>
                 <p id="identityMeta"></p>
               </div>
+              <aside class="still-need" id="stillNeed" hidden role="status">
+                <p class="still-need-title" id="stillNeedTitle">Still need</p>
+                <p class="still-need-lead">A plate lookup is not the finished check. We do not invent these figures.</p>
+                <ul class="still-need-list" id="stillNeedList">
+                  <li data-need="base"><span class="still-need-mark" aria-hidden="true"></span><span>Mass in Service or empty weighbridge total</span></li>
+                  <li data-need="limits"><span class="still-need-mark" aria-hidden="true"></span><span>Plate axle limits (front/rear)</span></li>
+                  <li data-need="loaded"><span class="still-need-mark" aria-hidden="true"></span><span>Loaded axle weights if you have a ticket (for the roadside axle check)</span></li>
+                </ul>
+              </aside>
               <div class="grid-3" style="margin-top:0.7rem">
                 <div class="field">
                   <label for="make">Make</label>
@@ -815,6 +832,7 @@
             <div class="sub" id="axleStatusSub">MAM check only until plate limits and weighbridge weights are both entered</div>
           </div>
         </div>
+        <p class="note axle-mam-note" id="axleMamNote">Under MAM but over on an axle is still a fail / roadside risk.</p>
         <div class="stat-row"><span>Estimated total loaded</span><b id="totalWeight">—</b></div>
         <div class="stat-row"><span>Maximum allowed (MAM)</span><b id="mamOut">—</b></div>
         <div class="stat-row"><span>Manufacturer payload (MAM − Mass in Service)</span><b id="platedPayload">—</b></div>
@@ -908,6 +926,10 @@
         <summary>Can I look up my motorhome by registration?</summary>
         <p>Yes. A UK plate lookup fills make and year, plus the DVLA revenue weight (often the plated MAM). DVLA does not supply model or Mass in Service. Model stays blank unless MOT history gives an exact van-maker model — coachbuilts such as Hymer are not filled with Ducato. Pick the platform from the list, and enter an empty weighbridge ticket or Mass in Service from the V5. You can also choose make, model and year to apply typical catalogue figures (often 3.5 t examples). Always confirm weights on the VIN plate and handbook.</p>
       </details>
+      <details id="faq-under-mam-over-axle">
+        <summary>Is under MAM enough if an axle is over?</summary>
+        <p>Under MAM but over on an axle is still a fail / roadside risk.</p>
+      </details>
       <details id="faq-axle-check">
         <summary>How does the axle weighbridge check work?</summary>
         <p>Plate axle ratings are limits, not today’s load. Enter front and rear kg from a weighbridge ticket — Empty for the base van, Loaded for a roadside check (Loaded is the default). We only pass or fail when both the plate limits and those ticket weights are present. We never invent an axle split from people or kit. A rear axle over the plate is a fail even if total MAM is OK.</p>
@@ -949,6 +971,7 @@
 
   <div class="dock" id="dock">
     <div>
+      <div class="hint dock-need" id="dockNeed" hidden></div>
       <div class="hint" id="dockHint">Remaining payload</div>
       <strong id="dockValue">—</strong>
     </div>
@@ -971,11 +994,12 @@
     </div>
   </footer>
 
-  <script src="lib/fuel-payload.js?v=20260910axle1"></script>
-  <script src="lib/driver-payload.js?v=20260910axle1"></script>
-  <script src="lib/mass-in-service.js?v=20260910axle1"></script>
-  <script src="lib/custom-kit.js?v=20260910axle1"></script>
-  <script src="lib/axle-check.js?v=20260910axle1"></script>
-  <script src="app.js?v=20260910axle1"></script>
+  <script src="lib/fuel-payload.js?v=20260910need1"></script>
+  <script src="lib/driver-payload.js?v=20260910need1"></script>
+  <script src="lib/mass-in-service.js?v=20260910need1"></script>
+  <script src="lib/custom-kit.js?v=20260910need1"></script>
+  <script src="lib/axle-check.js?v=20260910need1"></script>
+  <script src="lib/still-need.js?v=20260910need1"></script>
+  <script src="app.js?v=20260910need1"></script>
 </body>
 </html>
