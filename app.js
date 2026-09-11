@@ -236,28 +236,23 @@
     };
   var lookupSucceeded = false;
   var presetStarted = false;
-  var state = loadState();
+  var persistEnabled = false;
+  var restoredThisVisit = false;
+  var state = freshState();
+  var pageLoadSnapshot = readSavedVan();
   var waterBackup = null;
   var syncing = false;
 
   function clone(obj) { return JSON.parse(JSON.stringify(obj)); }
 
-  function loadState() {
-    var merged = clone(DEFAULTS);
-    try {
-      var raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) Object.assign(merged, JSON.parse(raw));
-      if (merged.foodPeople == null && merged.foodKg != null) {
-        merged.foodKgEach = merged.foodKgEach != null ? merged.foodKgEach : 12;
-        var oldFood = parseFloat(merged.foodKg);
-        merged.foodPeople = isFinite(oldFood) && oldFood > 0
-          ? Math.max(1, Math.round(oldFood / 12))
-          : 0;
-      }
-    } catch (e) { /* private mode */ }
-    merged.customItems = (customKit && customKit.normalizeItems)
-      ? customKit.normalizeItems(merged.customItems)
-      : (Array.isArray(merged.customItems) ? merged.customItems : []);
+  function normalizeCustomItems(list) {
+    return (customKit && customKit.normalizeItems)
+      ? customKit.normalizeItems(list)
+      : (Array.isArray(list) ? list : []);
+  }
+
+  function applyCustomItemIds(merged) {
+    merged.customItems = normalizeCustomItems(merged.customItems);
     merged.customItems.forEach(function (item) {
       var n = parseInt(String(item.id || "").replace(/\D/g, ""), 10);
       if (isFinite(n) && n >= nextCustomId) nextCustomId = n + 1;
@@ -265,8 +260,91 @@
     return merged;
   }
 
+  function migrateFoodPeople(merged) {
+    if (merged.foodPeople == null && merged.foodKg != null) {
+      merged.foodKgEach = merged.foodKgEach != null ? merged.foodKgEach : 12;
+      var oldFood = parseFloat(merged.foodKg);
+      merged.foodPeople = isFinite(oldFood) && oldFood > 0
+        ? Math.max(1, Math.round(oldFood / 12))
+        : 0;
+    }
+    return merged;
+  }
+
+  function freshState() {
+    return applyCustomItemIds(clone(DEFAULTS));
+  }
+
+  function readSavedVan() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return null;
+      var merged = clone(DEFAULTS);
+      Object.assign(merged, JSON.parse(raw));
+      migrateFoodPeople(merged);
+      return applyCustomItemIds(merged);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function hasSavedVan() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return false;
+      JSON.parse(raw);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function enablePersist() {
+    persistEnabled = true;
+  }
+
   function saveState() {
+    if (!persistEnabled) return;
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
+    syncSavedVanBanner();
+  }
+
+  function syncSavedVanBanner() {
+    var banner = document.getElementById("savedVanBanner");
+    var restoreBtn = document.getElementById("restoreVan");
+    if (!banner) return;
+    banner.hidden = !(pageLoadSnapshot || hasSavedVan());
+    if (restoreBtn) restoreBtn.hidden = !pageLoadSnapshot || restoredThisVisit;
+  }
+
+  function restoreLastVan() {
+    if (!pageLoadSnapshot) return;
+    state = clone(pageLoadSnapshot);
+    applyCustomItemIds(state);
+    persistEnabled = true;
+    restoredThisVisit = true;
+    waterBackup = null;
+    lookupSucceeded = false;
+    presetStarted = false;
+    fillForm();
+    saveState();
+    calculate();
+    syncSavedVanBanner();
+  }
+
+  function clearSavedVan() {
+    try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+    persistEnabled = false;
+    restoredThisVisit = false;
+    pageLoadSnapshot = null;
+    nextCustomId = 1;
+    state = freshState();
+    waterBackup = null;
+    lookupSucceeded = false;
+    presetStarted = false;
+    fillForm();
+    calculate();
+    syncSavedVanBanner();
   }
 
   function num(v) {
@@ -400,6 +478,7 @@
 
   function readForm(el) {
     if (syncing) return;
+    enablePersist();
     var key = el.getAttribute("data-key");
     var kind = el.getAttribute("data-kind");
     if (el.type === "checkbox") {
@@ -963,6 +1042,7 @@
         if (data.yearFromPlate) {
           state.yearOfManufacture = data.yearFromPlate;
           fillForm();
+          enablePersist();
           saveState();
           extra = " Year " + data.yearFromPlate + " taken from the UK registration age identifier.";
         }
@@ -1016,6 +1096,7 @@
     }
     if (vehicle.source === "demo") notes.push("Demo record \u2014 not a live DVLA result.");
     fillForm();
+    enablePersist();
     saveState();
     calculate();
     setLookupStatus(notes.join(" "), "ok");
@@ -1057,6 +1138,7 @@
     Object.assign(state, clone(DEFAULTS), partial, { units: state.units });
     waterBackup = null;
     fillForm();
+    enablePersist();
     saveState();
     calculate();
     setActivePreset(presetId);
@@ -1129,6 +1211,7 @@
     customKitRoot.addEventListener("input", function (event) {
       if (!event.target.closest(".custom-kit-row")) return;
       readCustomKitFromDom();
+      enablePersist();
       saveState();
       calculate();
     });
@@ -1148,6 +1231,7 @@
           return item.id !== id;
         });
         fillForm();
+        enablePersist();
         saveState();
         calculate();
       }
@@ -1160,6 +1244,7 @@
       state.customItems = customKit.normalizeItems(state.customItems);
       state.customItems.push(newCustomItem());
       fillForm();
+      enablePersist();
       saveState();
       calculate();
       var rows = document.querySelectorAll(".custom-kit-row .kit-name");
@@ -1186,6 +1271,7 @@
       state.blackFill = 0;
     }
     fillForm();
+    enablePersist();
     saveState();
     calculate();
   });
@@ -1221,6 +1307,10 @@
 
   document.getElementById("lookupBtn").addEventListener("click", function () { lookupRegistration(); });
   document.getElementById("lookupSpecBtn").addEventListener("click", function () { lookupMakeModelYear(); });
+  var restoreVanBtn = document.getElementById("restoreVan");
+  var clearVanBtn = document.getElementById("clearVan");
+  if (restoreVanBtn) restoreVanBtn.addEventListener("click", restoreLastVan);
+  if (clearVanBtn) clearVanBtn.addEventListener("click", clearSavedVan);
   document.getElementById("vrm").addEventListener("keydown", function (event) {
     if (event.key === "Enter") {
       event.preventDefault();
@@ -1256,6 +1346,7 @@
 
   fillForm();
   calculate();
+  syncSavedVanBanner();
   probeLookupStatus();
 
   /* Hidden check for converter-brand DVLA shape (no API key required). */

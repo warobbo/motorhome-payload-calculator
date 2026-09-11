@@ -1030,6 +1030,28 @@ footer.site-footer {
   .dock { display: none; }
 }
 
+.saved-van {
+  margin: 0 0 0.85rem;
+  padding: 0.75rem 0.8rem;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+.saved-van-trust {
+  margin: 0 0 0.55rem;
+  font-size: 0.86rem;
+  color: var(--muted);
+}
+.saved-van-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.saved-van-actions .btn {
+  flex: 1 1 10rem;
+  min-width: 0;
+}
+
 .lookup {
   background: var(--pine-soft);
   border: 1px solid #c5ddd4;

@@ -234,8 +234,8 @@
 }
   </script>
 
-  <!-- ASSET_VERSION=20260911wbmap1 — bump this query on CSS/JS below to force-refresh cached assets. -->
-  <link rel="stylesheet" href="styles.css?v=20260911wbmap1">
+  <!-- ASSET_VERSION=20260911restore1 — bump this query on CSS/JS below to force-refresh cached assets. -->
+  <link rel="stylesheet" href="styles.css?v=20260911restore1">
 
 </head>
 <body>
@@ -337,6 +337,13 @@
           </summary>
           <div class="body">
             <p class="lede">Look up a UK registration if you can. Then use an empty weighbridge ticket if you have one. Mass in Service from the V5 is second best. Confirm MAM and both axle ratings from the VIN plate — we do not invent those figures.</p>
+            <div class="saved-van" id="savedVanBanner" hidden>
+              <p class="saved-van-trust">Saved on this phone only. We don’t upload your van.</p>
+              <div class="saved-van-actions">
+                <button type="button" class="btn btn-primary" id="restoreVan">Restore last van</button>
+                <button type="button" class="btn" id="clearVan">Clear saved van</button>
+              </div>
+            </div>
             <div class="lookup">
               <div class="lookup-row">
                 <div class="field">
@@ -344,7 +351,7 @@
                     <label for="vrm">UK registration</label>
                     <span class="tip" tabindex="0" data-tip="A UK registration lookup fills make and year, plus DVLA revenue weight as MAM. Model stays blank unless MOT history gives an exact van-maker model — converter brands are not guessed as Ducato or similar. Pick the platform from the list. DVLA never supplies Mass in Service.">?</span>
                   </span>
-                  <input id="vrm" class="vrm-input" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="10" placeholder="e.g. WN67 DSO" data-key="vrm">
+                  <input id="vrm" class="vrm-input" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="10" placeholder="e.g. AB12 CDE" data-key="vrm">
                 </div>
                 <button type="button" class="btn btn-primary" id="lookupBtn">Look up vehicle</button>
               </div>
@@ -959,7 +966,7 @@
 
     <section class="prose" id="about">
       <h2>About</h2>
-      <p>This free calculator is for UK campervan and motorhome owners at any plated Maximum Authorised Mass (MAM) — the heaviest your van is allowed to be on the road (the plated weight). Light vans around 2800–3200&nbsp;kg (e.g. VW Transporter-style), motorhomes at 3500, 3850, 4500&nbsp;kg and up. It runs entirely in your browser. The last figures you type are stored on this device only.</p>
+      <p>This free calculator is for UK campervan and motorhome owners at any plated Maximum Authorised Mass (MAM) — the heaviest your van is allowed to be on the road (the plated weight). Light vans around 2800–3200&nbsp;kg (e.g. VW Transporter-style), motorhomes at 3500, 3850, 4500&nbsp;kg and up. It runs entirely in your browser. Figures stay on this device only and are not filled in until you tap Restore last van. We don’t upload your van.</p>
     </section>
 
     <section class="prose" id="more-tools">
@@ -970,7 +977,7 @@
 
     <section class="prose" id="privacy">
       <h2>Privacy</h2>
-      <p>No account and no advertising cookies. Calculator figures stay in this browser’s local storage. A registration lookup is sent only to this site’s proxy.</p>
+      <p>No account and no advertising cookies. Calculator figures stay in this browser’s local storage and are not filled in until you restore them. A registration lookup is sent only to this site’s proxy. We don’t upload your van.</p>
     </section>
   </main>
 
@@ -1005,6 +1012,6 @@
   <script src="lib/custom-kit.js?v=20260910need1"></script>
   <script src="lib/axle-check.js?v=20260911amend1"></script>
   <script src="lib/still-need.js?v=20260911amend1"></script>
-  <script src="app.js?v=20260911amend1"></script>
+  <script src="app.js?v=20260911restore1"></script>
 </body>
 </html>
