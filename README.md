@@ -2,7 +2,7 @@
 
 A free, mobile-first **UK motorhome / campervan payload hub**: the payload calculator plus a tyre-pressure tool for non-OEM sizes. Built for checking whether a loaded van stays under its plated **Maximum Authorised Mass (MAM)** — the heaviest your van is allowed to be on the road. For UK campervans and motorhomes at any plated weight — light vans around 2800–3200 kg (e.g. VW Transporter-style), motorhomes at 3500, 3850, 4500 kg and up.
 
-The site is static HTML/CSS/JS plus a tiny Node server. Registration lookup is proxied through `/api/vehicle-lookup` so the DVLA key stays on Render, not in the public page. Tyre figures never leave the browser.
+The site is static HTML/CSS/JS plus a tiny Node server. Registration lookup is proxied through `/api/vehicle-lookup` so the DVLA key stays on Render, not in the public page. Tyre pressures are calculated in the browser. An optional missing-size note is posted only if someone sends the research form.
 
 ## Open it
 
@@ -27,7 +27,7 @@ Then visit [http://localhost:4173](http://localhost:4173) (payload) or [http://l
 - Example presets (including a typical 3.5 t setup) — change MAM to match the plate
 - “What if I empty the water?” comparison
 - Printable results and a weighbridge disclaimer
-- **Tyres tool** (`tyres.html`): cold front and rear pressure from the sidewall plus axle loads. **Currently curated: Continental / General** Tyre Databook (Car · 4x4 · Van) for LT, C and CP sizes on 15–18″ (kg per axle at bar), **Michelin Agilis CrossClimate C and LT** from Michelin RV load/inflation tables, **and Michelin CrossClimate Camping CP** (ETRTO / Michelin 5.5 bar rear practice; Conti camping load steps only when that size + LI is in the book — never an invented Michelin CP grid). The **2025 Conti row is used for LT265/65R17** where it differs from older books. Same size + different load index = different row. Rim not 15–18″, or a size / LI we do not have, is refused. **CP single rear** never shows less than **5.5 bar** even if the table step is lower; the table figure is still shown. Goodyear, BFGoodrich and Yokohama are a later, labelled roadmap. The page names its sources. Sidewall decoder, bar ↔ PSI converter, and an optional notepad are helpers. Refuses a number if the tyre is outside the table or overloaded.
+- **Tyres tool** (`tyres.html`): cold front and rear pressure from the sidewall plus axle loads. **Currently curated: Continental / General** Tyre Databook (Car · 4x4 · Van) for LT, C and CP sizes on 15–18″ (kg per axle at bar), **Michelin Agilis CrossClimate C and LT** from Michelin RV load/inflation tables, **and Michelin CrossClimate Camping CP** (ETRTO / Michelin 5.5 bar rear practice; Conti camping load steps only when that size + LI is in the book — never an invented Michelin CP grid). The **2025 Conti row is used for LT265/65R17** where it differs from older books. Same size + different load index = different row. Rim not 15–18″, or a size / LI we do not have, is refused. **CP single rear** never shows less than **5.5 bar** even if the table step is lower; the table figure is still shown. Goodyear, BFGoodrich and Yokohama are a later, labelled roadmap. The page names its sources. Sidewall decoder, bar ↔ PSI converter, and an optional notepad are helpers. Refuses a number if the tyre is outside the table or overloaded. An uncovered size or brand shows **We don’t have this size yet** so people can send the sidewall for research — still no invented pressure.
 
 ## How the numbers work
 
@@ -58,6 +58,19 @@ Live UK plates need a free [DVLA Vehicle Enquiry](https://developer-portal.drive
 **Browser fallback:** open `/?setup=1` (not linked from the public page) and paste a Vehicle Enquiry key. It is stored in this browser only (`localStorage`) and sent with lookups from that device. A key you saved earlier is still sent even when the setup form is hidden.
 
 **On this machine:** copy `.env.example` to `.env`, paste the key, restart `npm start`.
+
+## Missing tyre sizes
+
+When the tyres tool refuses an uncovered size, load index or brand, the page offers a research form. That does **not** unlock a pressure.
+
+`POST /api/missing-size` logs one JSON line to stdout (visible in Render logs). Locally it also appends `data/missing-sizes.jsonl` (gitignored). No new paid service.
+
+Optional Render env vars (Dashboard → Environment — do not commit values):
+
+| Variable | What it does |
+| --- | --- |
+| `MISSING_SIZE_NOTIFY_EMAIL` | Public contact used only for the **Email this instead** mailto fallback if the POST fails |
+| `MISSING_SIZE_LOG_PATH` | JSONL file path if you attach a Render disk. Leave blank on the free web service — the disk is ephemeral, so stdout/Render logs are the store |
 
 ## Hosting on Render
 
