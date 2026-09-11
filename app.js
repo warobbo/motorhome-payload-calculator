@@ -21,6 +21,9 @@
     actualEmpty: "",
     frontAxle: "",
     rearAxle: "",
+    axleMode: "loaded",
+    wbFrontAxle: "",
+    wbRearAxle: "",
     driverKg: 75,
     miroIncludesDriver: true,
     miroIncludesFuel: true,
@@ -199,8 +202,40 @@
       hasRating: function (v) { return Number(v) > 0; },
       isIncomplete: function (f, r) { return !(Number(f) > 0 && Number(r) > 0); },
       cautionLabel: function () { return "MAM check only — axle check incomplete"; },
-      cautionDetail: function () { return "Enter both front and rear axle ratings from the VIN plate. This page does not invent axle loads."; }
+      cautionDetail: function () { return "Enter both front and rear axle ratings from the VIN plate. This page does not invent axle loads."; },
+      normalizeMode: function (mode) { return mode === "empty" ? "empty" : "loaded"; },
+      modeNote: function (mode) {
+        return mode === "empty"
+          ? "Base van — does not prove trip legality; use Loaded for roadside check"
+          : "As driven — front/rear vs plate";
+      },
+      evaluate: function () {
+        return {
+          status: "incomplete",
+          incompleteKind: "mam-only",
+          modeNote: "As driven — front/rear vs plate",
+          frontOver: false,
+          rearOver: false,
+          loudFail: false,
+          label: "MAM check only — axle check incomplete",
+          detail: "Enter both front and rear axle ratings from the VIN plate. This page does not invent axle loads.",
+          sanityFlag: false,
+          sanityDetail: "",
+          tyresLink: "Fitted different tyres? Use the Tyres tool with your axle weights (weighbridge figures, not the plate ratings)."
+        };
+      }
     };
+  var stillNeed = (typeof StillNeed !== "undefined" && StillNeed)
+    || (typeof globalThis !== "undefined" && globalThis.StillNeed)
+    || {
+      isVanPath: function () { return false; },
+      items: function () { return []; },
+      title: function () { return "Still need"; },
+      lead: function () { return "A plate lookup is not the finished check. We do not invent these figures."; },
+      dockLine: function () { return ""; }
+    };
+  var lookupSucceeded = false;
+  var presetStarted = false;
   var state = loadState();
   var waterBackup = null;
   var syncing = false;
@@ -359,6 +394,7 @@
     renderCustomKit();
     syncSteppers();
     syncWeighedEmptyUi();
+    syncAxleModeUi();
     syncing = false;
   }
 
@@ -431,6 +467,38 @@
     if (emptyNote) emptyNote.hidden = !usingActualEmpty();
   }
 
+  function syncAxleModeUi() {
+    var mode = axleCheck.normalizeMode(state.axleMode);
+    state.axleMode = mode;
+    var loaded = document.getElementById("axleModeLoaded");
+    var empty = document.getElementById("axleModeEmpty");
+    if (loaded) loaded.checked = mode === "loaded";
+    if (empty) empty.checked = mode === "empty";
+    var hint = document.getElementById("axleModeHint");
+    if (hint) hint.textContent = axleCheck.modeNote(mode);
+  }
+
+  function knownAxleTotal(computed) {
+    if (axleCheck.normalizeMode(state.axleMode) === "empty") {
+      if (num(state.actualEmpty) > 0) return num(state.actualEmpty);
+      if (num(state.miro) > 0) return num(state.miro);
+      return "";
+    }
+    if (computed && num(computed.total) > 0 && !miroMissing()) return computed.total;
+    return "";
+  }
+
+  function currentAxleResult(computed) {
+    return axleCheck.evaluate({
+      mode: state.axleMode,
+      frontLimit: state.frontAxle,
+      rearLimit: state.rearAxle,
+      frontWeight: state.wbFrontAxle,
+      rearWeight: state.wbRearAxle,
+      knownTotal: knownAxleTotal(computed)
+    });
+  }
+
   function escapeHtml(value) {
     return String(value == null ? "" : value)
       .replace(/&/g, "&amp;")
@@ -488,24 +556,88 @@
     state.customItems = Array.prototype.map.call(rows, customItemFromRow);
   }
 
-  function updateAxleResults() {
+  function updateTyresLink() {
+    var el = document.getElementById("tyresLink");
+    if (!el) return;
+    var hasWeights = axleCheck.hasRating(state.wbFrontAxle) && axleCheck.hasRating(state.wbRearAxle);
+    var href = "tyres.html";
+    if (hasWeights) {
+      href = "tyres.html?front=" + encodeURIComponent(String(Math.round(num(state.wbFrontAxle)))) +
+        "&rear=" + encodeURIComponent(String(Math.round(num(state.wbRearAxle))));
+    }
+    el.innerHTML = hasWeights
+      ? 'Use these weights in the <a href="' + href + '">Tyres tool</a> (weighbridge figures, not the plate ratings).'
+      : 'Fitted different tyres? Use the <a href="' + href + '">Tyres tool</a> with your axle weights (weighbridge figures, not the plate ratings).';
+  }
+
+  function axleStatusClass(result) {
+    if (result.status === "fail") return "over";
+    if (result.status === "pass") return "ok";
+    return "tight";
+  }
+
+  function updateAxleResults(computed) {
+    var result = currentAxleResult(computed);
     var frontEl = document.getElementById("frontAxleOut");
     var rearEl = document.getElementById("rearAxleOut");
+    var wbFrontRow = document.getElementById("wbFrontRow");
+    var wbRearRow = document.getElementById("wbRearRow");
+    var wbFrontOut = document.getElementById("wbFrontOut");
+    var wbRearOut = document.getElementById("wbRearOut");
     var warn = document.getElementById("warnAxleIncomplete");
+    var warnOver = document.getElementById("warnAxleOver");
+    var warnSanity = document.getElementById("warnAxleSanity");
     var note = document.getElementById("axleNote");
-    var incomplete = axleCheck.isIncomplete(state.frontAxle, state.rearAxle);
+    var box = document.getElementById("axleStatusBox");
+    var valueEl = document.getElementById("axleStatusValue");
+    var subEl = document.getElementById("axleStatusSub");
+    var hasWeights = axleCheck.hasRating(state.wbFrontAxle) && axleCheck.hasRating(state.wbRearAxle);
+
     if (frontEl) {
       frontEl.textContent = axleCheck.hasRating(state.frontAxle) ? fmt(num(state.frontAxle), 0) : "\u2014";
     }
     if (rearEl) {
       rearEl.textContent = axleCheck.hasRating(state.rearAxle) ? fmt(num(state.rearAxle), 0) : "\u2014";
     }
-    if (warn) warn.classList.toggle("show", incomplete);
-    if (note) {
-      note.textContent = incomplete
-        ? axleCheck.cautionDetail()
-        : "Plate ratings entered. This calculator cannot split today’s load between axles — confirm both on a weighbridge.";
+    if (wbFrontOut) {
+      wbFrontOut.textContent = axleCheck.hasRating(state.wbFrontAxle) ? fmt(num(state.wbFrontAxle), 0) : "\u2014";
     }
+    if (wbRearOut) {
+      wbRearOut.textContent = axleCheck.hasRating(state.wbRearAxle) ? fmt(num(state.wbRearAxle), 0) : "\u2014";
+    }
+    if (wbFrontRow) wbFrontRow.hidden = !hasWeights;
+    if (wbRearRow) wbRearRow.hidden = !hasWeights;
+
+    if (box) box.className = "remaining axle-status status-" + axleStatusClass(result);
+    if (valueEl) {
+      valueEl.textContent = result.status === "fail"
+        ? "FAIL"
+        : result.status === "pass"
+          ? result.label
+          : "\u2014";
+    }
+    if (subEl) subEl.textContent = result.detail;
+
+    if (warn) {
+      warn.classList.toggle("show", result.status === "incomplete");
+      warn.textContent = result.status === "incomplete"
+        ? result.label + ". " + result.detail
+        : warn.textContent;
+    }
+    if (warnOver) {
+      warnOver.classList.toggle("show", !!result.loudFail);
+      if (result.loudFail) warnOver.textContent = result.detail;
+    }
+    if (warnSanity) {
+      warnSanity.classList.toggle("show", !!result.sanityFlag);
+      if (result.sanityFlag) warnSanity.textContent = result.sanityDetail;
+    }
+    if (note) {
+      note.textContent = result.status === "incomplete"
+        ? result.detail
+        : (result.modeNote + (result.sanityFlag ? " " + result.sanityDetail : ""));
+    }
+    updateTyresLink();
   }
 
   function compute(overrides) {
@@ -594,7 +726,7 @@
       document.getElementById("warnLow").classList.remove("show");
       document.getElementById("breakdown").innerHTML = "";
       document.getElementById("waterWhatIf").textContent = "Enter Mass in Service or a weighbridge ticket to see how water and kit use the remaining payload.";
-      updateAxleResults();
+      updateAxleResults(null);
       var dockEmpty = document.getElementById("dockValue");
       dockEmpty.textContent = "\u2014";
       dockEmpty.className = "dock-tight";
@@ -605,6 +737,7 @@
       document.getElementById("peopleNote").textContent = "Mass in Service is blank after the plate lookup \u2014 the V5 figure is not guessed.";
       syncWeighedEmptyUi();
       updateIdentityCard();
+      updateStillNeed();
       return;
     }
 
@@ -654,7 +787,7 @@
       ? "Emptying fresh, grey and black water would free " + fmt(saved, 0) + " and leave " + fmt(empty.remaining, 0) + " remaining."
       : "Water tanks are already empty in this estimate.";
 
-    updateAxleResults();
+    updateAxleResults(r);
 
     var dock = document.getElementById("dockValue");
     dock.textContent = (r.remaining < 0 ? "\u2212" : "") + fmt(Math.abs(r.remaining), 0);
@@ -670,6 +803,7 @@
       : "Mass in Service assumes a 75 kg driver \u2014 only any extra is added. Additional adults are passengers only.";
     syncWeighedEmptyUi();
     updateIdentityCard();
+    updateStillNeed();
   }
 
   function titleCase(value) {
@@ -703,6 +837,48 @@
     summary.textContent = name
       ? (name + (state.yearOfManufacture ? " " + state.yearOfManufacture : "") + (state.vrm ? " \u00b7 " + state.vrm : ""))
       : "";
+  }
+
+  function stillNeedInput() {
+    return {
+      vrm: state.vrm,
+      make: state.make,
+      model: state.model,
+      lookupSucceeded: lookupSucceeded,
+      presetStarted: presetStarted,
+      miro: state.miro,
+      actualEmpty: state.actualEmpty,
+      frontLimit: state.frontAxle,
+      rearLimit: state.rearAxle,
+      frontWeight: state.wbFrontAxle,
+      rearWeight: state.wbRearAxle,
+      axleMode: state.axleMode
+    };
+  }
+
+  function updateStillNeed() {
+    var card = document.getElementById("stillNeed");
+    var titleEl = document.getElementById("stillNeedTitle");
+    var dockNeed = document.getElementById("dockNeed");
+    var input = stillNeedInput();
+    var show = stillNeed.isVanPath(input);
+    var list = stillNeed.items(input);
+    if (card) {
+      card.hidden = !show;
+      card.classList.toggle("is-complete", show && list.every(function (item) { return item.done; }));
+    }
+    if (titleEl) titleEl.textContent = stillNeed.title(list);
+    list.forEach(function (item) {
+      var row = document.querySelector('#stillNeedList [data-need="' + item.id + '"]');
+      if (!row) return;
+      row.classList.toggle("is-done", item.done);
+      row.setAttribute("aria-checked", item.done ? "true" : "false");
+    });
+    if (dockNeed) {
+      var line = show ? stillNeed.dockLine(list) : "";
+      dockNeed.textContent = line;
+      dockNeed.hidden = !line;
+    }
   }
 
   function setLookupStatus(message, kind) {
@@ -802,6 +978,7 @@
   }
 
   function applyLookup(vehicle) {
+    lookupSucceeded = true;
     var plateLookup = vehicle.source === "dvla";
     state.vrm = vehicle.registrationNumber || state.vrm;
     state.make = titleCase(vehicle.make || "");
@@ -875,6 +1052,8 @@
   }
 
   function applyPreset(partial, presetId) {
+    lookupSucceeded = false;
+    presetStarted = presetId !== "preset-reset";
     Object.assign(state, clone(DEFAULTS), partial, { units: state.units });
     waterBackup = null;
     fillForm();
@@ -932,6 +1111,15 @@
       state.units = el.value;
       saveState();
       fillForm();
+      calculate();
+    });
+  });
+
+  document.querySelectorAll("input[name='axleMode']").forEach(function (el) {
+    el.addEventListener("change", function () {
+      state.axleMode = axleCheck.normalizeMode(el.value);
+      saveState();
+      syncAxleModeUi();
       calculate();
     });
   });

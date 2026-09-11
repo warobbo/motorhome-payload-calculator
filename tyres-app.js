@@ -44,19 +44,37 @@
     return document.getElementById(id);
   }
 
+  function positiveKg(value) {
+    var n = Number(value);
+    return Number.isFinite(n) && n > 0 ? String(Math.round(n)) : "";
+  }
+
+  function weighbridgeFromQuery() {
+    var params = new URLSearchParams(location.search);
+    return {
+      frontAxleKg: positiveKg(params.get("front") || params.get("frontAxleKg")),
+      rearAxleKg: positiveKg(params.get("rear") || params.get("rearAxleKg"))
+    };
+  }
+
   function loadState() {
     var state = Object.assign({}, DEFAULTS);
     try {
       var raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return state;
-      var saved = JSON.parse(raw);
-      var hasTyre = saved.sidewall || saved.loadIndex;
-      var hasLoad = saved.frontAxleKg || saved.rearAxleKg;
-      if (!hasTyre && !hasLoad) return state;
-      Object.keys(DEFAULTS).forEach(function (key) {
-        if (saved[key] !== undefined && saved[key] !== null) state[key] = saved[key];
-      });
+      if (raw) {
+        var saved = JSON.parse(raw);
+        var hasTyre = saved.sidewall || saved.loadIndex;
+        var hasLoad = saved.frontAxleKg || saved.rearAxleKg;
+        if (hasTyre || hasLoad) {
+          Object.keys(DEFAULTS).forEach(function (key) {
+            if (saved[key] !== undefined && saved[key] !== null) state[key] = saved[key];
+          });
+        }
+      }
     } catch (err) { /* ignore */ }
+    var fromTicket = weighbridgeFromQuery();
+    if (fromTicket.frontAxleKg) state.frontAxleKg = fromTicket.frontAxleKg;
+    if (fromTicket.rearAxleKg) state.rearAxleKg = fromTicket.rearAxleKg;
     return state;
   }
 

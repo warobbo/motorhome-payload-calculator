@@ -1,7 +1,7 @@
 {
   "name": "motorhome-payload-calculator",
   "private": true,
-  "description": "Free UK motorhome / campervan payload calculator for any plated MAM.",
+  "description": "Free UK campervan and motorhome payload calculator for any plated Maximum Authorised Mass (MAM).",
   "scripts": {
     "start": "node server.js",
     "postinstall": "node scripts/write-og-image.js",
