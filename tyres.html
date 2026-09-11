@@ -76,7 +76,7 @@
           "name": "Which brands do you have tables for?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Today: Continental / General (listed LT, C and camping CP sizes) and Michelin (Agilis CrossClimate C and LT, plus CrossClimate Camping CP where we have a matching camping row). If your size or brand is not listed, this page refuses a number."
+            "text": "Today: Continental / General (listed LT, C and camping CP sizes) and Michelin (Agilis CrossClimate C and LT). We do not have Michelin’s Camping CP table. If your size or brand is not listed, this page refuses a number."
           }
         },
         {
@@ -100,7 +100,7 @@
           "name": "What does CP mean on a motorhome tyre?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "CP means camping / motorhome tyre — not the same as a plain van C tyre. On a rear axle with two tyres we never show less than 5.5 bar, even if the table step is lower."
+            "text": "CP means camping / motorhome tyre — not the same as a plain van C tyre. On a Continental / General CP rear axle with two tyres we never show less than 5.5 bar, even if the table step is lower. Michelin Camping CP is refused until we have Michelin’s official table."
           }
         },
         {
@@ -125,7 +125,7 @@
 }
   </script>
 
-  <!-- ASSET_VERSION=20260911tyres1 — bump this query on CSS/JS below to force-refresh cached assets. -->
+  <!-- ASSET_VERSION=20260911tyres2 — bump this query on CSS/JS below to force-refresh cached assets. -->
   <link rel="stylesheet" href="styles.css?v=20260911restore1">
 </head>
 <body>
@@ -155,19 +155,20 @@
 
   <main class="wrap" id="tyres">
     <div class="intro">
-      <h2>Use this when you’ve fitted a different size to the ones that came on the van.</h2>
-      <p>Recommended pressures are usually on a sticker inside the driver’s door. Those match the original factory size, not a replacement size.</p>
+      <h2>Use this when you’ve fitted different tyres to the original ones that came with the van from new.</h2>
+      <p>Factory cold pressures are often on a sticker inside the driver’s door — those match the original tyre size, not a replacement.</p>
       <p>Enter the tyre specification information found on the sidewall of the tyre. Add front and rear axle weights in kg from a public weighbridge (best — today’s weight), the Payload calculator (an estimate), or the VIN plate (often axle maximums, not today’s weight).</p>
     </div>
 
     <section class="prose how-to-use" id="how-to-use">
       <h2>How to use</h2>
       <ol>
-        <li>Use this when your tyres are a <strong>different size</strong> to the ones that came on the van. Recommended pressures are usually on a sticker inside the driver’s door — those match the original size.</li>
+        <li>Factory cold pressures are often on a sticker inside the driver’s door — those match the original tyre size, not a replacement.</li>
         <li>Enter the tyre specification from the <strong>sidewall</strong> (fields start empty; a faint example is shown in the box, such as <code>225/75R16C 118R</code>).</li>
         <li>Add front and rear axle <strong>weights</strong> in kg from a public weighbridge (best — today’s weight), the Payload calculator (an estimate), or the VIN plate (often axle maximums, not today’s weight).</li>
-        <li>Read <strong>cold front</strong> and <strong>cold rear</strong> in bar and PSI. If your size or load index isn’t covered, the tool refuses — no guessed pressure. You can send the size so we can look it up in a manufacturer book.</li>
-        <li>See <a href="#sources">Sources we use</a> — that box names the manufacturer tables we use.</li>
+        <li>Read <strong>cold front</strong> and <strong>cold rear</strong> in bar and PSI. If your size or load index isn’t covered, the tool refuses — no guessed pressure. We’ve noted this size for research when we can; use the form on this page for anything else from the sidewall so we can check a manufacturer book.</li>
+        <li>See <a href="#sources">Sources we use</a> — it names the manufacturer tables behind the figures.</li>
+        <li>Check pressures cold. Don’t go above the maximum air pressure marked on the wheel (that limit is pressure, not weight). Ask a tyre fitter if you’re unsure.</li>
       </ol>
     </section>
 
@@ -209,6 +210,7 @@
     <aside class="missing-size" id="missingSize" hidden>
       <h2>We don’t have this size yet</h2>
       <p id="missingSizeReason">This size is not in our tables yet. This page will not invent a pressure.</p>
+      <p class="auto-note" id="autoNoteLine" hidden>We’ve noted this size for research.</p>
       <form id="missingSizeForm">
         <div class="hp" aria-hidden="true">
           <label for="captureWebsite">Website</label>
@@ -257,10 +259,10 @@
       <h2 id="sources-heading">Sources we use</h2>
       <p>Pressures come from published manufacturer tables — not guesses.</p>
       <ul>
-        <li><strong>Covered today:</strong> Continental / General (listed LT, C and camping CP sizes) and Michelin (Agilis CrossClimate C and LT, plus CrossClimate Camping CP where we have a matching camping row — rear never below 5.5 bar).</li>
+        <li><strong>Covered today:</strong> Continental / General (listed LT, C and camping CP sizes) and Michelin (Agilis CrossClimate C and LT). We do not have Michelin’s Camping CP load/pressure table — we will not copy another brand’s camping table and call it Michelin.</li>
+        <li><strong>Industry CP guidance:</strong> <a href="https://www.tyresafe.org/vehicle-owners/motorhome-tyre-safety/load-and-inflation-tables/">TyreSafe</a> publishes camping / motorhome guidance (a rear single is often 5.5 bar). That is industry guidance, not a Michelin Camping databook.</li>
       </ul>
-      <p>If your size, brand or load index is not listed, the tool refuses a number. We will not invent one. You can send that size as research — we only add sizes from manufacturer databooks.</p>
-      <p>Don’t go above the maximum <strong>air pressure</strong> marked on the wheel (bar or PSI) — that limit is pressure, not weight. If you can’t find it, ask a tyre fitter. Also check pressures cold, and weigh the axles when you can.</p>
+      <p>If your size, brand or load index is not listed, the tool refuses a number. We will not invent one. We’ve noted this size for research when we can; use the form on this page for anything else from the sidewall. We only add sizes from manufacturer databooks.</p>
     </aside>
 
     <details class="block" open>
@@ -271,7 +273,7 @@
         </span>
       </summary>
       <div class="body">
-        <p class="lede">Enter the size printed on the tyre you fitted. The sticker inside the driver’s door matches the original size, not a replacement size.</p>
+        <p class="lede">Enter the size printed on the tyre you fitted.</p>
         <div class="example-bar">
           <button type="button" class="btn btn-ghost" id="loadExample">Load an example</button>
           <span class="hint">Optional sample only — fields start empty.</span>
@@ -462,7 +464,7 @@
       </details>
       <details>
         <summary>Which brands do you have tables for?</summary>
-        <p>Today: Continental / General (listed LT, C and camping CP sizes) and Michelin (Agilis CrossClimate C and LT, plus CrossClimate Camping CP where we have a matching camping row). If your size or brand is not listed, this page refuses a number.</p>
+        <p>Today: Continental / General (listed LT, C and camping CP sizes) and Michelin (Agilis CrossClimate C and LT). We do not have Michelin’s Camping CP table. If your size or brand is not listed, this page refuses a number.</p>
       </details>
       <details>
         <summary>Why don’t you use a US lb/PSI chart or a generic van-tyre formula?</summary>
@@ -482,7 +484,7 @@
       </details>
       <details>
         <summary>What does CP mean on a motorhome tyre?</summary>
-        <p><strong>CP</strong> is a camping / motorhome tyre — not a plain <strong>C</strong> van tyre. On a rear axle with two tyres we never show less than <strong>5.5 bar</strong>, even if the table step is lower. Front stays on the table.</p>
+        <p><strong>CP</strong> is a camping / motorhome tyre — not a plain <strong>C</strong> van tyre. On a Continental / General CP rear axle with two tyres we never show less than <strong>5.5 bar</strong>, even if the table step is lower. Front stays on the table. Michelin Camping CP is refused until we have Michelin’s official table.</p>
       </details>
       <details>
         <summary>What does the load index 120/117 mean?</summary>
@@ -494,7 +496,7 @@
       </details>
       <details>
         <summary>What if you don’t have my size?</summary>
-        <p>The tool refuses a number. You can send the size and load index as research. We only add sizes from manufacturer databooks — we will not invent a pressure or email you one.</p>
+        <p>The tool refuses a number. We’ve noted this size for research when we can. Use the form on this page for anything else from the sidewall. We only add sizes from manufacturer databooks — we will not invent a pressure or email you one.</p>
       </details>
       <details>
         <summary>How does this sit with the payload calculator?</summary>
@@ -504,12 +506,12 @@
 
     <section class="prose" id="about">
       <h2>About</h2>
-      <p>This tyre pressure tool sits on the Motorhome Payload hub. Enter the sidewall of the tyre you fitted and your front and rear axle weights to get cold pressures in bar and PSI. Your figures stay on this device and are not filled in until you restore them — nothing is sent away to calculate. We only use published manufacturer tables for the brands and sizes listed under <a href="#sources">Sources we use</a>; if your size or load index isn’t covered, the tool refuses a number rather than guessing. You can then send that size as research. This is a guide — check pressures cold, don’t exceed the wheel’s maximum air pressure, and ask a tyre fitter if unsure.</p>
+      <p>This tyre pressure tool sits on the Motorhome Payload hub. Enter the sidewall of the tyre you fitted and your front and rear axle weights to get cold pressures in bar and PSI. Your figures stay on this device and are not filled in until you restore them — nothing is sent away to calculate. We only use published manufacturer tables for the brands and sizes listed under <a href="#sources">Sources we use</a>; if your size or load index isn’t covered, the tool refuses a number rather than guessing. We’ve noted this size for research when we can; use the form on this page for anything else from the sidewall. This is a guide — check pressures cold, don’t exceed the wheel’s maximum air pressure, and ask a tyre fitter if unsure.</p>
     </section>
 
     <section class="prose" id="privacy">
       <h2>Privacy</h2>
-      <p>No account and no advertising cookies. Numbers stay in this browser’s local storage and are not filled in until you restore them. Nothing you type is sent to the payload lookup server. If you send a missing-size note, that form (size, load index, and anything you typed) is posted to this site so we can research a manufacturer table. Optional email is only used if we need to ask about that size — we will not email a pressure. We don’t upload your tyres.</p>
+      <p>No account and no advertising cookies. Numbers stay in this browser’s local storage and are not filled in until you restore them. Nothing you type is sent to the payload lookup server. If a size is refused, the size, load index and brand already typed may be posted automatically so we can research a manufacturer table — you’ll see “We’ve noted this size for research.” The form is for an optional extra note or email. We will not email a pressure. We don’t upload your tyres.</p>
     </section>
   </main>
 
@@ -537,8 +539,8 @@
   </footer>
 
   <script src="lib/tyre-tra-db.js?v=20260910copy12"></script>
-  <script src="lib/tyre-michelin-db.js?v=20260910copy12"></script>
-  <script src="lib/tyre-calc.js?v=20260911miss1"></script>
-  <script src="tyres-app.js?v=20260911tyres1"></script>
+  <script src="lib/tyre-michelin-db.js?v=20260911tyres2"></script>
+  <script src="lib/tyre-calc.js?v=20260911tyres2"></script>
+  <script src="tyres-app.js?v=20260911tyres2"></script>
 </body>
 </html>

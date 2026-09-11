@@ -35,6 +35,17 @@ describe("missing-size research intake", function () {
     assert.equal(built.record.email, "wayne@example.com");
     assert.equal(built.record.bar, undefined);
     assert.equal(built.record.psi, undefined);
+    assert.equal(built.record.source, "form");
+
+    const auto = missing.buildRecord({
+      size: "205/75 R16C 113R",
+      loadIndex: "113",
+      brand: "Goodyear",
+      auto: true
+    });
+    assert.equal(auto.ok, true);
+    assert.equal(auto.record.source, "auto");
+    assert.equal(auto.record.bar, undefined);
     assert.match(missing.sidewallLine(built.record), /245\/70 R19\.5/);
     assert.match(missing.formatMailtoBody(built.record), /do not invent a pressure/);
     assert.doesNotMatch(missing.formatMailtoBody(built.record), /we will email you a pressure/i);

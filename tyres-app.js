@@ -394,7 +394,8 @@
           return "That camping tyre size is not in our table yet, so this page will not invent a pressure.";
         }
         if (result.reason === "michelin-cp-no-table") {
-          return "No published Michelin camping load table for this size. This page will not invent a pressure.";
+          return T.MICHELIN_CP_REFUSE ||
+            "We don’t have Michelin’s Camping CP load/pressure table for this size. We won’t invent one or copy another brand’s camping table and call it Michelin.";
         }
         if (result.reason === "brand-later") {
           return "That brand is not in our tables yet. This page will not invent a pressure.";
@@ -484,6 +485,10 @@
       badge.textContent = "van C tyre table";
     } else if (path.path === "unsupported-rim") {
       badge.textContent = "Only 15–18″ supported — this is a " + parsed.rimIn + "″ rim.";
+    } else if (path.reason === "michelin-cp-no-table") {
+      badge.textContent = "Michelin Camping CP — no official table on this page.";
+    } else if (path.reason === "brand-later") {
+      badge.textContent = "That brand is not in our tables yet.";
     } else {
       badge.textContent = "Detected " + (parsed.family || "unknown") + " — not in our table yet / only 15–18″ supported.";
     }
@@ -540,7 +545,8 @@
       return "That brand is not in our tables yet.";
     }
     if (result.reason === "michelin-cp-no-table") {
-      return "No published Michelin camping load table for this size.";
+      return T.MICHELIN_CP_REFUSE ||
+        "We don’t have Michelin’s Camping CP load/pressure table for this size.";
     }
     if (result.reason === "lt-size-unknown") {
       return "That LT size is not in our table yet.";
@@ -581,6 +587,87 @@
   var capturePrefillKey = "";
   var captureSubmittedKey = "";
   var captureMailtoTo = "";
+  var autoNoteTimer = 0;
+  var AUTO_NOTE_STORE = "mh-tyres-autonote-v1";
+
+  function autoNoteKey(target) {
+    return [target.size, target.loadIndex, target.brand, target.reason].join("|");
+  }
+
+  function alreadyAutoNoted(key) {
+    try {
+      var raw = sessionStorage.getItem(AUTO_NOTE_STORE);
+      var list = raw ? JSON.parse(raw) : [];
+      return list.indexOf(key) !== -1;
+    } catch (err) {
+      return false;
+    }
+  }
+
+  function markAutoNoted(key) {
+    try {
+      var raw = sessionStorage.getItem(AUTO_NOTE_STORE);
+      var list = raw ? JSON.parse(raw) : [];
+      if (list.indexOf(key) === -1) {
+        list.push(key);
+        if (list.length > 40) list = list.slice(-40);
+        sessionStorage.setItem(AUTO_NOTE_STORE, JSON.stringify(list));
+      }
+    } catch (err) { /* ignore */ }
+  }
+
+  function showAutoNoteLine(visible) {
+    var el = $("autoNoteLine");
+    if (el) el.hidden = !visible;
+  }
+
+  function postAutoNote(target) {
+    if (!target || !String(target.size || "").trim()) return;
+    var key = autoNoteKey(target);
+    if (key === captureSubmittedKey || alreadyAutoNoted(key)) {
+      showAutoNoteLine(true);
+      return;
+    }
+    fetch("/api/missing-size", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        size: target.size,
+        loadIndex: target.loadIndex,
+        speedRating: target.speed,
+        brand: target.brand,
+        reason: target.reasonText || target.reason,
+        auto: true
+      })
+    }).then(function (res) {
+      return res.json().then(function (data) {
+        return { res: res, data: data };
+      }).catch(function () {
+        return { res: res, data: {} };
+      });
+    }).then(function (out) {
+      if (out.res && out.res.ok && out.data && out.data.ok) {
+        markAutoNoted(key);
+        showAutoNoteLine(true);
+      }
+    }).catch(function () { /* offline — form still works */ });
+  }
+
+  function scheduleAutoNote(target) {
+    if (!target) {
+      showAutoNoteLine(false);
+      return;
+    }
+    var key = autoNoteKey(target);
+    if (alreadyAutoNoted(key) || key === captureSubmittedKey) {
+      showAutoNoteLine(true);
+      return;
+    }
+    clearTimeout(autoNoteTimer);
+    autoNoteTimer = setTimeout(function () {
+      postAutoNote(target);
+    }, 800);
+  }
 
   function capturePayload() {
     return {
@@ -639,9 +726,12 @@
     var target = uncoveredTarget();
     if (!target) {
       panel.hidden = true;
+      clearTimeout(autoNoteTimer);
+      showAutoNoteLine(false);
       return;
     }
     panel.hidden = false;
+    scheduleAutoNote(target);
     var key = [target.size, target.loadIndex, target.reason].join("|");
     if (key === captureSubmittedKey) {
       form.hidden = true;
