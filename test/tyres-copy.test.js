@@ -48,7 +48,7 @@ describe("tyres missing-size capture copy", function () {
     assert.match(html, /ASSET_VERSION=20260911tyres2/);
     assert.match(html, /styles\.css\?v=20260911restore1/);
     assert.match(html, /tyre-calc\.js\?v=20260911tyres2/);
-    assert.match(html, /tyres-app\.js\?v=20260911tyres2/);
+    assert.match(html, /tyres-app\.js\?v=20260911tyres3/);
     assert.match(css, /Keep the last fields and Send above the sticky cold-pressure bar/);
     assert.match(css, /\.missing-size/);
     assert.match(css, /\[hidden\] \{ display: none !important; \}/);
@@ -64,7 +64,7 @@ describe("tyres opt-in restore", function () {
     assert.match(html, />Clear saved</);
     assert.match(html, /Saved on this phone only\. We don’t upload your tyres\./);
     assert.match(html, /are not filled in until you restore them/);
-    assert.match(html, /tyres-app\.js\?v=20260911tyres2/);
+    assert.match(html, /tyres-app\.js\?v=20260911tyres3/);
     assert.match(app, /function restoreLastTyres/);
     assert.match(app, /function clearSaved/);
     assert.match(app, /if \(booting \|\| !persistEnabled\) return;/);
@@ -84,7 +84,7 @@ describe("tyres opt-in restore", function () {
   });
 
   it("locks Wayne’s tyres copy, auto-note, and honest Michelin CP refuse", function () {
-    assert.match(html, /Use this when you’ve fitted different tyres to the original ones that came with the van from new\./);
+    assert.match(html, /Use this when you’ve fitted different tyres to the originals\./);
     assert.match(html, /Factory cold pressures are often on a sticker inside the driver’s door — those match the original tyre size, not a replacement\./);
     assert.match(html, /We’ve noted this size for research when we can; use the form on this page/);
     assert.match(html, /See <a href="#sources">Sources we use<\/a> — it names the manufacturer tables behind the figures\./);
