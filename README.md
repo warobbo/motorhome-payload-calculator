@@ -23,7 +23,7 @@ Then visit [http://localhost:4173](http://localhost:4173) (payload) or [http://l
 - Empty or Loaded weighbridge axle check (front/rear kg vs plate limits — never invented from kit)
 - People, pets, water, diesel, gas bottles, batteries, solar, touring kit and custom extra items
 - Metric (kg / litres) by default, with a UK imperial toggle (lb / UK gallons)
-- Remembers the last figures in `localStorage`
+- Can restore the last figures from this device (`localStorage`) — first paint stays empty until you tap Restore last van
 - Example presets (including a typical 3.5 t setup) — change MAM to match the plate
 - “What if I empty the water?” comparison
 - Printable results and a weighbridge disclaimer

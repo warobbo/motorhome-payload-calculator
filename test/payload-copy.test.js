@@ -133,7 +133,8 @@ describe("payload page identity and honesty", function () {
     assert.match(html, /id="make"[^>]*autocomplete="off"/);
     assert.doesNotMatch(html, /id="make"[^>]*placeholder=/);
     assert.doesNotMatch(html, /id="yearOfManufacture"[^>]*placeholder=/);
-    assert.match(html, /placeholder="e\.g\. WN67 DSO"/);
+    assert.match(html, /placeholder="e\.g\. AB12 CDE"/);
+    assert.doesNotMatch(html, /WN67 DSO/);
     assert.doesNotMatch(html, /DEMO3500/);
     assert.match(
       html,
@@ -146,5 +147,25 @@ describe("payload page identity and honesty", function () {
     assert.doesNotMatch(html, /90% fuel \(usual\)/);
     assert.match(html, /<span>Awning<\/span>/);
     assert.doesNotMatch(html, /Cassette awning/);
+  });
+
+  it("does not silently auto-fill a saved van and offers Restore / Clear on this device", function () {
+    assert.match(html, /id="savedVanBanner"[^>]*hidden/);
+    assert.match(html, /id="restoreVan"/);
+    assert.match(html, />Restore last van</);
+    assert.match(html, /id="clearVan"/);
+    assert.match(html, />Clear saved van</);
+    assert.match(html, /Saved on this phone only\. We don’t upload your van\./);
+    assert.match(html, /Figures stay on this device only and are not filled in until you tap Restore last van/);
+    assert.match(html, /styles\.css\?v=20260911restore1/);
+    assert.match(html, /app\.js\?v=20260911restore2/);
+    assert.match(app, /var state = freshState\(\)/);
+    assert.match(app, /var pageLoadSnapshot = readSavedVan\(\)/);
+    assert.match(app, /if \(booting \|\| !persistEnabled\) return;/);
+    assert.match(app, /if \(state\[key\] !== before\) enablePersist\(\)/);
+    assert.match(app, /function restoreLastVan/);
+    assert.match(app, /function clearSavedVan/);
+    assert.doesNotMatch(app, /var state = loadState\(\)/);
+    assert.doesNotMatch(html, /WN67/);
   });
 });
