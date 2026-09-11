@@ -22,6 +22,7 @@ describe("tyres missing-size capture copy", function () {
     assert.match(html, /Email if a reply would help/);
     assert.match(html, /We will not email a pressure/);
     assert.match(html, /Thank you\. We only add sizes from manufacturer databooks — no invented pressures\./);
+    assert.match(html, /id="captureMailto"[^>]*hidden/);
     assert.doesNotMatch(html, /we will email you a pressure/i);
     assert.doesNotMatch(html, /we.?ll send you the (bar|PSI|pressure)/i);
   });
@@ -42,11 +43,12 @@ describe("tyres missing-size capture copy", function () {
   });
 
   it("bumps cache-bust and keeps the sticky bar off the form footer", function () {
-    assert.match(html, /ASSET_VERSION=20260911miss1/);
-    assert.match(html, /styles\.css\?v=20260911miss1/);
+    assert.match(html, /ASSET_VERSION=20260911miss2/);
+    assert.match(html, /styles\.css\?v=20260911miss2/);
     assert.match(html, /tyre-calc\.js\?v=20260911miss1/);
     assert.match(html, /tyres-app\.js\?v=20260911miss1/);
     assert.match(css, /Keep the last fields and Send above the sticky cold-pressure bar/);
     assert.match(css, /\.missing-size/);
+    assert.match(css, /\[hidden\] \{ display: none !important; \}/);
   });
 });
