@@ -485,15 +485,17 @@ input:focus, select:focus, textarea:focus, button:focus-visible {
 }
 .tip:hover::after, .tip:focus::after, .tip:hover::before, .tip:focus::before {
   opacity: 1;
-  transform: translate(-50%, 0);
+  transform: translateY(0);
   pointer-events: none;
 }
 .tip::after {
   content: attr(data-tip);
   position: absolute;
-  left: 50%;
+  /* Tips sit on the right of field rows — grow left so they stay in-viewport. */
+  left: auto;
+  right: 0;
   bottom: calc(100% + 8px);
-  width: min(240px, calc(100% + 8rem));
+  width: min(240px, calc(100vw - 2.5rem));
   max-width: min(240px, calc(100vw - 2.5rem));
   background: var(--ink);
   color: #fff;
@@ -503,19 +505,20 @@ input:focus, select:focus, textarea:focus, button:focus-visible {
   padding: 0.5rem 0.6rem;
   border-radius: 8px;
   opacity: 0;
-  transform: translate(-50%, 4px);
+  transform: translateY(4px);
   transition: 0.12s ease;
   z-index: 5;
 }
 .tip::before {
   content: "";
   position: absolute;
-  left: 50%;
+  left: auto;
+  right: 0.4rem;
   bottom: calc(100% + 2px);
   border: 6px solid transparent;
   border-top-color: var(--ink);
   opacity: 0;
-  transform: translate(-50%, 4px);
+  transform: translateY(4px);
 }
 
 .presets {

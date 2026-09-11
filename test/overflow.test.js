@@ -32,6 +32,11 @@ describe("mobile horizontal overflow guards", function () {
     assert.match(css, /\.missing-size \.hp \{[\s\S]*?clip-path:\s*inset\(50%\)/);
   });
 
+  it("grows field-row tips left so hidden tooltips do not widen the page", function () {
+    assert.match(css, /\.tip::after \{[\s\S]*?left:\s*auto;[\s\S]*?right:\s*0;/);
+    assert.doesNotMatch(css, /\.tip::after \{[\s\S]*?transform:\s*translate\(-50%/);
+  });
+
   it("bumps the shared stylesheet cache-bust on both pages", function () {
     assert.match(index, /styles\.css\?v=20260911clip1/);
     assert.match(tyres, /styles\.css\?v=20260911clip1/);
