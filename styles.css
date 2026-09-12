@@ -997,6 +997,51 @@ input:focus, select:focus, textarea:focus, button:focus-visible {
 .term h3 { margin: 0 0 0.3rem; font-size: 1rem; }
 .term p { margin: 0; color: var(--muted); font-size: 0.9rem; }
 
+.guides-strip {
+  margin: 1.6rem 0 0.35rem;
+  padding: 0.95rem 1rem 1.05rem;
+  background: var(--pine-soft);
+  border: 1px solid #c5ddd4;
+  border-radius: 14px;
+  scroll-margin-top: calc(var(--sticky-header) + 0.75rem);
+}
+.guides-strip h2 { margin-top: 0; }
+.guides-strip > p { margin: 0 0 0.75rem; color: var(--muted); }
+.guides-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.45rem;
+}
+.guides-list a {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.2rem 0.75rem;
+  min-width: 0;
+  min-height: 2.75rem;
+  padding: 0.6rem 0.85rem;
+  background: var(--paper);
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  text-decoration: none;
+  color: var(--ink);
+  font-weight: 650;
+}
+.guides-list a:hover { border-color: var(--pine); }
+.guides-list a:focus-visible { box-shadow: var(--focus); }
+.guides-list a span { min-width: 0; }
+.guides-list .hint {
+  font-weight: 500;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+@media (min-width: 720px) {
+  .guides-list { grid-template-columns: 1fr 1fr; }
+}
+
 .faq details {
   background: var(--paper);
   border: 1px solid var(--line);
@@ -1266,6 +1311,7 @@ footer.site-footer {
   .how-to-use,
   #presets,
   .faq,
+  #guides,
   #explain,
   #about,
   #privacy,
