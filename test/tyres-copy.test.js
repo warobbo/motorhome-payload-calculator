@@ -100,6 +100,8 @@ describe("tyres opt-in restore", function () {
     assert.match(html, /Tyre capacity is not permission to exceed the vehicle axle, wheel or legal limits/);
     const sources = html.slice(html.indexOf('id="sources"'), html.indexOf("</aside>", html.indexOf('id="sources"')));
     assert.match(sources, /We do not have Michelin’s Camping CP load\/pressure table/);
+    assert.match(sources, /Conti_Tyre_Databook_2025_EN_screen\.pdf/);
+    assert.match(sources, /VanContact Camper/);
     assert.match(sources, /AMBER \(max load @ max cold pressure only\)/);
     assert.match(sources, /GT18_Grabber-AT2_Tire_Spec_Pages\.pdf/);
     assert.match(sources, /GT19_Grabber_ATx_ProductFlyer_v2_Print\.pdf/);
