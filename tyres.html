@@ -11,15 +11,15 @@
   <meta name="apple-mobile-web-app-title" content="Tyre Pressure">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
 
-  <title>Motorhome Tyre Pressure | Cold Front &amp; Rear</title>
-  <meta name="description" content="Cold front and rear motorhome tyre pressure from your sidewall and axle weights. Continental / General and Michelin tables for listed sizes. Planner only.">
-  <meta name="keywords" content="motorhome tyre pressure, camping tyre CP, cold tyre pressure, axle weight, UK motorhome tyres">
+  <title>Motorhome Tyre Pressure | LT and changed wheels</title>
+  <meta name="description" content="LT and changed wheel or tyre sets: cold figures from published maker tables only. Same-size C or CP renewals use the door sticker. Planner only.">
+  <meta name="keywords" content="LT tyre pressure, motorhome tyre pressure, campervan wheels, cold tyre pressure, axle weight, UK motorhome tyres">
   <meta name="author" content="Motorhome Payload Calculator">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://motorhomepayload.co.uk/tyres.html">
 
-  <meta property="og:title" content="Motorhome Tyre Pressure | Cold Front &amp; Rear">
-  <meta property="og:description" content="Enter the tyre sidewall and front and rear axle weights to read cold bar and PSI from published manufacturer tables.">
+  <meta property="og:title" content="Motorhome Tyre Pressure | LT and changed wheels">
+  <meta property="og:description" content="For LT tyres or a different wheel and tyre set. Same-size C or CP renewals belong on the door sticker. Maker-cited figures only.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://motorhomepayload.co.uk/tyres.html">
   <meta property="og:image" content="https://motorhomepayload.co.uk/og-image.png">
@@ -30,8 +30,8 @@
   <meta property="og:site_name" content="Motorhome Payload Calculator">
 
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Motorhome Tyre Pressure from axle weights">
-  <meta name="twitter:description" content="Cold front and rear bar and PSI when you have fitted a different tyre size.">
+  <meta name="twitter:title" content="Motorhome Tyre Pressure — LT and changed wheels">
+  <meta name="twitter:description" content="LT or a different wheel and tyre set. Same-size C or CP: use the door sticker. We do not invent pressures.">
   <meta name="twitter:image" content="https://motorhomepayload.co.uk/og-image.png">
 
   <link rel="icon" type="image/svg+xml" href="brand/tyres.svg?v=20260911logos1">
@@ -51,7 +51,7 @@
       "@type": "WebApplication",
       "name": "Motorhome Tyre Pressure",
       "url": "https://motorhomepayload.co.uk/tyres.html",
-      "description": "Estimate cold front and rear motorhome tyre pressure from axle weights and the fitted tyre, using published manufacturer tables.",
+      "description": "LT and changed wheel or tyre sets: cold figures from published maker tables only. Same-size C or CP renewals use the door sticker.",
       "applicationCategory": "UtilitiesApplication",
       "operatingSystem": "Any",
       "inLanguage": "en-GB",
@@ -71,7 +71,7 @@
           "name": "Where do these motorhome tyre pressures come from?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "From published manufacturer tables, not guesses. Today we cover Continental / General and Michelin for the sizes listed under Sources we use. If your size, brand or load index is not listed, the tool refuses a number."
+            "text": "From published manufacturer tables, not guesses. GREEN means a full maker load and pressure curve. AMBER means only the published max load at max cold pressure. If your size, brand or load index is not listed, the tool refuses a number."
           }
         },
         {
@@ -79,7 +79,15 @@
           "name": "Which brands do you have tables for?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Today: Continental / General (listed LT, C and camping CP sizes) and Michelin (Agilis CrossClimate C and LT). We do not have Michelin’s Camping CP table. If your size or brand is not listed, this page refuses a number."
+            "text": "GREEN full curves: Continental / General (listed LT, C and camping CP) and Michelin Agilis CrossClimate C and LT. AMBER max-only: General Grabber LT and BFGoodrich All-Terrain T/A KO2 LT from the maker spec sheets listed under Sources. We do not have Michelin’s Camping CP table. If your size or brand is not listed, this page refuses a number."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Should I use this page for a same-size C or CP renewal?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. If you are putting the same C or CP size back on, use the vehicle door sticker or handbook. This page is for LT tyres or a different wheel and tyre set to the originals."
           }
         },
         {
@@ -95,7 +103,7 @@
           "name": "Why isn’t my door-sticker pressure right for new tyres?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "The sticker inside the driver’s door matches the original factory size. A different size needs a pressure from that tyre’s published table at your axle weights."
+            "text": "The sticker inside the driver’s door matches the original factory size. Same-size C or CP renewals should use that sticker or the handbook. A different size or an LT set needs a figure from that tyre’s published table — and only if we have one."
           }
         },
         {
@@ -128,8 +136,8 @@
 }
   </script>
 
-  <!-- ASSET_VERSION=20260911logos1 — bump this query on CSS/JS below to force-refresh cached assets. -->
-  <link rel="stylesheet" href="styles.css?v=20260911logos1">
+  <!-- ASSET_VERSION=20260912lt1 — bump this query on CSS/JS below to force-refresh cached assets. -->
+  <link rel="stylesheet" href="styles.css?v=20260912lt1">
 </head>
 <body>
   <a class="skip" href="#tyres">Skip to tyre tool</a>
@@ -140,7 +148,7 @@
         <img class="logo" src="brand/tyres.svg?v=20260911logos1" width="42" height="42" alt="Tyres &#8212; motorhome tools">
         <span>
           <h1>Motorhome Tyre Pressure</h1>
-          <p>Cold front and rear in bar and PSI</p>
+          <p>LT and changed wheels — cold bar and PSI</p>
         </span>
       </a>
     </div>
@@ -152,20 +160,20 @@
 
   <main class="wrap" id="tyres">
     <div class="intro">
-      <h2>Use this when you’ve fitted different tyres to the originals.</h2>
-      <p>Factory cold pressures are often on a sticker inside the driver’s door — those match the original tyre size, not a replacement.</p>
-      <p>Enter the tyre specification information found on the sidewall of the tyre. Add front and rear axle weights in kg from a public weighbridge (best — today’s weight), the Payload calculator (an estimate), or the VIN plate (often axle maximums, not today’s weight).</p>
+      <h2>Use this for LT tyres, or when the wheels or tyres are different to the originals.</h2>
+      <p>Same-size C or CP renewals: use the door sticker or handbook. This page does not invent a pressure for those.</p>
+      <p>For an LT / light-truck set or a different size, enter the sidewall and your front and rear axle weights. We only show figures the maker published. Van axle, wheel and legal limits still win.</p>
     </div>
 
     <section class="prose how-to-use" id="how-to-use">
       <h2>How to use</h2>
       <ol>
-        <li>Factory cold pressures are often on a sticker inside the driver’s door — those match the original tyre size, not a replacement.</li>
-        <li>Enter the tyre specification from the <strong>sidewall</strong> (fields start empty; a faint example is shown in the box, such as <code>225/75R16C 118R</code>).</li>
+        <li>Same-size C or CP like the factory fit → use the <strong>door sticker or handbook</strong>. This page is for <strong>LT</strong> tyres or a <strong>different</strong> wheel or tyre set.</li>
+        <li>Enter the tyre specification from the <strong>sidewall</strong> (fields start empty; a faint example is shown in the box, such as <code>LT265/70R17 121/118S</code>).</li>
         <li>Add front and rear axle <strong>weights</strong> in kg from a public weighbridge (best — today’s weight), the Payload calculator (an estimate), or the VIN plate (often axle maximums, not today’s weight).</li>
-        <li>Read <strong>cold front</strong> and <strong>cold rear</strong> in bar and PSI. If your size or load index isn’t covered, the tool refuses — no guessed pressure. We’ve noted this size for research when we can; use the form on this page for anything else from the sidewall so we can check a manufacturer book.</li>
+        <li><strong>GREEN</strong> is a full maker load×pressure curve. <strong>AMBER</strong> is only the published max load at max cold pressure — not a step-by-step curve. If your size or load index isn’t covered, the tool refuses — no guessed pressure. We’ve noted this size for research when we can; use the form on this page for anything else from the sidewall so we can check a manufacturer book.</li>
         <li>See <a href="#sources">Sources we use</a> — it names the manufacturer tables behind the figures.</li>
-        <li>Check pressures cold. Don’t go above the maximum air pressure marked on the wheel (that limit is pressure, not weight). Ask a tyre fitter if you’re unsure.</li>
+        <li>Check pressures cold. Don’t go above the maximum air pressure marked on the wheel. Tyre capacity is not permission to exceed the vehicle axle, wheel or legal limits. Ask a tyre fitter if you’re unsure.</li>
       </ol>
     </section>
 
@@ -202,6 +210,14 @@
       </div>
       <p class="source-cite" id="chartNote"></p>
       <p class="note" id="answerNotes"></p>
+      <aside class="sticker-nudge" id="stickerNudge" hidden>
+        <p><strong>Same-size C or CP?</strong> Use the vehicle door sticker or handbook — not this page. This tool is for LT tyres or a different wheel and tyre set to the originals.</p>
+      </aside>
+      <aside class="amber-warning" id="amberWarning" hidden>
+        <p><strong>AMBER — incomplete maker table.</strong> This is the published <em>max load at max cold pressure</em> only — not a full pressure curve. We will not invent the in-between steps.</p>
+        <p class="amber-source" id="amberSource"></p>
+      </aside>
+      <p class="legal-limit-note" id="legalLimitNote">Tyre capacity is not permission to exceed the vehicle axle, wheel or legal limits.</p>
     </section>
 
     <aside class="missing-size" id="missingSize" hidden>
@@ -254,9 +270,13 @@
 
     <aside class="sources-note" id="sources" aria-labelledby="sources-heading">
       <h2 id="sources-heading">Sources we use</h2>
-      <p>Pressures come from published manufacturer tables — not guesses.</p>
+      <p>Pressures come from published manufacturer tables — not guesses. Blanks stay blank.</p>
       <ul>
-        <li><strong>Covered today:</strong> Continental / General (listed LT, C and camping CP sizes) and Michelin (Agilis CrossClimate C and LT). We do not have Michelin’s Camping CP load/pressure table — we will not copy another brand’s camping table and call it Michelin.</li>
+        <li><strong>GREEN (full curve):</strong> Continental / General Tyre Databook for listed LT, C and camping CP sizes on 15–18″, and Michelin Agilis CrossClimate C and LT. VanContact Camper / CP (FA S, RA S, RA T) is the Conti camping curve. Public 2025 UK screen PDF (retrieved 12 Sep 2026): <a href="https://www.continental-tyres.co.uk/content/dam/conti-tires-cms/continental/market-content/gb/tyre-knowledge/Conti_Tyre_Databook_2025_EN_screen.pdf.coredownload.pdf">Continental Tyre Databook 2025 (EN)</a>. Stored CP steps stay the verified book figures — we do not invent in-between values. We do not have Michelin’s Camping CP load/pressure table — we will not copy another brand’s camping table and call it Michelin.</li>
+        <li><strong>AMBER (max load @ max cold pressure only):</strong> General Grabber LT from the official AT2 spec pages and A/TX flyer / specs page, and BFGoodrich All-Terrain T/A KO2 LT from the KO2 product sheet — retrieved 12 Sep 2026. Not a full curve. Dual stays blank where the maker did not print one. We did not use BFG commercial truck databooks (11R22.5 and similar).</li>
+        <li><strong>General Grabber AT2</strong> (AMBER) — <a href="https://generaltire.com/sites/default/files/tires/files/GT18_Grabber-AT2_Tire_Spec_Pages.pdf">GT18 spec pages PDF</a>, retrieved 12 Sep 2026.</li>
+        <li><strong>General Grabber A/TX</strong> (AMBER) — <a href="https://generaltire.com/sites/default/files/tires/files/GT19_Grabber_ATx_ProductFlyer_v2_Print.pdf">GT19 product flyer PDF</a> and the <a href="https://generaltire.com/tires/light-trucksuv/grabber-atx/specs">A/TX specs page</a>, retrieved 12 Sep 2026.</li>
+        <li><strong>BFGoodrich All-Terrain T/A KO2</strong> (AMBER) — <a href="https://images.carid.com/bfgoodrich/info/bfgoodrich-all-terrain-ta-ko-2-product-information.pdf">KO2 product information PDF</a>, retrieved 12 Sep 2026.</li>
         <li><strong>Industry CP guidance:</strong> <a href="https://www.tyresafe.org/vehicle-owners/motorhome-tyre-safety/load-and-inflation-tables/">TyreSafe</a> publishes camping / motorhome guidance (a rear single is often 5.5 bar). That is industry guidance, not a Michelin Camping databook.</li>
       </ul>
       <p>If your size, brand or load index is not listed, the tool refuses a number. We will not invent one. We’ve noted this size for research when we can; use the form on this page for anything else from the sidewall. We only add sizes from manufacturer databooks.</p>
@@ -277,13 +297,13 @@
         </div>
         <div class="field">
           <label for="sidewall">Sidewall code</label>
-          <input id="sidewall" type="text" spellcheck="false" autocomplete="off" autocapitalize="characters" placeholder="225/75R16C 118R">
-          <span class="hint">The size printed on the tyre — for example <code>225/75R16C 118R</code></span>
+          <input id="sidewall" type="text" spellcheck="false" autocomplete="off" autocapitalize="characters" placeholder="LT265/70R17 121/118S">
+          <span class="hint">The size printed on the tyre — for example <code>LT265/70R17 121/118S</code></span>
         </div>
         <div class="field">
           <label for="brandLabel">Tyre brand / model</label>
           <input id="brandLabel" type="text" spellcheck="false" autocomplete="off" placeholder="e.g. brand and model">
-          <span class="hint">Type the brand so we use the right table (for example Michelin or Continental).</span>
+          <span class="hint">Type the brand so we use the right table (for example General Grabber, BFGoodrich, Continental or Michelin).</span>
         </div>
         <div id="decodeOut" class="decode-out" hidden></div>
         <div class="grid-2" style="margin-top:0.85rem">
@@ -457,11 +477,15 @@
       <h2>Tyres FAQ</h2>
       <details open>
         <summary>Where do these motorhome tyre pressures come from?</summary>
-        <p>From published manufacturer tables, not guesses. See <a href="#sources">Sources we use</a> for the tables we cover today. If your size, brand or load index is not listed, the tool refuses a number.</p>
+        <p>From published manufacturer tables, not guesses. <strong>GREEN</strong> is a full maker load×pressure curve. <strong>AMBER</strong> is only the published max load at max cold pressure. See <a href="#sources">Sources we use</a>. If your size, brand or load index is not listed, the tool refuses a number.</p>
       </details>
       <details>
         <summary>Which brands do you have tables for?</summary>
-        <p>Today: Continental / General (listed LT, C and camping CP sizes) and Michelin (Agilis CrossClimate C and LT). We do not have Michelin’s Camping CP table. If your size or brand is not listed, this page refuses a number.</p>
+        <p><strong>GREEN</strong> full curves: Continental / General (listed LT, C and camping CP) and Michelin Agilis CrossClimate C and LT. <strong>AMBER</strong> max-only: General Grabber LT and BFGoodrich All-Terrain T/A KO2 LT from the spec sheets named under Sources. We do not have Michelin’s Camping CP table. If your size or brand is not listed, this page refuses a number.</p>
+      </details>
+      <details>
+        <summary>Should I use this page for a same-size C or CP renewal?</summary>
+        <p>No. If you are putting the same C or CP size back on, use the vehicle door sticker or handbook. This page is for <strong>LT</strong> tyres or a <strong>different</strong> wheel and tyre set to the originals.</p>
       </details>
       <details>
         <summary>Why don’t you use a US lb/PSI chart or a generic van-tyre formula?</summary>
@@ -473,7 +497,7 @@
       </details>
       <details>
         <summary>Why isn’t my door-sticker pressure right for new tyres?</summary>
-        <p>The sticker inside the driver’s door matches the original factory size. A different size needs a pressure from that tyre’s published table at your axle weights.</p>
+        <p>The sticker inside the driver’s door matches the original factory size. Same-size C or CP renewals should stay on that sticker or the handbook. A different size or an LT set needs a figure from that tyre’s published table — and only if we have one. Tyre capacity still does not let you exceed the van’s axle, wheel or legal limits.</p>
       </details>
       <details>
         <summary>What if the tyre cannot carry the axle weight?</summary>
@@ -497,13 +521,13 @@
       </details>
       <details>
         <summary>How does this sit with the payload calculator?</summary>
-        <p>Use the <a href="index.html">payload calculator</a> for MAM and kit. Use this page once you know (or estimate) axle weights and have fitted a different tyre. For axle weights: a public weighbridge is best; the Payload calculator is an estimate; the VIN plate often shows axle maximums, not today’s weight. Do not use the V5 for front and rear axle weights.</p>
+        <p>Use the <a href="index.html">payload calculator</a> for MAM and kit. Use this page for an <strong>LT</strong> set or when the wheels or tyres are different to the originals. Same-size C or CP renewals belong on the door sticker. For axle weights: a public weighbridge is best; the Payload calculator is an estimate; the VIN plate often shows axle maximums, not today’s weight. Do not use the V5 for front and rear axle weights.</p>
       </details>
     </section>
 
     <section class="prose" id="about">
       <h2>About</h2>
-      <p>This tyre pressure tool sits on the Motorhome Payload hub. Enter the sidewall of the tyre you fitted and your front and rear axle weights to get cold pressures in bar and PSI. Your figures stay on this device and are not filled in until you restore them — nothing is sent away to calculate. We only use published manufacturer tables for the brands and sizes listed under <a href="#sources">Sources we use</a>; if your size or load index isn’t covered, the tool refuses a number rather than guessing. We’ve noted this size for research when we can; use the form on this page for anything else from the sidewall. This is a guide — check pressures cold, don’t exceed the wheel’s maximum air pressure, and ask a tyre fitter if unsure.</p>
+      <p>This tyre pressure tool sits on the Motorhome Payload hub. It is for <strong>LT</strong> tyres and for wheel or tyre sets that are different to the originals. Same-size C or CP renewals should use the door sticker or handbook. Your figures stay on this device and are not filled in until you restore them. We only use published manufacturer tables for the brands and sizes listed under <a href="#sources">Sources we use</a> — GREEN full curves, or AMBER max load at max pressure. If your size or load index isn’t covered, the tool refuses a number rather than guessing. We’ve noted this size for research when we can; use the form on this page for anything else from the sidewall. This is a guide — check pressures cold, don’t exceed the wheel’s maximum air pressure, and never treat tyre capacity as permission to exceed the vehicle axle, wheel or legal limits.</p>
     </section>
 
     <section class="prose" id="privacy">
@@ -522,7 +546,7 @@
 
   <footer class="site-footer">
     <div class="footer-inner">
-      <p class="disclaimer"><strong>Disclaimer:</strong> Planning estimate only. Cold pressures from the published table for the tyre family you typed. Tyre maker, vehicle plate and a fitter always win. Wrong pressure or load can be dangerous.</p>
+      <p class="disclaimer"><strong>Disclaimer:</strong> Planning estimate only. Maker-cited figures only — full curve (GREEN) or published max (AMBER). Tyre maker, vehicle plate and a fitter always win. Tyre capacity is not permission to exceed axle, wheel or legal limits. Wrong pressure or load can be dangerous.</p>
       <nav class="footer-links" aria-label="Footer">
         <a href="index.html">Payload calculator</a>
         <a href="tyres.html">Tyres</a>
@@ -535,9 +559,10 @@
     </div>
   </footer>
 
-  <script src="lib/tyre-tra-db.js?v=20260910copy12"></script>
-  <script src="lib/tyre-michelin-db.js?v=20260911tyres2"></script>
-  <script src="lib/tyre-calc.js?v=20260911tyres2"></script>
-  <script src="tyres-app.js?v=20260911tyres3"></script>
+  <script src="lib/tyre-tra-db.js?v=20260912lt1"></script>
+  <script src="lib/tyre-michelin-db.js?v=20260912lt1"></script>
+  <script src="lib/tyre-amber-db.js?v=20260912lt1"></script>
+  <script src="lib/tyre-calc.js?v=20260912lt1"></script>
+  <script src="tyres-app.js?v=20260912lt1"></script>
 </body>
 </html>
