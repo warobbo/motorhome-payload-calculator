@@ -102,6 +102,26 @@ describe("payload page identity and honesty", function () {
     assert.match(app, /stillNeed\.items/);
   });
 
+  it("links to Wave 1 Motorhome Tools guides next to the FAQ", function () {
+    const start = html.indexOf('id="guides"');
+    const end = html.indexOf('id="faq"');
+    const strip = html.slice(start, end);
+    assert.ok(start > 0 && end > start, "Guides strip should sit next to the FAQ");
+    assert.match(strip, /<h2>Guides<\/h2>/);
+    assert.match(strip, /They do not change the numbers on this calculator/);
+    assert.match(strip, /href="https:\/\/motorhometools\.co\.uk\/guides\/"/);
+    assert.match(strip, /href="https:\/\/motorhometools\.co\.uk\/guides\/weighbridge-how-to\.html"/);
+    assert.match(strip, /href="https:\/\/motorhometools\.co\.uk\/guides\/axle-weights-explained\.html"/);
+    assert.match(strip, /href="https:\/\/motorhometools\.co\.uk\/guides\/mam-mass-in-service-payload\.html"/);
+    assert.match(strip, />Weighbridge how-to</);
+    assert.match(strip, />Axle weights explained</);
+    assert.match(strip, />MAM \/ Mass in Service \/ payload</);
+    assert.equal((strip.match(/target="_blank"/g) || []).length, 4);
+    assert.equal((strip.match(/rel="noopener noreferrer"/g) || []).length, 4);
+    assert.match(html, /href="#guides">Guides</);
+    assert.doesNotMatch(strip, /invent/i);
+  });
+
   it("says under MAM but over on an axle is still a fail", function () {
     assert.match(html, /id="faq-under-mam-over-axle"/);
     assert.match(html, /Under MAM but over on an axle is still a fail \/ roadside risk\./);
@@ -157,7 +177,7 @@ describe("payload page identity and honesty", function () {
     assert.match(html, />Clear saved van</);
     assert.match(html, /Saved on this phone only\. We don’t upload your van\./);
     assert.match(html, /Figures stay on this device only and are not filled in until you tap Restore last van/);
-    assert.match(html, /styles\.css\?v=20260912lt1/);
+    assert.match(html, /styles\.css\?v=20260912guides1/);
     assert.match(html, /app\.js\?v=20260911restore2/);
     assert.match(app, /var state = freshState\(\)/);
     assert.match(app, /var pageLoadSnapshot = readSavedVan\(\)/);
