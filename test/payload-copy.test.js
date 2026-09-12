@@ -124,6 +124,19 @@ describe("payload page identity and honesty", function () {
     assert.match(css, /\.guides-strip \{[\s\S]*?scroll-margin-top:\s*calc\(var\(--sticky-header\)/);
   });
 
+  it("links back to the Motorhome Tools front door from header and footer", function () {
+    const navStart = html.indexOf('class="hub-nav"');
+    const nav = html.slice(navStart, html.indexOf("</nav>", navStart));
+    const footStart = html.indexOf('class="footer-links"');
+    const foot = html.slice(footStart, html.indexOf("</nav>", footStart));
+    assert.ok(navStart > 0 && footStart > navStart, "hub nav and footer should both exist");
+    assert.match(nav, /href="https:\/\/motorhometools\.co\.uk\/">All tools</);
+    assert.match(foot, /href="https:\/\/motorhometools\.co\.uk\/">All tools</);
+    assert.doesNotMatch(nav, /target="_blank"/);
+    assert.doesNotMatch(foot, /target="_blank"/);
+    assert.ok(nav.indexOf("All tools") < nav.indexOf("Payload"), "All tools should lead the hub nav");
+  });
+
   it("says under MAM but over on an axle is still a fail", function () {
     assert.match(html, /id="faq-under-mam-over-axle"/);
     assert.match(html, /Under MAM but over on an axle is still a fail \/ roadside risk\./);
@@ -179,7 +192,7 @@ describe("payload page identity and honesty", function () {
     assert.match(html, />Clear saved van</);
     assert.match(html, /Saved on this phone only\. We don’t upload your van\./);
     assert.match(html, /Figures stay on this device only and are not filled in until you tap Restore last van/);
-    assert.match(html, /styles\.css\?v=20260912guides2/);
+    assert.match(html, /styles\.css\?v=20260912door1/);
     assert.match(html, /app\.js\?v=20260911restore2/);
     assert.match(app, /var state = freshState\(\)/);
     assert.match(app, /var pageLoadSnapshot = readSavedVan\(\)/);

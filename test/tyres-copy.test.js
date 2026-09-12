@@ -45,14 +45,26 @@ describe("tyres missing-size capture copy", function () {
   });
 
   it("bumps cache-bust and keeps the sticky bar off the form footer", function () {
-    assert.match(html, /ASSET_VERSION=20260912guides2/);
-    assert.match(html, /styles\.css\?v=20260912guides2/);
+    assert.match(html, /ASSET_VERSION=20260912door1/);
+    assert.match(html, /styles\.css\?v=20260912door1/);
     assert.match(html, /tyre-amber-db\.js\?v=20260912lt1/);
     assert.match(html, /tyre-calc\.js\?v=20260912lt1/);
     assert.match(html, /tyres-app\.js\?v=20260912lt1/);
     assert.match(css, /Keep the last fields and Send above the sticky cold-pressure bar/);
     assert.match(css, /\.missing-size/);
     assert.match(css, /\[hidden\] \{ display: none !important; \}/);
+  });
+
+  it("links back to the Motorhome Tools front door from header and footer", function () {
+    const navStart = html.indexOf('class="hub-nav"');
+    const nav = html.slice(navStart, html.indexOf("</nav>", navStart));
+    const footStart = html.indexOf('class="footer-links"');
+    const foot = html.slice(footStart, html.indexOf("</nav>", footStart));
+    assert.ok(navStart > 0 && footStart > navStart, "hub nav and footer should both exist");
+    assert.match(nav, /href="https:\/\/motorhometools\.co\.uk\/">All tools</);
+    assert.match(foot, /href="https:\/\/motorhometools\.co\.uk\/">All tools</);
+    assert.doesNotMatch(nav, /target="_blank"/);
+    assert.doesNotMatch(foot, /target="_blank"/);
   });
 });
 
