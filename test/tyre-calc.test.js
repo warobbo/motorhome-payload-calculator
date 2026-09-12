@@ -19,6 +19,7 @@ const {
   LT_DATABOOK_SOURCE,
   TraDb,
   MichelinDb,
+  AmberDb,
   detectMaker,
   WAYNE_EXAMPLE,
   getChart,
@@ -1163,10 +1164,12 @@ describe("Michelin Agilis C/LT tables", function () {
     assert.equal(detectMaker("Michelin Agilis", ""), "michelin");
     assert.equal(detectMaker("agilis crossclimate", ""), "michelin");
     assert.equal(detectMaker("CrossClimate Camping", ""), "michelin");
-    assert.equal(detectMaker("General Grabber", ""), "continental");
+    assert.equal(detectMaker("General Grabber", ""), "general");
     assert.equal(detectMaker("", "Continental VanContact 225/75R16C"), "continental");
     assert.equal(detectMaker("Goodyear Wrangler", ""), "goodyear");
-    assert.equal(detectMaker("BFGoodrich", ""), "later");
+    assert.equal(detectMaker("BFGoodrich", ""), "bfgoodrich");
+    assert.equal(detectMaker("BFG KO2", ""), "bfgoodrich");
+    assert.equal(detectMaker("Yokohama", ""), "later");
     assert.equal(detectMaker("", ""), null);
   });
 
@@ -1312,7 +1315,7 @@ describe("Michelin Agilis C/LT tables", function () {
     assert.equal(r.error, "no-table");
   });
 
-  it("refuses Goodyear and other later brands", function () {
+  it("refuses Goodyear and Yokohama; BFG uses its own AMBER sheet", function () {
     assert.equal(coldPressureForAxle({
       sidewall: "LT265/65R17 120/117S",
       brand: "Goodyear Wrangler",
@@ -1320,8 +1323,8 @@ describe("Michelin Agilis C/LT tables", function () {
       tyresOnAxle: 2
     }).reason, "brand-later");
     assert.equal(coldPressureForAxle({
-      sidewall: "LT245/75R16 120/116S",
-      brand: "BFGoodrich",
+      sidewall: "LT265/65R17 120/117S",
+      brand: "Yokohama",
       axleLoadKg: 1800,
       tyresOnAxle: 2
     }).reason, "brand-later");
@@ -1410,5 +1413,187 @@ describe("isUncoveredRefuse", function () {
     });
     assert.ok(over.status === "over-capacity" || over.status === "over-pressure" || over.ok === false);
     assert.equal(isUncoveredRefuse(over), false);
+  });
+});
+
+describe("AMBER LT max-only catalogue", function () {
+  it("keeps General Grabber LT265/65R17 on the GREEN Conti curve", function () {
+    const r = coldPressureForAxle({
+      sidewall: "LT265/65R17 120/117S",
+      brand: "General Grabber",
+      axleLoadKg: 1800,
+      tyresOnAxle: 2
+    });
+    assert.equal(r.ok, true);
+    assert.equal(r.path, "lt-databook");
+    assert.equal(r.confidence, "GREEN");
+    assert.equal(r.table.maker, "continental");
+    assert.equal(r.bar, 3.5);
+    assert.notEqual(r.status, "amber-max-only");
+  });
+
+  it("uses General Grabber A/TX AMBER max for LT275/70R17 (no Conti curve)", function () {
+    const r = coldPressureForAxle({
+      sidewall: "LT275/70R17 121/118R",
+      brand: "General Grabber",
+      axleLoadKg: 1800,
+      tyresOnAxle: 2
+    });
+    assert.equal(r.ok, true);
+    assert.equal(r.path, "lt-amber-max");
+    assert.equal(r.status, "amber-max-only");
+    assert.equal(r.confidence, "AMBER");
+    assert.equal(r.table.maker, "general");
+    assert.equal(r.table.sourceId, "atx");
+    assert.equal(r.table.singleLb, 3195);
+    assert.equal(r.table.dualLb, null);
+    assert.equal(r.maxPsi || r.psi, 80);
+    assert.equal(r.bar, AmberDb.psiToBar(80));
+    assert.equal(r.maxKgEach, AmberDb.lbToKg(3195));
+    assert.match(r.table.sourceUrl, /GT19_Grabber_ATx/);
+  });
+
+  it("uses AT2 dual max when General printed one, and will not invent a missing dual", function () {
+    const single = coldPressureForAxle({
+      sidewall: "LT265/70R17 121/118S",
+      brand: "General Grabber AT2",
+      axleLoadKg: 2100,
+      tyresOnAxle: 2
+    });
+    assert.equal(single.path, "lt-databook");
+    assert.equal(single.confidence, "GREEN");
+
+    const amberAt2 = AmberDb.matchEntry({
+      sizeKey: "265/70R17",
+      family: "LT",
+      loadIndex: 121,
+      maker: "general"
+    });
+    assert.equal(amberAt2.ok, true);
+    assert.equal(amberAt2.entry.sourceId, "at2");
+    assert.equal(amberAt2.entry.singleLb, 3195);
+    assert.equal(amberAt2.entry.dualLb, 2910);
+
+    const noDual = coldPressureForAxle({
+      sidewall: "LT275/70R17 121/118R",
+      brand: "General Grabber",
+      axleLoadKg: 4000,
+      tyresOnAxle: 4
+    });
+    assert.equal(noDual.ok, false);
+    assert.equal(noDual.reason, "amber-no-dual");
+    assert.equal(noDual.bar, undefined);
+    assert.equal(isUncoveredRefuse(noDual), true);
+  });
+
+  it("uses BFG KO2 AMBER max for LT265/65R17 and never a Conti proxy", function () {
+    const r = coldPressureForAxle({
+      sidewall: "LT265/65R17 120/117S",
+      brand: "BFGoodrich All-Terrain T/A KO2",
+      axleLoadKg: 1800,
+      tyresOnAxle: 2
+    });
+    assert.equal(r.path, "lt-amber-max");
+    assert.equal(r.status, "amber-max-only");
+    assert.equal(r.table.maker, "bfgoodrich");
+    assert.equal(r.table.singleLb, 3085);
+    assert.equal(r.table.dualLb, 2835);
+    assert.equal(r.psi, 80);
+    assert.equal(r.maxKgEach, AmberDb.lbToKg(3085));
+    assert.notEqual(r.table.maker, "continental");
+    assert.match(r.table.sourceUrl, /bfgoodrich-all-terrain-ta-ko-2/);
+  });
+
+  it("does not invent a lower AMBER pressure for a lighter axle", function () {
+    const light = coldPressureForAxle({
+      sidewall: "LT265/65R17 120S",
+      brand: "BFGoodrich",
+      axleLoadKg: 1200,
+      tyresOnAxle: 2
+    });
+    const heavy = coldPressureForAxle({
+      sidewall: "LT265/65R17 120S",
+      brand: "BFGoodrich",
+      axleLoadKg: 2500,
+      tyresOnAxle: 2
+    });
+    assert.equal(light.bar, heavy.bar);
+    assert.equal(light.psi, 80);
+    assert.equal(light.status, "amber-max-only");
+  });
+
+  it("fails AMBER when the axle is over the published max, and keeps Conti CP GREEN", function () {
+    const over = coldPressureForAxle({
+      sidewall: "LT265/65R17 120S",
+      brand: "BFGoodrich",
+      axleLoadKg: 4000,
+      tyresOnAxle: 2
+    });
+    assert.equal(over.status, "over-capacity");
+    assert.equal(over.bar, null);
+    assert.equal(over.confidence, "AMBER");
+
+    const cp = coldPressureForAxle({
+      sidewall: "225/75 R16 CP 118R",
+      brand: "Continental VanContact Camper",
+      axleLoadKg: 2000,
+      tyresOnAxle: 2,
+      axle: "rear"
+    });
+    assert.equal(cp.path, "cp-databook");
+    assert.equal(cp.confidence, "GREEN");
+    assert.equal(cp.bar, 5.5);
+  });
+
+  it("refuses unnamed BFG-only sizes and named Continental on a Grabber-only size", function () {
+    const unmarkedBfgOnly = coldPressureForAxle({
+      sidewall: "LT255/70R17 121/118S",
+      axleLoadKg: 1800,
+      tyresOnAxle: 2
+    });
+    assert.equal(unmarkedBfgOnly.error, "no-table");
+
+    const namedBfg = coldPressureForAxle({
+      sidewall: "LT255/70R17 121/118S",
+      brand: "BFGoodrich",
+      axleLoadKg: 1800,
+      tyresOnAxle: 2
+    });
+    assert.equal(namedBfg.path, "lt-amber-max");
+    assert.equal(namedBfg.table.singleLb, 3195);
+
+    const contiOnGrabberOnly = coldPressureForAxle({
+      sidewall: "LT275/70R17 121/118R",
+      brand: "Continental",
+      axleLoadKg: 1800,
+      tyresOnAxle: 2
+    });
+    assert.equal(contiOnGrabberOnly.error, "no-table");
+  });
+
+  it("converts printed lb/psi only; does not ingest P-metric or BFG truck sizes", function () {
+    assert.equal(AmberDb.lbToKg(3085), 1399);
+    assert.equal(AmberDb.psiToBar(80), 5.52);
+    assert.ok(AmberDb.ALL.every(function (row) {
+      return row.confidence === "AMBER" && row.family === "LT";
+    }));
+    assert.ok(AmberDb.ALL.every(function (row) {
+      return row.maker === "general" || row.maker === "bfgoodrich";
+    }));
+    const blob = JSON.stringify(AmberDb.ALL);
+    assert.equal(/11R22\.5|275\/80R22|295\/80R22/i.test(blob), false);
+    const pMetric = AmberDb.matchEntry({
+      sizeKey: "265/65R17",
+      family: "LT",
+      loadIndex: 112,
+      maker: "general"
+    });
+    assert.equal(pMetric.ok, false);
+    const truck = AmberDb.matchEntry({
+      sizeKey: "11R22.5",
+      family: "LT",
+      maker: "bfgoodrich"
+    });
+    assert.equal(truck.ok, false);
   });
 });

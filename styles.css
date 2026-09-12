@@ -776,6 +776,37 @@ input:focus, select:focus, textarea:focus, button:focus-visible {
   font-size: 0.78rem;
   font-weight: 650;
 }
+.sticker-nudge,
+.amber-warning {
+  margin: 0.85rem 0 0;
+  padding: 0.7rem 0.8rem;
+  border-radius: 14px;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+.sticker-nudge {
+  background: var(--pine-soft);
+  border: 1.5px solid #9ec4b6;
+}
+.amber-warning {
+  background: var(--amber-bg);
+  border: 1.5px solid #e0b84f;
+  color: #5c3d00;
+}
+.sticker-nudge p,
+.amber-warning p {
+  margin: 0;
+}
+.amber-warning .amber-source {
+  margin-top: 0.4rem;
+  font-size: 0.82rem;
+}
+.legal-limit-note {
+  margin: 0.75rem 0 0;
+  font-size: 0.86rem;
+  color: var(--muted);
+  line-height: 1.4;
+}
 .source-cite {
   margin: 0.85rem 0 0;
   font-size: 0.82rem;

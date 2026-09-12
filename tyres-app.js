@@ -1,6 +1,8 @@
 /* =========================================================================
    Tyres tool UI — sidewall + axle loads → cold front/rear from the
-   right published table (Continental databook or Michelin Agilis C/LT).
+   right published table (GREEN Conti/Michelin curves, or AMBER
+   General Grabber / BFG KO2 max-only). Same-size C/CP nudges the
+   door sticker.
    ========================================================================= */
 (function () {
   "use strict";
@@ -10,10 +12,10 @@
   if (!T) return;
 
   var EXAMPLE = {
-    brand: "Continental",
-    sidewall: "225/75 R16C 118R",
+    brand: "General Grabber",
+    sidewall: "LT265/70R17 121/118S",
     frontAxleKg: 1800,
-    rearAxleKg: 2000,
+    rearAxleKg: 2100,
     tyresOnAxle: 2
   };
 
@@ -276,7 +278,7 @@
         } else if (parsed.error === "unknown-speed") {
           err = "Size read OK, but that speed letter is not one this page explains.";
         }
-        out.innerHTML = "<p>" + err + " Try a size such as <code>225/75R16C 118R</code>.</p>";
+        out.innerHTML = "<p>" + err + " Try a size such as <code>LT265/70R17 121/118S</code>.</p>";
         return parsed;
       }
       var text = T.describeSidewall(parsed);
@@ -293,6 +295,7 @@
       else if (path.path === "unsupported-rim") familyNote = " — only 15–18″ wheels";
       else if (path.reason === "michelin-cp-no-table") familyNote = " — no table for this camping size";
       else if (path.reason === "brand-later") familyNote = " — that brand is not covered yet";
+      else if (path.reason === "amber-no-dual") familyNote = " — dual max not published";
       else if (path.path === "no-table") familyNote = " — not in our table yet";
       rows.push(row("Family", parsed.family + familyNote));
       rows.push(row("C / LT mark", text.service));
@@ -358,6 +361,15 @@
       if ((result.path === "lt-databook" || result.path === "c-databook" || result.path === "cp-databook") && result.maxKg != null) {
         altEl.textContent = "Over the last published step";
       }
+      if (result.path === "lt-amber-max" && result.maxKgEach != null) {
+        altEl.textContent = "Over the published max (" + Math.round(result.maxKgEach) + " kg each)";
+      }
+      return;
+    }
+    if (result.status === "amber-max-only") {
+      valueEl.textContent = "Max " + formatBar(result.bar) + " bar";
+      var each = result.maxKgEach != null ? Math.round(result.maxKgEach) + " kg each" : "";
+      altEl.textContent = (each ? each + " at " : "") + formatPsi(result.psi) + " PSI";
       return;
     }
     if (result.psi == null && result.bar == null) {
@@ -400,6 +412,9 @@
         if (result.reason === "brand-later") {
           return "That brand is not in our tables yet. This page will not invent a pressure.";
         }
+        if (result.reason === "amber-no-dual") {
+          return "The maker did not publish a dual max for this size. We will not invent one.";
+        }
         if (result.reason === "p-metric") {
           return "That size is not in our table, so this page will not invent a pressure.";
         }
@@ -410,7 +425,19 @@
       return "Not enough to calculate the " + axleName + ".";
     }
     if (result.status === "over-capacity" || result.status === "over-pressure") {
+      if (result.path === "lt-amber-max") {
+        return "This axle weight is over the published max load. No safe pressure from this sheet.";
+      }
       return "This axle weight is over the last published step. No safe pressure.";
+    }
+    if (result.status === "amber-max-only") {
+      var kg = result.maxKgEach != null ? Math.round(result.maxKgEach) : null;
+      var bar = formatBar(result.bar);
+      var psi = formatPsi(result.psi);
+      var line = "Published maximum only";
+      if (kg != null) line += ": " + kg + " kg each at " + bar + " bar (" + psi + " PSI)";
+      else line += ": " + bar + " bar (" + psi + " PSI)";
+      return line + ". Incomplete maker table — not a full pressure curve.";
     }
     if (result.note && result.appliedCpRearFloor) {
       return result.note;
@@ -424,14 +451,23 @@
   function resultClass(result) {
     if (!result || !result.ok) return "";
     if (result.status === "over-capacity" || result.status === "over-pressure") return "is-fail";
-    if (result.status === "min-pressure") return "is-tight";
+    if (result.status === "amber-max-only" || result.status === "min-pressure") return "is-tight";
     return "is-ok";
   }
 
   function sourceHtml(result) {
     // Never dump table.source — those strings are databook/ETRTO essays for code only.
+    if (result && result.ok && result.path === "lt-amber-max") {
+      var url = result.table && result.table.sourceUrl;
+      var label = result.table && result.table.label ? result.table.label : "maker spec sheet";
+      if (url) {
+        return "AMBER — published max only, from <a href=\"" + escapeHtml(url) + "\">" +
+          escapeHtml(label) + "</a>. See <a href=\"#sources\">Sources we use</a>.";
+      }
+      return "AMBER — published max only. See <a href=\"#sources\">Sources we use</a>.";
+    }
     if (result && result.ok && (result.path === "lt-databook" || result.path === "c-databook" || result.path === "cp-databook" || result.path === "c-etrto")) {
-      return "From the published table for this tyre. See <a href=\"#sources\">Sources we use</a>.";
+      return "GREEN — full maker curve. See <a href=\"#sources\">Sources we use</a>.";
     }
     return "";
   }
@@ -462,21 +498,30 @@
       return path;
     }
     if (!parsed || !parsed.ok) {
-      badge.textContent = "Sidewall not recognised yet — try 225/75R16C 118R.";
+      badge.textContent = "Sidewall not recognised yet — try LT265/70R17 121/118S.";
       return path;
     }
-    if (path.path === "lt-databook" || path.path === "c-databook" || path.path === "cp-databook") {
+    if (path.path === "lt-amber-max") {
+      var amberBrand = $("brandLabel").value.trim();
+      var amberSize = parsed.sizeKey +
+        (path.table && path.table.loadRange ? " LR" + path.table.loadRange : "") +
+        (path.table && path.table.loadIndex != null ? " LI " + path.table.loadIndex : "");
+      var amberBook = path.maker === "bfgoodrich"
+        ? "BFGoodrich KO2 · AMBER max only"
+        : "General Grabber · AMBER max only";
+      badge.textContent = (amberBrand ? amberBrand + " · " : "") + amberSize + " · " + amberBook;
+    } else if (path.path === "lt-databook" || path.path === "c-databook" || path.path === "cp-databook") {
       var brand = $("brandLabel").value.trim();
       var sizeLabel = parsed.sizeKey + (path.table && path.table.family === "CP" ? " CP" : "") +
         (path.table && path.table.loadRange ? " LR" + path.table.loadRange : "") +
         (path.table && path.table.loadIndex != null ? " LI " + path.table.loadIndex : "");
-      var book = "Continental / General table";
+      var book = "Continental / General table · GREEN";
       if (path.table && path.table.family === "CP") {
         book = path.maker === "michelin"
           ? "camping tyre · 5.5 bar rear minimum"
-          : "camping tyre table";
+          : "camping tyre table · GREEN";
       } else if (path.maker === "michelin" || (path.table && path.table.maker === "michelin")) {
-        book = "Michelin table";
+        book = "Michelin table · GREEN";
       }
       badge.textContent = (brand ? brand + " · " : "") + sizeLabel + " · " + book;
     } else if (path.path === "no-matching-li") {
@@ -489,10 +534,36 @@
       badge.textContent = "Michelin Camping CP — no official table on this page.";
     } else if (path.reason === "brand-later") {
       badge.textContent = "That brand is not in our tables yet.";
+    } else if (path.reason === "amber-no-dual") {
+      badge.textContent = "AMBER — dual max not published for this size.";
     } else {
-      badge.textContent = "Detected " + (parsed.family || "unknown") + " — not in our table yet / only 15–18″ supported.";
+      badge.textContent = "Detected " + (parsed.family || "unknown") + " — not in our table yet / only 15–18″ (GREEN) or 15–20″ (AMBER LT).";
     }
     return path;
+  }
+
+  function syncHonestyNotes(path) {
+    var nudge = $("stickerNudge");
+    var amberBox = $("amberWarning");
+    var amberSrc = $("amberSource");
+    var parsed = T.parseSidewall($("sidewall").value);
+    var likeForLike = parsed && parsed.ok && (parsed.family === "C" || parsed.family === "CP");
+    if (nudge) nudge.hidden = !likeForLike;
+    var amberHit = (lastFront && lastFront.path === "lt-amber-max") ||
+      (lastRear && lastRear.path === "lt-amber-max") ||
+      (path && path.path === "lt-amber-max");
+    if (amberBox) amberBox.hidden = !amberHit;
+    if (amberSrc) {
+      var srcResult = (lastFront && lastFront.path === "lt-amber-max") ? lastFront
+        : (lastRear && lastRear.path === "lt-amber-max") ? lastRear : null;
+      var table = (srcResult && srcResult.table) || (path && path.table);
+      if (table && table.sourceUrl) {
+        amberSrc.innerHTML = "<a href=\"" + escapeHtml(table.sourceUrl) + "\">" +
+          escapeHtml(table.label || "Maker spec sheet") + "</a> · retrieved 12 Sep 2026.";
+      } else {
+        amberSrc.textContent = "";
+      }
+    }
   }
 
   function renderAnswers() {
@@ -514,6 +585,7 @@
     var extras = [];
     if ($("rearDifferent").checked) extras.push("Front and rear tyres are set separately.");
     $("answerNotes").textContent = extras.join(" ");
+    syncHonestyNotes(path);
 
     if (lastFront && lastFront.bar != null && lastRear && lastRear.bar != null) {
       $("dockValue").textContent = formatBar(lastFront.bar) + " / " + formatBar(lastRear.bar) + " bar";
@@ -543,6 +615,9 @@
     }
     if (result.reason === "brand-later") {
       return "That brand is not in our tables yet.";
+    }
+    if (result.reason === "amber-no-dual") {
+      return "The maker did not publish a dual max for this size.";
     }
     if (result.reason === "michelin-cp-no-table") {
       return T.MICHELIN_CP_REFUSE ||

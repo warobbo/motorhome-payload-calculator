@@ -45,10 +45,11 @@ describe("tyres missing-size capture copy", function () {
   });
 
   it("bumps cache-bust and keeps the sticky bar off the form footer", function () {
-    assert.match(html, /ASSET_VERSION=20260911logos1/);
-    assert.match(html, /styles\.css\?v=20260911logos1/);
-    assert.match(html, /tyre-calc\.js\?v=20260911tyres2/);
-    assert.match(html, /tyres-app\.js\?v=20260911tyres3/);
+    assert.match(html, /ASSET_VERSION=20260912lt1/);
+    assert.match(html, /styles\.css\?v=20260912lt1/);
+    assert.match(html, /tyre-amber-db\.js\?v=20260912lt1/);
+    assert.match(html, /tyre-calc\.js\?v=20260912lt1/);
+    assert.match(html, /tyres-app\.js\?v=20260912lt1/);
     assert.match(css, /Keep the last fields and Send above the sticky cold-pressure bar/);
     assert.match(css, /\.missing-size/);
     assert.match(css, /\[hidden\] \{ display: none !important; \}/);
@@ -64,7 +65,7 @@ describe("tyres opt-in restore", function () {
     assert.match(html, />Clear saved</);
     assert.match(html, /Saved on this phone only\. We don’t upload your tyres\./);
     assert.match(html, /are not filled in until you restore them/);
-    assert.match(html, /tyres-app\.js\?v=20260911tyres3/);
+    assert.match(html, /tyres-app\.js\?v=20260912lt1/);
     assert.match(app, /function restoreLastTyres/);
     assert.match(app, /function clearSaved/);
     assert.match(app, /if \(booting \|\| !persistEnabled\) return;/);
@@ -83,14 +84,29 @@ describe("tyres opt-in restore", function () {
     assert.match(html, /VIN plate \(often axle maximums, not today’s weight\)/);
   });
 
-  it("locks Wayne’s tyres copy, auto-note, and honest Michelin CP refuse", function () {
-    assert.match(html, /Use this when you’ve fitted different tyres to the originals\./);
-    assert.match(html, /Factory cold pressures are often on a sticker inside the driver’s door — those match the original tyre size, not a replacement\./);
+  it("locks Wayne’s LT-first copy, sticker nudge, AMBER warning, and honest Michelin CP refuse", function () {
+    assert.match(html, /Use this for LT tyres, or when the wheels or tyres are different to the originals\./);
+    assert.match(html, /Same-size C or CP renewals: use the door sticker or handbook/);
+    assert.match(html, /Van axle, wheel and legal limits still win/);
     assert.match(html, /We’ve noted this size for research when we can; use the form on this page/);
     assert.match(html, /See <a href="#sources">Sources we use<\/a> — it names the manufacturer tables behind the figures\./);
     assert.match(html, /id="autoNoteLine"[^>]*>We’ve noted this size for research\./);
+    assert.match(html, /id="stickerNudge"/);
+    assert.match(html, /Same-size C or CP\?/);
+    assert.match(html, /id="amberWarning"/);
+    assert.match(html, /incomplete maker table/);
+    assert.match(html, /not a full pressure curve/);
+    assert.match(html, /id="legalLimitNote"/);
+    assert.match(html, /Tyre capacity is not permission to exceed the vehicle axle, wheel or legal limits/);
     const sources = html.slice(html.indexOf('id="sources"'), html.indexOf("</aside>", html.indexOf('id="sources"')));
     assert.match(sources, /We do not have Michelin’s Camping CP load\/pressure table/);
+    assert.match(sources, /AMBER \(max load @ max cold pressure only\)/);
+    assert.match(sources, /GT18_Grabber-AT2_Tire_Spec_Pages\.pdf/);
+    assert.match(sources, /GT19_Grabber_ATx_ProductFlyer_v2_Print\.pdf/);
+    assert.match(sources, /grabber-atx\/specs/);
+    assert.match(sources, /bfgoodrich-all-terrain-ta-ko-2-product-information\.pdf/);
+    assert.match(sources, /retrieved 12 Sep 2026/);
+    assert.match(sources, /11R22\.5/);
     assert.doesNotMatch(sources, /rear never below 5\.5 bar/);
     assert.doesNotMatch(sources, /Don’t go above the maximum/);
     assert.match(sources, /tyresafe\.org\/vehicle-owners\/motorhome-tyre-safety\/load-and-inflation-tables/);
@@ -104,5 +120,9 @@ describe("tyres opt-in restore", function () {
     assert.match(calc, /var MICHELIN_CP_REFUSE/);
     assert.match(app, /scheduleAutoNote/);
     assert.match(app, /auto: true/);
+    assert.match(app, /syncHonestyNotes/);
+    assert.match(app, /amber-max-only/);
+    assert.match(css, /\.sticker-nudge/);
+    assert.match(css, /\.amber-warning/);
   });
 });
