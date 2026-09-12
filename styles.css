@@ -1003,6 +1003,7 @@ input:focus, select:focus, textarea:focus, button:focus-visible {
   background: var(--pine-soft);
   border: 1px solid #c5ddd4;
   border-radius: 14px;
+  scroll-margin-top: calc(var(--sticky-header) + 0.75rem);
 }
 .guides-strip h2 { margin-top: 0; }
 .guides-strip > p { margin: 0 0 0.75rem; color: var(--muted); }

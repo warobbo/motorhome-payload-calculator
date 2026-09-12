@@ -120,6 +120,8 @@ describe("payload page identity and honesty", function () {
     assert.equal((strip.match(/rel="noopener noreferrer"/g) || []).length, 4);
     assert.match(html, /href="#guides">Guides</);
     assert.doesNotMatch(strip, /invent/i);
+    const css = fs.readFileSync(path.join(__dirname, "../styles.css"), "utf8");
+    assert.match(css, /\.guides-strip \{[\s\S]*?scroll-margin-top:\s*calc\(var\(--sticky-header\)/);
   });
 
   it("says under MAM but over on an axle is still a fail", function () {
@@ -177,7 +179,7 @@ describe("payload page identity and honesty", function () {
     assert.match(html, />Clear saved van</);
     assert.match(html, /Saved on this phone only\. We don’t upload your van\./);
     assert.match(html, /Figures stay on this device only and are not filled in until you tap Restore last van/);
-    assert.match(html, /styles\.css\?v=20260912guides1/);
+    assert.match(html, /styles\.css\?v=20260912guides2/);
     assert.match(html, /app\.js\?v=20260911restore2/);
     assert.match(app, /var state = freshState\(\)/);
     assert.match(app, /var pageLoadSnapshot = readSavedVan\(\)/);
