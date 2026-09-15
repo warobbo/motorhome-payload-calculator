@@ -124,6 +124,30 @@ describe("payload page identity and honesty", function () {
     assert.match(css, /\.guides-strip \{[\s\S]*?scroll-margin-top:\s*calc\(var\(--sticky-header\)/);
   });
 
+  it("keeps SERP title and description in the usual display window", function () {
+    const title = html.match(/<title>([^<]+)<\/title>/)[1].replace(/&amp;/g, "&");
+    const desc = html.match(/<meta name="description" content="([^"]+)"/)[1];
+    assert.ok(title.length >= 50 && title.length <= 60, "title should be ~50–60 chars, got " + title.length);
+    assert.ok(desc.length >= 150 && desc.length <= 160, "description should be ~150–160 chars, got " + desc.length);
+    assert.match(title, /Payload/);
+    assert.match(title, /Weighbridge/);
+    assert.match(title, /Axle/);
+    assert.match(desc, /weighbridge/i);
+    assert.match(desc, /axle check/i);
+    assert.match(desc, /do not invent loads/);
+    assert.match(html, /rel="canonical" href="https:\/\/motorhomepayload\.co\.uk\/"/);
+    assert.match(html, /property="og:image" content="https:\/\/motorhomepayload\.co\.uk\/og-image\.png"/);
+    assert.match(html, /<script type="application\/ld\+json">/);
+    assert.match(html, /"@type": "WebApplication"/);
+    JSON.parse(html.match(/<script type="application\/ld\+json">\s*([\s\S]*?)\s*<\/script>/)[1]);
+  });
+
+  it("points internal Payload links at / not index.html", function () {
+    assert.doesNotMatch(html, /href=["']index\.html/);
+    assert.match(html, /<a href="\/" aria-current="page">Payload<\/a>/);
+    assert.match(html, /<a href="\/">Payload<\/a>/);
+  });
+
   it("links back to the Motorhome Tools front door from header and footer", function () {
     const navStart = html.indexOf('class="hub-nav"');
     const nav = html.slice(navStart, html.indexOf("</nav>", navStart));
@@ -141,6 +165,13 @@ describe("payload page identity and honesty", function () {
     assert.doesNotMatch(nav, /target="_blank"/);
     assert.doesNotMatch(foot, /target="_blank"/);
     assert.ok(nav.indexOf(">Home<") < nav.indexOf("Payload"), "Home should lead the hub nav");
+    assert.match(
+      html,
+      /Full legal pages live on the tools home site:[\s\S]*href="https:\/\/motorhometools\.co\.uk\/privacy\.html">Privacy<\/a>/
+    );
+    assert.match(html, /href="https:\/\/motorhometools\.co\.uk\/cookies\.html">Cookies<\/a>/);
+    assert.match(html, /href="https:\/\/motorhometools\.co\.uk\/disclaimer\.html">Disclaimer<\/a>/);
+    assert.match(foot, /href="#privacy">Privacy</);
   });
 
   it("says under MAM but over on an axle is still a fail", function () {
