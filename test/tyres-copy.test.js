@@ -71,6 +71,19 @@ describe("tyres missing-size capture copy", function () {
     assert.doesNotMatch(foot, />Motorhome Tools</);
     assert.doesNotMatch(nav, /target="_blank"/);
     assert.doesNotMatch(foot, /target="_blank"/);
+    assert.doesNotMatch(html, /href=["']index\.html/);
+    assert.match(html, /<a class="brand" href="\/">/);
+    assert.match(html, /<a href="\/">Payload<\/a>/);
+    assert.match(html, /<a href="\/">payload calculator<\/a>/);
+    assert.match(
+      html,
+      /Full legal pages live on the tools home site:[\s\S]*href="https:\/\/motorhometools\.co\.uk\/privacy\.html">Privacy<\/a>/
+    );
+    assert.match(html, /href="https:\/\/motorhometools\.co\.uk\/cookies\.html">Cookies<\/a>/);
+    assert.match(html, /href="https:\/\/motorhometools\.co\.uk\/disclaimer\.html">Disclaimer<\/a>/);
+    assert.match(html, /rel="canonical" href="https:\/\/motorhomepayload\.co\.uk\/tyres\.html"/);
+    assert.match(html, /property="og:image" content="https:\/\/motorhomepayload\.co\.uk\/og-image\.png"/);
+    assert.match(html, /<script type="application\/ld\+json">/);
   });
 });
 

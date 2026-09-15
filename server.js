@@ -36,8 +36,21 @@ const MIME = {
   ".xml": "application/xml; charset=utf-8",
 };
 
+function indexHtmlRedirectLocation(reqUrl) {
+  const raw = reqUrl || "/";
+  const queryAt = raw.indexOf("?");
+  const query = queryAt >= 0 ? raw.slice(queryAt) : "";
+  return "/" + query;
+}
+
 const server = http.createServer((req, res) => {
   const urlPath = decodeURIComponent((req.url || "/").split("?")[0]);
+
+  if (urlPath === "/index.html") {
+    res.writeHead(301, { Location: indexHtmlRedirectLocation(req.url) });
+    res.end();
+    return;
+  }
 
   if (urlPath === "/api/vehicle-lookup") {
     handleLookup(req, res);
