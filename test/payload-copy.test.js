@@ -130,11 +130,17 @@ describe("payload page identity and honesty", function () {
     const footStart = html.indexOf('class="footer-links"');
     const foot = html.slice(footStart, html.indexOf("</nav>", footStart));
     assert.ok(navStart > 0 && footStart > navStart, "hub nav and footer should both exist");
-    assert.match(nav, /href="https:\/\/motorhometools\.co\.uk\/">All tools</);
-    assert.match(foot, /href="https:\/\/motorhometools\.co\.uk\/">All tools</);
+    assert.match(nav, /href="https:\/\/motorhometools\.co\.uk\/"[^>]*>Home</);
+    assert.match(foot, /href="https:\/\/motorhometools\.co\.uk\/"[^>]*>Home</);
+    assert.match(nav, /aria-label="Home — all calculators"/);
+    assert.match(foot, /aria-label="Home — all calculators"/);
+    assert.doesNotMatch(nav, />All tools</);
+    assert.doesNotMatch(foot, />All tools</);
+    assert.doesNotMatch(nav, />Motorhome Tools</);
+    assert.doesNotMatch(foot, />Motorhome Tools</);
     assert.doesNotMatch(nav, /target="_blank"/);
     assert.doesNotMatch(foot, /target="_blank"/);
-    assert.ok(nav.indexOf("All tools") < nav.indexOf("Payload"), "All tools should lead the hub nav");
+    assert.ok(nav.indexOf(">Home<") < nav.indexOf("Payload"), "Home should lead the hub nav");
   });
 
   it("says under MAM but over on an axle is still a fail", function () {
