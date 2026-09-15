@@ -37,17 +37,17 @@ describe("shared logo family", function () {
   });
 
   it("puts the Payload mark on payload pages and the Tyres mark on tyres.html", function () {
-    assert.match(index, /brand\/payload\.svg\?v=20260911logos1/);
-    assert.match(index, /brand\/payload-32\.png\?v=20260911logos1/);
-    assert.match(index, /apple-touch-icon[^>]+brand\/payload-180\.png\?v=20260911logos1/);
-    assert.match(index, /brand\/payload-512\.png\?v=20260911logos1/);
+    assert.match(index, /brand\/payload\.svg\?v=20260915logos2/);
+    assert.match(index, /brand\/payload-32\.png\?v=20260915logos2/);
+    assert.match(index, /apple-touch-icon[^>]+brand\/payload-180\.png\?v=20260915logos2/);
+    assert.match(index, /brand\/payload-512\.png\?v=20260915logos2/);
     assert.match(index, /alt="Payload &#8212; motorhome tools"/);
     assert.doesNotMatch(index, /brand\/tyres/);
 
-    assert.match(tyres, /brand\/tyres\.svg\?v=20260911logos1/);
-    assert.match(tyres, /brand\/tyres-32\.png\?v=20260911logos1/);
-    assert.match(tyres, /apple-touch-icon[^>]+brand\/tyres-180\.png\?v=20260911logos1/);
-    assert.match(tyres, /brand\/tyres-512\.png\?v=20260911logos1/);
+    assert.match(tyres, /brand\/tyres\.svg\?v=20260915logos2/);
+    assert.match(tyres, /brand\/tyres-32\.png\?v=20260915logos2/);
+    assert.match(tyres, /apple-touch-icon[^>]+brand\/tyres-180\.png\?v=20260915logos2/);
+    assert.match(tyres, /brand\/tyres-512\.png\?v=20260915logos2/);
     assert.match(tyres, /alt="Tyres &#8212; motorhome tools"/);
     assert.doesNotMatch(tyres, /brand\/payload/);
   });
