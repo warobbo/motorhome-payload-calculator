@@ -61,8 +61,14 @@ describe("tyres missing-size capture copy", function () {
     const footStart = html.indexOf('class="footer-links"');
     const foot = html.slice(footStart, html.indexOf("</nav>", footStart));
     assert.ok(navStart > 0 && footStart > navStart, "hub nav and footer should both exist");
-    assert.match(nav, /href="https:\/\/motorhometools\.co\.uk\/">All tools</);
-    assert.match(foot, /href="https:\/\/motorhometools\.co\.uk\/">All tools</);
+    assert.match(nav, /href="https:\/\/motorhometools\.co\.uk\/"[^>]*>Home</);
+    assert.match(foot, /href="https:\/\/motorhometools\.co\.uk\/"[^>]*>Home</);
+    assert.match(nav, /aria-label="Home — all calculators"/);
+    assert.match(foot, /aria-label="Home — all calculators"/);
+    assert.doesNotMatch(nav, />All tools</);
+    assert.doesNotMatch(foot, />All tools</);
+    assert.doesNotMatch(nav, />Motorhome Tools</);
+    assert.doesNotMatch(foot, />Motorhome Tools</);
     assert.doesNotMatch(nav, /target="_blank"/);
     assert.doesNotMatch(foot, /target="_blank"/);
   });
