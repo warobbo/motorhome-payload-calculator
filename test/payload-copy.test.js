@@ -174,6 +174,44 @@ describe("payload page identity and honesty", function () {
     assert.match(foot, /href="#privacy">Privacy</);
   });
 
+  it("cross-links Power, Water and Motorhome Tools without breaking Wave A legal or guides", function () {
+    const moreStart = html.indexOf('id="more-calculators"');
+    const moreEnd = html.indexOf('id="privacy"');
+    const more = html.slice(moreStart, moreEnd);
+    assert.ok(moreStart > 0 && moreEnd > moreStart, "More calculators should sit above Privacy");
+    assert.match(more, /<h2>More calculators<\/h2>/);
+    assert.match(more, /href="https:\/\/motorhomepower\.co\.uk\/"/);
+    assert.match(more, /href="https:\/\/motorhomewater\.co\.uk\/"/);
+    assert.match(more, /href="https:\/\/motorhometools\.co\.uk\/"/);
+    assert.match(more, /href="https:\/\/motorhometools\.co\.uk\/guides\/"/);
+    assert.match(more, />Power</);
+    assert.match(more, />Water</);
+    assert.match(more, />Motorhome Tools</);
+    assert.doesNotMatch(more, /target="_blank"/);
+    assert.doesNotMatch(more, /campsite/i);
+
+    const hubsStart = html.indexOf('class="footer-hubs"');
+    const hubs = html.slice(hubsStart, html.indexOf("</section>", hubsStart));
+    assert.ok(hubsStart > 0, "footer More calculators should exist");
+    assert.match(hubs, /<h2 id="footer-hubs-title">More calculators<\/h2>/);
+    assert.match(hubs, /href="https:\/\/motorhomepower\.co\.uk\/">Power</);
+    assert.match(hubs, /href="https:\/\/motorhomewater\.co\.uk\/">Water</);
+    assert.match(hubs, /href="https:\/\/motorhometools\.co\.uk\/">Motorhome Tools</);
+    assert.match(hubs, /href="https:\/\/motorhometools\.co\.uk\/guides\/">Guides</);
+    assert.doesNotMatch(hubs, /target="_blank"/);
+
+    const guideStart = html.indexOf('id="guides"');
+    const guideStrip = html.slice(guideStart, html.indexOf('id="faq"'));
+    assert.match(guideStrip, /href="https:\/\/motorhometools\.co\.uk\/guides\/weighbridge-how-to\.html"/);
+    assert.match(guideStrip, /href="https:\/\/motorhometools\.co\.uk\/guides\/axle-weights-explained\.html"/);
+    assert.match(guideStrip, /href="https:\/\/motorhometools\.co\.uk\/guides\/mam-mass-in-service-payload\.html"/);
+
+    assert.match(html, /rel="canonical" href="https:\/\/motorhomepayload\.co\.uk\/"/);
+    assert.match(html, /property="og:image" content="https:\/\/motorhomepayload\.co\.uk\/og-image\.png"/);
+    assert.match(html, /"@type": "WebApplication"/);
+    JSON.parse(html.match(/<script type="application\/ld\+json">\s*([\s\S]*?)\s*<\/script>/)[1]);
+  });
+
   it("says under MAM but over on an axle is still a fail", function () {
     assert.match(html, /id="faq-under-mam-over-axle"/);
     assert.match(html, /Under MAM but over on an axle is still a fail \/ roadside risk\./);
@@ -229,7 +267,7 @@ describe("payload page identity and honesty", function () {
     assert.match(html, />Clear saved van</);
     assert.match(html, /Saved on this phone only\. We don’t upload your van\./);
     assert.match(html, /Figures stay on this device only and are not filled in until you tap Restore last van/);
-    assert.match(html, /styles\.css\?v=20260912door1/);
+    assert.match(html, /styles\.css\?v=20260915wavec/);
     assert.match(html, /app\.js\?v=20260911restore2/);
     assert.match(app, /var state = freshState\(\)/);
     assert.match(app, /var pageLoadSnapshot = readSavedVan\(\)/);

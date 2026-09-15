@@ -1072,6 +1072,21 @@ footer.site-footer {
   margin: 0 0 0.7rem;
 }
 .footer-links { display: flex; flex-wrap: wrap; gap: 0.9rem; font-size: 0.88rem; }
+.footer-hubs {
+  margin: 1rem 0 0;
+}
+.footer-hubs h2 {
+  margin: 0 0 0.45rem;
+  font-size: 1rem;
+  font-weight: 650;
+  color: #e7efe9;
+}
+.footer-hubs-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+  font-size: 0.88rem;
+}
 .fine { opacity: 0.8; font-size: 0.78rem; margin: 0.8rem 0 0; }
 
 /* Mobile dock — body child, so full-bleed without negative margins (those overflow iPhone). */
@@ -1316,6 +1331,7 @@ footer.site-footer {
   #about,
   #privacy,
   #more-tools,
+  #more-calculators,
   #splitHelper,
   .dock,
   .site-footer,
