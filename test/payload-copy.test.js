@@ -268,7 +268,7 @@ describe("payload page identity and honesty", function () {
     assert.match(html, /Saved on this phone only\. We don’t upload your van\./);
     assert.match(html, /Figures stay on this device only and are not filled in until you tap Restore last van/);
     assert.match(html, /styles\.css\?v=20260915wavec/);
-    assert.match(html, /app\.js\?v=20260911restore2/);
+    assert.match(html, /app\.js\?v=20260918prefill/);
     assert.match(app, /var state = freshState\(\)/);
     assert.match(app, /var pageLoadSnapshot = readSavedVan\(\)/);
     assert.match(app, /if \(booting \|\| !persistEnabled\) return;/);
