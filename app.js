@@ -234,6 +234,13 @@
       lead: function () { return "A registration lookup is not the finished check. We do not invent these figures."; },
       dockLine: function () { return ""; }
     };
+  var payloadPrefill = (typeof PayloadPrefill !== "undefined" && PayloadPrefill)
+    || (typeof globalThis !== "undefined" && globalThis.PayloadPrefill)
+    || {
+      parsePayloadPrefillQuery: function () { return null; },
+      applyPayloadPrefillToState: function () { return null; },
+      buildPayloadPrefillHref: function (state, base) { return base || "/"; }
+    };
   var lookupSucceeded = false;
   var presetStarted = false;
   var persistEnabled = false;
@@ -451,6 +458,11 @@
 
   function miroMissing() {
     adoptVisibleMiro();
+    /* Ask remaining-payload share: mam + miro 0 is intentional maths,
+       not a missing V5 figure. MassInService still treats 0 as blank. */
+    if (state.remainingPayloadShare && num(state.mam) > 0 && !(num(state.actualEmpty) > 0)) {
+      return false;
+    }
     return massInService.isMissing(state.miro, visibleMiroValue(), state.actualEmpty);
   }
 
@@ -1347,9 +1359,34 @@
     });
   }
 
+  function openPrefillSections(patch) {
+    if (!patch) return;
+    function openField(id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      var block = el.closest("details.block");
+      if (block) block.open = true;
+    }
+    if (patch.mam != null || patch.miro != null || patch.actualEmpty != null) openField("mam");
+    if (patch.freshCap != null || patch.freshFill != null) openField("freshCap");
+    if (patch.gas6 != null || patch.gas9 != null || patch.gas13 != null) openField("gas6");
+    if (patch.bikes != null || patch.bikeKg != null || patch.rackKg != null) openField("bikes");
+  }
+
+  /* Ask / share-link query params patch onto defaults on first load only. */
+  var prefillPatch = payloadPrefill.parsePayloadPrefillQuery(location.search);
+  var prefilled = payloadPrefill.applyPayloadPrefillToState(state, location.search);
+  if (prefilled) {
+    state = applyCustomItemIds(prefilled);
+    openPrefillSections(prefillPatch);
+  }
+
   fillForm();
   calculate();
   syncSavedVanBanner();
+  if (typeof window !== "undefined") {
+    window.buildPayloadPrefillHref = payloadPrefill.buildPayloadPrefillHref;
+  }
   window.requestAnimationFrame(function () {
     booting = false;
   });
