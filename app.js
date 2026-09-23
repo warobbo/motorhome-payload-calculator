@@ -241,6 +241,35 @@
       applyPayloadPrefillToState: function () { return null; },
       buildPayloadPrefillHref: function (state, base) { return base || "/"; }
     };
+  var massLimits = (typeof MassLimits !== "undefined" && MassLimits)
+    || (typeof globalThis !== "undefined" && globalThis.MassLimits)
+    || {
+      classifyPlateMass: function (value) {
+        if (value === "" || value == null || (typeof value === "string" && String(value).trim() === "")) return "blank";
+        var n = Number(String(value).replace(/,/g, ""));
+        if (!isFinite(n) || n <= 0) return "non-positive";
+        if (n > 10000) return "above-max";
+        return "ok";
+      },
+      enteredPlateKg: function (value) {
+        return this.classifyPlateMass(value) === "ok" ? Number(String(value).replace(/,/g, "")) : null;
+      },
+      resultGate: function (values) {
+        var kind = this.classifyPlateMass(values && values.mam);
+        if (kind === "blank") return { mode: "mam-blank", summary: "MAM is not entered.", errors: {} };
+        if (kind !== "ok") return { mode: "invalid", summary: "MAM is outside the accepted range.", errors: { mam: "MAM is outside the accepted range." } };
+        return { mode: "ready", summary: "", errors: {} };
+      }
+    };
+  var PLATE_ERROR_IDS = {
+    mam: "mamError",
+    miro: "miroError",
+    actualEmpty: "actualEmptyError",
+    frontAxle: "frontAxleError",
+    rearAxle: "rearAxleError",
+    wbFrontAxle: "wbFrontAxleError",
+    wbRearAxle: "wbRearAxleError"
+  };
   var lookupSucceeded = false;
   var presetStarted = false;
   var persistEnabled = false;
@@ -380,6 +409,35 @@
     var n = displayWeight(kg);
     var d = digits != null ? digits : (isImperial() ? 0 : 0);
     return n.toLocaleString("en-GB", { maximumFractionDigits: d, minimumFractionDigits: 0 }) + " " + (isImperial() ? "lb" : "kg");
+  }
+
+  /* Blank or out-of-range plates use the same em dash as an empty summary. */
+  function formatEnteredKg(value) {
+    var kg = massLimits.enteredPlateKg(value);
+    return kg == null ? "\u2014" : fmt(kg, 0);
+  }
+
+  function syncPlateFieldErrors(errors) {
+    Object.keys(PLATE_ERROR_IDS).forEach(function (key) {
+      var input = document.getElementById(key);
+      var error = document.getElementById(PLATE_ERROR_IDS[key]);
+      var message = errors && errors[key] ? errors[key] : "";
+      if (input) {
+        if (message) {
+          input.setAttribute("aria-invalid", "true");
+          input.setAttribute("aria-describedby", PLATE_ERROR_IDS[key]);
+        } else {
+          input.removeAttribute("aria-invalid");
+          if (input.getAttribute("aria-describedby") === PLATE_ERROR_IDS[key]) {
+            input.removeAttribute("aria-describedby");
+          }
+        }
+      }
+      if (error) {
+        error.hidden = !message;
+        error.textContent = message;
+      }
+    });
   }
 
   function roundView(value, kind) {
@@ -574,8 +632,10 @@
 
   function knownAxleTotal(computed) {
     if (axleCheck.normalizeMode(state.axleMode) === "empty") {
-      if (num(state.actualEmpty) > 0) return num(state.actualEmpty);
-      if (num(state.miro) > 0) return num(state.miro);
+      var emptyKg = massLimits.enteredPlateKg(state.actualEmpty);
+      if (emptyKg != null) return emptyKg;
+      var miroKg = massLimits.enteredPlateKg(state.miro);
+      if (miroKg != null) return miroKg;
       return "";
     }
     if (computed && num(computed.total) > 0 && !miroMissing()) return computed.total;
@@ -585,10 +645,10 @@
   function currentAxleResult(computed) {
     return axleCheck.evaluate({
       mode: state.axleMode,
-      frontLimit: state.frontAxle,
-      rearLimit: state.rearAxle,
-      frontWeight: state.wbFrontAxle,
-      rearWeight: state.wbRearAxle,
+      frontLimit: massLimits.enteredPlateKg(state.frontAxle) == null ? "" : state.frontAxle,
+      rearLimit: massLimits.enteredPlateKg(state.rearAxle) == null ? "" : state.rearAxle,
+      frontWeight: massLimits.enteredPlateKg(state.wbFrontAxle) == null ? "" : state.wbFrontAxle,
+      rearWeight: massLimits.enteredPlateKg(state.wbRearAxle) == null ? "" : state.wbRearAxle,
       knownTotal: knownAxleTotal(computed)
     });
   }
@@ -653,11 +713,13 @@
   function updateTyresLink() {
     var el = document.getElementById("tyresLink");
     if (!el) return;
-    var hasWeights = axleCheck.hasRating(state.wbFrontAxle) && axleCheck.hasRating(state.wbRearAxle);
+    var frontTicket = massLimits.enteredPlateKg(state.wbFrontAxle);
+    var rearTicket = massLimits.enteredPlateKg(state.wbRearAxle);
+    var hasWeights = frontTicket != null && rearTicket != null;
     var href = "tyres.html";
     if (hasWeights) {
-      href = "tyres.html?front=" + encodeURIComponent(String(Math.round(num(state.wbFrontAxle)))) +
-        "&rear=" + encodeURIComponent(String(Math.round(num(state.wbRearAxle))));
+      href = "tyres.html?front=" + encodeURIComponent(String(Math.round(frontTicket))) +
+        "&rear=" + encodeURIComponent(String(Math.round(rearTicket)));
     }
     el.innerHTML = hasWeights
       ? 'Use these weights in the <a href="' + href + '">Tyres tool</a> (weighbridge figures, not the VIN plate ratings).'
@@ -685,20 +747,13 @@
     var box = document.getElementById("axleStatusBox");
     var valueEl = document.getElementById("axleStatusValue");
     var subEl = document.getElementById("axleStatusSub");
-    var hasWeights = axleCheck.hasRating(state.wbFrontAxle) && axleCheck.hasRating(state.wbRearAxle);
+    var hasWeights = massLimits.enteredPlateKg(state.wbFrontAxle) != null
+      && massLimits.enteredPlateKg(state.wbRearAxle) != null;
 
-    if (frontEl) {
-      frontEl.textContent = axleCheck.hasRating(state.frontAxle) ? fmt(num(state.frontAxle), 0) : "\u2014";
-    }
-    if (rearEl) {
-      rearEl.textContent = axleCheck.hasRating(state.rearAxle) ? fmt(num(state.rearAxle), 0) : "\u2014";
-    }
-    if (wbFrontOut) {
-      wbFrontOut.textContent = axleCheck.hasRating(state.wbFrontAxle) ? fmt(num(state.wbFrontAxle), 0) : "\u2014";
-    }
-    if (wbRearOut) {
-      wbRearOut.textContent = axleCheck.hasRating(state.wbRearAxle) ? fmt(num(state.wbRearAxle), 0) : "\u2014";
-    }
+    if (frontEl) frontEl.textContent = formatEnteredKg(state.frontAxle);
+    if (rearEl) rearEl.textContent = formatEnteredKg(state.rearAxle);
+    if (wbFrontOut) wbFrontOut.textContent = formatEnteredKg(state.wbFrontAxle);
+    if (wbRearOut) wbRearOut.textContent = formatEnteredKg(state.wbRearAxle);
     if (wbFrontRow) wbFrontRow.hidden = !hasWeights;
     if (wbRearRow) wbRearRow.hidden = !hasWeights;
 
@@ -802,7 +857,56 @@
     return '<div class="bar-row"><header><span>' + label + '</span><span>' + sign + fmt(Math.abs(kg), 0) + '</span></header><div class="bar"><span style="width:' + pct + '%;background:' + (kg < 0 ? "var(--amber)" : "var(--pine)") + '"></span></div></div>';
   }
 
+  function plateState() {
+    return {
+      mam: state.mam,
+      miro: state.miro,
+      actualEmpty: state.actualEmpty,
+      frontAxle: state.frontAxle,
+      rearAxle: state.rearAxle,
+      wbFrontAxle: state.wbFrontAxle,
+      wbRearAxle: state.wbRearAxle
+    };
+  }
+
+  function showHeldResult(subText, dockText) {
+    var box = document.getElementById("remainingBox");
+    box.className = "remaining status-tight";
+    document.getElementById("remainingLabel").textContent = "Remaining payload";
+    document.getElementById("remainingValue").textContent = "\u2014";
+    document.getElementById("remainingSub").textContent = subText;
+    document.getElementById("totalWeight").textContent = "\u2014";
+    document.getElementById("mamOut").textContent = formatEnteredKg(state.mam);
+    document.getElementById("platedPayload").textContent = "\u2014";
+    var platedNote = document.getElementById("platedPayloadNote");
+    if (platedNote) platedNote.hidden = true;
+    document.getElementById("payloadPct").textContent = "\u2014";
+    document.getElementById("meterFill").style.width = "0%";
+    document.getElementById("warnOver").classList.remove("show");
+    document.getElementById("warnLow").classList.remove("show");
+    document.getElementById("breakdown").innerHTML = "";
+    document.getElementById("waterWhatIf").textContent = subText;
+    updateAxleResults(null);
+    var dock = document.getElementById("dockValue");
+    dock.textContent = "\u2014";
+    dock.className = "dock-tight";
+    document.getElementById("dockHint").textContent = dockText || subText;
+    document.getElementById("emptyWater").textContent = waterBackup
+      ? "Restore water levels"
+      : "What if I empty the water?";
+    syncWeighedEmptyUi();
+    updateIdentityCard();
+    updateStillNeed();
+  }
+
   function calculate() {
+    var gate = massLimits.resultGate(plateState());
+    syncPlateFieldErrors(gate.errors);
+    if (gate.mode === "invalid") {
+      showHeldResult(gate.summary, "Check the highlighted weights");
+      return;
+    }
+
     if (miroMissing()) {
       var boxEmpty = document.getElementById("remainingBox");
       boxEmpty.className = "remaining status-tight";
@@ -810,7 +914,7 @@
       document.getElementById("remainingValue").textContent = "\u2014";
       document.getElementById("remainingSub").textContent = "Enter Mass in Service from the V5 or a weighbridge ticket.";
       document.getElementById("totalWeight").textContent = "\u2014";
-      document.getElementById("mamOut").textContent = fmt(num(state.mam), 0);
+      document.getElementById("mamOut").textContent = formatEnteredKg(state.mam);
       document.getElementById("platedPayload").textContent = "\u2014";
       var platedNoteEmpty = document.getElementById("platedPayloadNote");
       if (platedNoteEmpty) platedNoteEmpty.hidden = true;
@@ -835,6 +939,11 @@
       return;
     }
 
+    if (gate.mode === "mam-blank") {
+      showHeldResult(gate.summary, "Enter MAM from the VIN plate");
+      return;
+    }
+
     var r = compute();
     var cls = statusClass(r.remaining);
     var box = document.getElementById("remainingBox");
@@ -850,7 +959,7 @@
           : "Over MAM";
 
     document.getElementById("totalWeight").textContent = fmt(r.total, 0);
-    document.getElementById("mamOut").textContent = fmt(r.mam, 0);
+    document.getElementById("mamOut").textContent = formatEnteredKg(state.mam);
     var hasMiro = num(state.miro) > 0;
     document.getElementById("platedPayload").textContent = hasMiro ? fmt(r.plated, 0) : "\u2014";
     var platedNote = document.getElementById("platedPayloadNote");

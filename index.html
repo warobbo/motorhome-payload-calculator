@@ -237,8 +237,8 @@
 }
   </script>
 
-  <!-- ASSET_VERSION=20260915wavec — bump this query on CSS/JS below to force-refresh cached assets. -->
-  <link rel="stylesheet" href="styles.css?v=20260915wavec">
+  <!-- ASSET_VERSION=20260923qa — bump this query on CSS/JS below to force-refresh cached assets. -->
+  <link rel="stylesheet" href="styles.css?v=20260923qa">
 
 </head>
 <body>
@@ -298,11 +298,13 @@
             <label for="wbFrontAxle">Front axle kg</label>
             <input id="wbFrontAxle" type="number" inputmode="decimal" min="0" step="1" data-key="wbFrontAxle">
             <span class="hint">kg on the ticket — today’s weight, not the VIN plate limit</span>
+            <p class="field-error" id="wbFrontAxleError" role="alert" hidden></p>
           </div>
           <div class="field">
             <label for="wbRearAxle">Rear axle kg</label>
             <input id="wbRearAxle" type="number" inputmode="decimal" min="0" step="1" data-key="wbRearAxle">
             <span class="hint">kg on the ticket — today’s weight, not the VIN plate limit</span>
+            <p class="field-error" id="wbRearAxleError" role="alert" hidden></p>
           </div>
         </div>
       </div>
@@ -429,6 +431,7 @@
                 </span>
                 <input id="mam" type="number" inputmode="decimal" min="0" step="1" data-key="mam" data-kind="weight">
                 <span class="hint"><span class="u-weight">kg</span> on the <a href="#weight-plate">VIN plate</a></span>
+                <p class="field-error" id="mamError" role="alert" hidden></p>
               </div>
               <div class="field">
                 <span class="field-row">
@@ -437,6 +440,7 @@
                 </span>
                 <input id="actualEmpty" type="number" inputmode="decimal" min="0" step="1" data-key="actualEmpty" data-kind="weight" placeholder="Van only — no people, empty water">
                 <span class="hint">Best starting weight. Leave blank to use Mass in Service instead.</span>
+                <p class="field-error" id="actualEmptyError" role="alert" hidden></p>
               </div>
               <div class="field">
                 <span class="field-row">
@@ -445,6 +449,7 @@
                 </span>
                 <input id="miro" type="number" inputmode="decimal" min="0" step="1" data-key="miro" data-kind="weight">
                 <span class="hint">Second best. Also called MIRO in handbooks. Can be optimistic — a weighbridge is more honest. A registration lookup leaves this blank; DVLA never supplies it.</span>
+                <p class="field-error" id="miroError" role="alert" hidden></p>
               </div>
               <div class="field" id="driverWeightField">
                 <label for="driverKg">Driver weight</label>
@@ -460,11 +465,13 @@
                   <label for="frontAxle">Front axle rating</label>
                   <input id="frontAxle" type="number" inputmode="decimal" min="0" step="1" data-key="frontAxle" data-kind="weight">
                   <span class="hint"><span class="u-weight">kg</span> from the VIN plate — a limit, not today’s load</span>
+                  <p class="field-error" id="frontAxleError" role="alert" hidden></p>
                 </div>
                 <div class="field">
                   <label for="rearAxle">Rear axle rating</label>
                   <input id="rearAxle" type="number" inputmode="decimal" min="0" step="1" data-key="rearAxle" data-kind="weight">
                   <span class="hint"><span class="u-weight">kg</span> from the VIN plate — a limit, not today’s load</span>
+                  <p class="field-error" id="rearAxleError" role="alert" hidden></p>
                 </div>
               </div>
             </div>
@@ -1006,16 +1013,16 @@
 
     <section class="prose more-calculators" id="more-calculators">
       <h2>More calculators</h2>
-      <p>Payload is one hub. Power and Water sit on their own sites. Motorhome Tools is the front door.</p>
+      <p>Payload is one hub. Power and Water are on Motorhome Tools.</p>
       <ul class="guides-list">
         <li>
-          <a href="https://motorhomepower.co.uk/">
+          <a href="https://motorhometools.co.uk/power/">
             <span>Power</span>
             <span class="hint">Daily power, battery, solar</span>
           </a>
         </li>
         <li>
-          <a href="https://motorhomewater.co.uk/">
+          <a href="https://motorhometools.co.uk/water/">
             <span>Water</span>
             <span class="hint">Gas, tanks and cassette</span>
           </a>
@@ -1067,8 +1074,8 @@
       <section class="footer-hubs" aria-labelledby="footer-hubs-title">
         <h2 id="footer-hubs-title">More calculators</h2>
         <nav class="footer-hubs-links" aria-label="More calculators">
-          <a href="https://motorhomepower.co.uk/">Power</a>
-          <a href="https://motorhomewater.co.uk/">Water</a>
+          <a href="https://motorhometools.co.uk/power/">Power</a>
+          <a href="https://motorhometools.co.uk/water/">Water</a>
           <a href="https://motorhometools.co.uk/">Motorhome Tools</a>
           <a href="https://motorhometools.co.uk/guides/">Guides</a>
         </nav>
@@ -1084,7 +1091,8 @@
   <script src="lib/custom-kit.js?v=20260910need1"></script>
   <script src="lib/axle-check.js?v=20260911amend1"></script>
   <script src="lib/still-need.js?v=20260911amend1"></script>
+  <script src="lib/mass-limits.js?v=20260923qa"></script>
   <script src="lib/payload-prefill.js?v=20260918prefill"></script>
-  <script src="app.js?v=20260918prefill"></script>
+  <script src="app.js?v=20260923qa"></script>
 </body>
 </html>

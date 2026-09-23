@@ -38,7 +38,7 @@ describe("mobile horizontal overflow guards", function () {
   });
 
   it("bumps the shared stylesheet cache-bust on both pages", function () {
-    assert.match(index, /styles\.css\?v=20260915wavec/);
-    assert.match(tyres, /styles\.css\?v=20260915wavec/);
+    assert.match(index, /styles\.css\?v=20260923qa/);
+    assert.match(tyres, /styles\.css\?v=20260923qa/);
   });
 });
