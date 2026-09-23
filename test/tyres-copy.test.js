@@ -45,8 +45,8 @@ describe("tyres missing-size capture copy", function () {
   });
 
   it("bumps cache-bust and keeps the sticky bar off the form footer", function () {
-    assert.match(html, /ASSET_VERSION=20260915wavec/);
-    assert.match(html, /styles\.css\?v=20260915wavec/);
+    assert.match(html, /ASSET_VERSION=20260923qa/);
+    assert.match(html, /styles\.css\?v=20260923qa/);
     assert.match(html, /tyre-amber-db\.js\?v=20260912lt1/);
     assert.match(html, /tyre-calc\.js\?v=20260912lt1/);
     assert.match(html, /tyres-app\.js\?v=20260912lt1/);
@@ -91,8 +91,8 @@ describe("tyres missing-size capture copy", function () {
     const hubs = html.slice(hubsStart, html.indexOf("</section>", hubsStart));
     assert.ok(hubsStart > 0, "footer More calculators should exist");
     assert.match(hubs, /<h2 id="footer-hubs-title">More calculators<\/h2>/);
-    assert.match(hubs, /href="https:\/\/motorhomepower\.co\.uk\/">Power</);
-    assert.match(hubs, /href="https:\/\/motorhomewater\.co\.uk\/">Water</);
+    assert.match(hubs, /href="https:\/\/motorhometools\.co\.uk\/power\/">Power</);
+    assert.match(hubs, /href="https:\/\/motorhometools\.co\.uk\/water\/">Water</);
     assert.match(hubs, /href="https:\/\/motorhometools\.co\.uk\/">Motorhome Tools</);
     assert.match(hubs, /href="https:\/\/motorhometools\.co\.uk\/guides\/">Guides</);
     assert.doesNotMatch(hubs, /target="_blank"/);

@@ -20,15 +20,16 @@ describe("SEO Wave C cross-family links", function () {
     for (const html of [index, tyres]) {
       const hubs = footerHubs(html);
       assert.match(hubs, /More calculators/);
-      assert.match(hubs, /href="https:\/\/motorhomepower\.co\.uk\/">Power</);
-      assert.match(hubs, /href="https:\/\/motorhomewater\.co\.uk\/">Water</);
+      assert.match(hubs, /href="https:\/\/motorhometools\.co\.uk\/power\/">Power</);
+      assert.match(hubs, /href="https:\/\/motorhometools\.co\.uk\/water\/">Water</);
+      assert.doesNotMatch(html, /motorhomepower\.co\.uk|motorhomewater\.co\.uk/);
       assert.match(hubs, /href="https:\/\/motorhometools\.co\.uk\/">Motorhome Tools</);
       assert.match(hubs, /href="https:\/\/motorhometools\.co\.uk\/guides\/">Guides</);
     }
 
     const more = index.slice(index.indexOf('id="more-calculators"'), index.indexOf('id="privacy"'));
-    assert.match(more, /href="https:\/\/motorhomepower\.co\.uk\/"/);
-    assert.match(more, /href="https:\/\/motorhomewater\.co\.uk\/"/);
+    assert.match(more, /href="https:\/\/motorhometools\.co\.uk\/power\/"/);
+    assert.match(more, /href="https:\/\/motorhometools\.co\.uk\/water\/"/);
     assert.match(more, /href="https:\/\/motorhometools\.co\.uk\/"/);
     assert.match(more, /href="https:\/\/motorhometools\.co\.uk\/guides\/"/);
   });

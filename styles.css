@@ -385,6 +385,12 @@ label, .lbl {
   font-weight: 600;
 }
 .hint { color: var(--muted); font-size: 0.78rem; font-weight: 400; }
+.field-error {
+  color: var(--danger);
+  font-size: 0.78rem;
+  font-weight: 600;
+  margin: 0;
+}
 input[type="number"], input[type="text"], input[type="password"], input[type="email"], select, textarea {
   width: 100%;
   min-height: 48px;
@@ -413,6 +419,14 @@ input:focus, select:focus, textarea:focus, button:focus-visible {
   outline: none;
   box-shadow: var(--focus);
   border-color: var(--pine);
+}
+input[aria-invalid="true"] {
+  border-color: var(--danger);
+  background: var(--danger-bg);
+}
+input[aria-invalid="true"]:focus {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 3px #fff, 0 0 0 6px var(--danger);
 }
 
 .stepper {
