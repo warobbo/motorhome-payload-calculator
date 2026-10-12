@@ -7,17 +7,6 @@ const path = require("node:path");
 
 const root = path.join(__dirname, "..");
 
-function token(codes) {
-  return String.fromCharCode.apply(null, codes);
-}
-
-// Built from codes so this served test file does not itself contain the names.
-const NAMES = [
-  token([119, 97, 121, 110, 101]),
-  token([114, 111, 98, 105, 110, 115, 111, 110]),
-  token([119, 97, 114, 111, 98, 98, 111])
-];
-
 const TEXT_EXT = new Set([
   ".html", ".js", ".css", ".json", ".xml", ".txt", ".md", ".svg", ".yaml", ".yml", ".webmanifest"
 ]);
@@ -37,21 +26,16 @@ function walk(dir, rel, out) {
   }
 }
 
-describe("public files do not name the site owner", function () {
-  it("keeps owner names and personal addresses out of files the server can return", function () {
+describe("public files do not publish a contact", function () {
+  it("keeps personal addresses and Person schema out of files the server can return", function () {
     const files = [];
     walk(root, "", files);
-    const nameHits = [];
     const emailHits = [];
     const personHits = [];
 
     for (let i = 0; i < files.length; i += 1) {
       const file = files[i];
       const text = fs.readFileSync(file.abs).toString("utf8");
-      const folded = text.toLowerCase();
-      for (let n = 0; n < NAMES.length; n += 1) {
-        if (folded.includes(NAMES[n])) nameHits.push(file.rel);
-      }
       const ext = path.extname(file.rel).toLowerCase();
       if (ext === ".html" && /"@type"\s*:\s*"Person"/i.test(text)) personHits.push(file.rel);
       if (!TEXT_EXT.has(ext)) continue;
@@ -61,7 +45,6 @@ describe("public files do not name the site owner", function () {
       }
     }
 
-    assert.deepEqual(nameHits, []);
     assert.deepEqual(emailHits, []);
     assert.deepEqual(personHits, []);
   });

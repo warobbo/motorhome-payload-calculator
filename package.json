@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node server.js",
     "postinstall": "node scripts/write-og-image.js",
-    "test": "node --test"
+    "test": "node --test && node .cursor/skills/verify-motorhome-payload/helpers/scan-public-names.js"
   },
   "engines": {
     "node": ">=22 <23"
