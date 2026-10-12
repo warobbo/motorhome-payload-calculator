@@ -1,0 +1,72 @@
+[
+  {
+    "input": "After typing MAM 3850, before reload",
+    "expected": "#restoreVan hidden",
+    "actual": "#restoreVan hidden",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "Reload does not apply the save by itself",
+    "expected": "3500",
+    "actual": "3500",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "Restore last van is offered on the next load",
+    "expected": "#restoreVan visible",
+    "actual": "#restoreVan visible",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "Click Restore last van",
+    "expected": "3850",
+    "actual": "3850",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "Click Clear saved van",
+    "expected": "3500",
+    "actual": "3500",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "Banner after clear",
+    "expected": "#savedVanBanner hidden",
+    "actual": "#savedVanBanner hidden",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "Tyres reload does not fill the sidewall",
+    "expected": "#sidewall empty",
+    "actual": "#sidewall empty",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "Restore last tyres on the next load",
+    "expected": "#restoreTyres visible",
+    "actual": "#restoreTyres visible",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "Click Restore last tyres",
+    "expected": "LT265/70R17 121/118S",
+    "actual": "LT265/70R17 121/118S",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "Click Clear saved on tyres",
+    "expected": "#sidewall empty",
+    "actual": "#sidewall empty",
+    "difference": "none",
+    "pass": true
+  }
+]

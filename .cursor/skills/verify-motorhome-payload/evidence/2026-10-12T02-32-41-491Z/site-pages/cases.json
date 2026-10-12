@@ -1,0 +1,37 @@
+[
+  {
+    "input": "GET /",
+    "expected": "200 and payload h1",
+    "actual": "200 and payload h1",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "GET /tyres.html",
+    "expected": "200 and tyres h1",
+    "actual": "200 and tyres h1",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "GET /index.html",
+    "expected": "301 to /",
+    "actual": "301 to /",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "Header Tyres link",
+    "expected": "Motorhome Tyre Pressure",
+    "actual": "Motorhome Tyre Pressure",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "Header Payload link",
+    "expected": "Motorhome Payload Calculator",
+    "actual": "Motorhome Payload Calculator",
+    "difference": "none",
+    "pass": true
+  }
+]

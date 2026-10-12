@@ -1,0 +1,58 @@
+[
+  {
+    "input": "Tyres page heading",
+    "expected": "Motorhome Tyre Pressure",
+    "actual": "Motorhome Tyre Pressure",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "Load an example, front cold",
+    "expected": "3.0 bar",
+    "actual": "3.0 bar",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "Load an example, front PSI",
+    "expected": "43.5 PSI",
+    "actual": "43.5 PSI",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "Load an example, rear cold",
+    "expected": "3.5 bar",
+    "actual": "3.5 bar",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "Load an example, rear PSI",
+    "expected": "50.8 PSI",
+    "actual": "50.8 PSI",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "Load an example, dock",
+    "expected": "3.0 / 3.5 bar",
+    "actual": "3.0 / 3.5 bar",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "Example badge",
+    "expected": "badge contains GREEN",
+    "actual": "badge contains GREEN",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "Converter 4.5 bar",
+    "expected": "65.3",
+    "actual": "65.3",
+    "difference": "none",
+    "pass": true
+  }
+]

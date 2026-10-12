@@ -1,0 +1,142 @@
+[
+  {
+    "input": "Fresh page, no typing. Defaults in app.js DEFAULTS.",
+    "expected": "254 kg",
+    "actual": "254 kg",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "Fresh page total",
+    "expected": "3,247 kg",
+    "actual": "3,247 kg",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "Click Typical 3.5t Motorhome setup",
+    "expected": "−6 kg",
+    "actual": "−6 kg",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "Click Light weekend setup based on 2 adults",
+    "expected": "270 kg",
+    "actual": "270 kg",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "Click Full week family of 4",
+    "expected": "−129 kg",
+    "actual": "−129 kg",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "Click Reset to defaults",
+    "expected": "254 kg",
+    "actual": "254 kg",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "Bare van: MAM 3500, Mass in Service 3000, driver 75, every added load 0, fuel 90 L at 90%",
+    "expected": "500 kg",
+    "actual": "500 kg",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "Bare van total",
+    "expected": "3,000 kg",
+    "actual": "3,000 kg",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "Bare van plated payload",
+    "expected": "500 kg",
+    "actual": "500 kg",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "Bare van status line",
+    "expected": "Comfortable margin under 3,500 kg MAM",
+    "actual": "Comfortable margin under 3,500 kg MAM",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "Bare van plus 100 L fresh at 100%",
+    "expected": "400 kg",
+    "actual": "400 kg",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "Water what-if sentence",
+    "expected": "Emptying fresh, grey and black water would free 100 kg and leave 500 kg remaining.",
+    "actual": "Emptying fresh, grey and black water would free 100 kg and leave 500 kg remaining.",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "Click What if I empty the water?",
+    "expected": "500 kg",
+    "actual": "500 kg",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "Water sentence after emptying",
+    "expected": "Water tanks are already empty in this estimate.",
+    "actual": "Water tanks are already empty in this estimate.",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "Button label after emptying",
+    "expected": "Restore water levels",
+    "actual": "Restore water levels",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "Custom item Chairs, 2 kg, quantity 2, on the bare van",
+    "expected": "496 kg",
+    "actual": "496 kg",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "Remove the custom item",
+    "expected": "500 kg",
+    "actual": "500 kg",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "Driver 85 kg on Mass in Service (only +10 kg)",
+    "expected": "490 kg",
+    "actual": "490 kg",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "Imperial display of the 490 kg result",
+    "expected": "1,080 lb",
+    "actual": "1,080 lb",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "Back to metric",
+    "expected": "490 kg",
+    "actual": "490 kg",
+    "difference": "none",
+    "pass": true
+  }
+]

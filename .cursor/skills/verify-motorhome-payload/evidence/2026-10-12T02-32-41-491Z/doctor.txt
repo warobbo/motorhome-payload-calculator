@@ -1,0 +1,12 @@
+ok
+url: http://127.0.0.1:4183/
+pid: 2263
+port owned by recorded server: yes
+payload h1: Motorhome Payload Calculator
+tyres h1: Motorhome Tyre Pressure
+lookup ok: true
+liveDvla: false
+demoPlates: DEMO3500,BOXER35,RELAY35,SPRINT35
+git at launch: fca1cd7a456d881654a0d401a6eabf5e4f907503
+git now: fca1cd7a456d881654a0d401a6eabf5e4f907503
+ready line: present

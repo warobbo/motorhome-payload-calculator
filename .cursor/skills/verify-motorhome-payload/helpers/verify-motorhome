@@ -1,0 +1,455 @@
+#!/usr/bin/env node
+"use strict";
+
+const fs = require("fs");
+const path = require("path");
+const net = require("net");
+const http = require("http");
+const { spawn, execFileSync } = require("child_process");
+
+const HELPERS = __dirname;
+const SKILL = path.resolve(HELPERS, "..");
+const REPO = path.resolve(SKILL, "../../..");
+const RUN = path.join(SKILL, "run");
+const EVIDENCE_ROOT = path.join(SKILL, "evidence");
+const DEFAULT_PORT = 4183;
+
+const FEATURES = [
+  "payload-calculator",
+  "axle-check",
+  "vehicle-lookup",
+  "tyre-pressure",
+  "missing-tyre-size",
+  "saved-figures",
+  "site-pages"
+];
+
+function readText(file) {
+  return fs.readFileSync(file, "utf8").trim();
+}
+
+function writeText(file, text) {
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  fs.writeFileSync(file, text.endsWith("\n") ? text : text + "\n");
+}
+
+function exists(file) {
+  return fs.existsSync(file);
+}
+
+function pidAlive(pid) {
+  if (!Number.isInteger(pid) || pid < 2) return false;
+  try {
+    process.kill(pid, 0);
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
+
+function cmdline(pid) {
+  try {
+    return fs.readFileSync("/proc/" + pid + "/cmdline", "utf8").replace(/\0/g, " ").trim();
+  } catch (err) {
+    return "";
+  }
+}
+
+function gitHead() {
+  try {
+    return execFileSync("git", ["rev-parse", "HEAD"], { cwd: REPO, encoding: "utf8" }).trim();
+  } catch (err) {
+    return "";
+  }
+}
+
+function evidenceDir() {
+  const idFile = path.join(RUN, "evidence-id");
+  if (!exists(idFile)) return null;
+  return path.join(EVIDENCE_ROOT, readText(idFile));
+}
+
+function baseUrl() {
+  const file = path.join(RUN, "base-url");
+  if (!exists(file)) return "";
+  return readText(file);
+}
+
+function recordedPid(name) {
+  const file = path.join(RUN, name);
+  if (!exists(file)) return null;
+  const pid = Number(readText(file));
+  return Number.isInteger(pid) ? pid : null;
+}
+
+function listenPorts(pid) {
+  const ports = [];
+  ["tcp", "tcp6"].forEach(function (kind) {
+    let text = "";
+    try {
+      text = fs.readFileSync("/proc/" + pid + "/net/" + kind, "utf8");
+    } catch (err) {
+      return;
+    }
+    text.split("\n").slice(1).forEach(function (line) {
+      const parts = line.trim().split(/\s+/);
+      if (parts.length < 4 || parts[3] !== "0A") return;
+      const hex = (parts[1] || "").split(":")[1];
+      if (!hex) return;
+      ports.push(parseInt(hex, 16));
+    });
+  });
+  return ports;
+}
+
+function httpGet(url, redirect) {
+  return new Promise(function (resolve, reject) {
+    const req = http.get(url, { headers: { Accept: "*/*" } }, function (res) {
+      if (redirect === "manual" && res.statusCode >= 300 && res.statusCode < 400) {
+        res.resume();
+        resolve({ status: res.statusCode, headers: res.headers, body: "" });
+        return;
+      }
+      const chunks = [];
+      res.on("data", function (chunk) { chunks.push(chunk); });
+      res.on("end", function () {
+        resolve({
+          status: res.statusCode,
+          headers: res.headers,
+          body: Buffer.concat(chunks).toString("utf8")
+        });
+      });
+    });
+    req.on("error", reject);
+  });
+}
+
+function freePort(start, hops) {
+  const left = hops == null ? 30 : hops;
+  return new Promise(function (resolve, reject) {
+    if (left < 0) {
+      reject(new Error("no free port from " + DEFAULT_PORT));
+      return;
+    }
+    const server = net.createServer();
+    server.once("error", function () {
+      resolve(freePort(start + 1, left - 1));
+    });
+    server.listen(start, "127.0.0.1", function () {
+      const port = server.address().port;
+      server.close(function () { resolve(port); });
+    });
+  });
+}
+
+function safeLogLines(logText) {
+  return logText.split("\n").filter(function (line) {
+    return /Motorhome Payload Calculator ready|^  Local:|^  Lookup:|^  Missing:|^  DVLA:/.test(line);
+  }).join("\n");
+}
+
+function secretInBody(body) {
+  const key = process.env.DVLA_API_KEY || "";
+  const mot = process.env.MOT_API_KEY || "";
+  if (key && body.indexOf(key) !== -1) return true;
+  if (mot && body.indexOf(mot) !== -1) return true;
+  return false;
+}
+
+async function doctor() {
+  const lines = [];
+  function fail(message) {
+    lines.push("FAIL " + message);
+    return { ok: false, text: lines.join("\n") };
+  }
+  const pid = recordedPid("server.pid");
+  if (!pid) return fail("no server pid. Run launch first.");
+  const command = cmdline(pid);
+  if (!pidAlive(pid) || command.indexOf("server.js") === -1) {
+    return fail("recorded server pid " + pid + " is not the verification server.");
+  }
+  const port = Number(exists(path.join(RUN, "port")) ? readText(path.join(RUN, "port")) : "");
+  if (!port) return fail("no recorded port.");
+  const ports = listenPorts(pid);
+  if (ports.indexOf(port) === -1) {
+    return fail("pid " + pid + " is not listening on port " + port + ".");
+  }
+  const url = "http://127.0.0.1:" + port + "/";
+  let home;
+  let tyres;
+  let lookup;
+  try {
+    home = await httpGet(url);
+    tyres = await httpGet("http://127.0.0.1:" + port + "/tyres.html");
+    lookup = await httpGet("http://127.0.0.1:" + port + "/api/vehicle-lookup");
+  } catch (err) {
+    return fail("HTTP check failed: " + err.message);
+  }
+  if (home.status !== 200 || home.body.indexOf("<h1>Motorhome Payload Calculator</h1>") === -1) {
+    return fail("payload page is not this app (status " + home.status + ").");
+  }
+  if (tyres.status !== 200 || tyres.body.indexOf("<h1>Motorhome Tyre Pressure</h1>") === -1) {
+    return fail("tyres page is not this app (status " + tyres.status + ").");
+  }
+  if (secretInBody(home.body + tyres.body + lookup.body)) {
+    return fail("a response contained a secret. Refusing to print it.");
+  }
+  let lookupJson = null;
+  try {
+    lookupJson = JSON.parse(lookup.body);
+  } catch (err) {
+    return fail("vehicle lookup did not return JSON.");
+  }
+  if (!lookupJson || lookupJson.ok !== true || !Array.isArray(lookupJson.demoPlates)) {
+    return fail("vehicle lookup health JSON was not ok.");
+  }
+  const head = exists(path.join(RUN, "git-head")) ? readText(path.join(RUN, "git-head")) : "";
+  const now = gitHead();
+  lines.push("ok");
+  lines.push("url: " + url);
+  lines.push("pid: " + pid);
+  lines.push("port owned by recorded server: yes");
+  lines.push("payload h1: Motorhome Payload Calculator");
+  lines.push("tyres h1: Motorhome Tyre Pressure");
+  lines.push("lookup ok: true");
+  lines.push("liveDvla: " + (lookupJson.liveDvla === true ? "true" : "false"));
+  lines.push("demoPlates: " + lookupJson.demoPlates.join(","));
+  lines.push("git at launch: " + (head || "unknown"));
+  lines.push("git now: " + (now || "unknown"));
+  if (head && now && head !== now) lines.push("note: checkout changed after launch");
+  const logFile = path.join(RUN, "server.log");
+  if (exists(logFile)) {
+    const ready = safeLogLines(fs.readFileSync(logFile, "utf8"));
+    if (ready.indexOf("Motorhome Payload Calculator ready") === -1) {
+      return fail("server log has no ready line.");
+    }
+    lines.push("ready line: present");
+  }
+  return { ok: true, text: lines.join("\n"), url: url, port: port, liveDvla: lookupJson.liveDvla === true };
+}
+
+function sleep(ms) {
+  return new Promise(function (resolve) { setTimeout(resolve, ms); });
+}
+
+async function launch() {
+  const existing = recordedPid("server.pid");
+  if (existing && pidAlive(existing) && cmdline(existing).indexOf("server.js") !== -1) {
+    console.log("Verification server already running.");
+    console.log(baseUrl());
+    console.log("Stop it with: .cursor/skills/verify-motorhome-payload/helpers/verify-motorhome cleanup");
+    process.exit(1);
+  }
+  fs.mkdirSync(RUN, { recursive: true });
+  const port = process.env.VERIFY_PORT
+    ? Number(process.env.VERIFY_PORT)
+    : await freePort(DEFAULT_PORT);
+  if (!Number.isInteger(port) || port < 1) {
+    console.error("Could not choose a port.");
+    process.exit(1);
+  }
+  const id = new Date().toISOString().replace(/[:.]/g, "-");
+  const evidence = path.join(EVIDENCE_ROOT, id);
+  fs.mkdirSync(evidence, { recursive: true });
+  writeText(path.join(RUN, "evidence-id"), id);
+  writeText(path.join(RUN, "port"), String(port));
+  writeText(path.join(RUN, "base-url"), "http://127.0.0.1:" + port + "/");
+  writeText(path.join(RUN, "git-head"), gitHead());
+  const logPath = path.join(RUN, "server.log");
+  const logFd = fs.openSync(logPath, "a");
+  const missingLog = path.join(RUN, "missing-sizes.jsonl");
+  const child = spawn(process.execPath, ["server.js"], {
+    cwd: REPO,
+    detached: true,
+    stdio: ["ignore", logFd, logFd],
+    env: Object.assign({}, process.env, {
+      PORT: String(port),
+      MISSING_SIZE_LOG_PATH: missingLog
+    })
+  });
+  fs.closeSync(logFd);
+  child.unref();
+  writeText(path.join(RUN, "server.pid"), String(child.pid));
+  const started = Date.now();
+  let ready = false;
+  while (Date.now() - started < 15000) {
+    await sleep(200);
+    if (!pidAlive(child.pid)) break;
+    const log = exists(logPath) ? fs.readFileSync(logPath, "utf8") : "";
+    if (log.indexOf("Motorhome Payload Calculator ready") === -1) continue;
+    try {
+      const home = await httpGet("http://127.0.0.1:" + port + "/");
+      if (home.status === 200 && home.body.indexOf("Motorhome Payload Calculator") !== -1) {
+        ready = true;
+        break;
+      }
+    } catch (err) { /* not up yet */ }
+  }
+  const log = exists(logPath) ? fs.readFileSync(logPath, "utf8") : "";
+  writeText(path.join(evidence, "launch.txt"), [
+    "pid: " + child.pid,
+    "url: http://127.0.0.1:" + port + "/",
+    "missing-size log: " + missingLog,
+    "git: " + gitHead(),
+    "",
+    safeLogLines(log) || "(no safe log lines)"
+  ].join("\n"));
+  if (!ready) {
+    console.error("Server did not become ready. See " + logPath);
+    process.exit(1);
+  }
+  console.log("Motorhome Payload Calculator ready");
+  console.log("url: http://127.0.0.1:" + port + "/");
+  console.log("pid: " + child.pid);
+  console.log("evidence: " + evidence);
+}
+
+function stopPid(pid, group) {
+  if (!pidAlive(pid)) return "already stopped";
+  const signalTarget = group ? -pid : pid;
+  try {
+    process.kill(signalTarget, "SIGTERM");
+  } catch (err) {
+    try { process.kill(pid, "SIGTERM"); } catch (err2) { return "could not signal"; }
+  }
+  const start = Date.now();
+  while (pidAlive(pid) && Date.now() - start < 3000) {
+    try { execFileSync("sleep", ["0.1"]); } catch (err) { break; }
+  }
+  if (pidAlive(pid)) {
+    try { process.kill(pid, "SIGKILL"); } catch (err) { /* gone */ }
+  }
+  return pidAlive(pid) ? "still running" : "stopped";
+}
+
+function cleanup() {
+  const notes = [];
+  const serverPid = recordedPid("server.pid");
+  if (serverPid) {
+    const command = cmdline(serverPid);
+    if (command.indexOf("server.js") === -1) {
+      notes.push("refused to kill pid " + serverPid + " (not server.js)");
+    } else {
+      notes.push("server " + serverPid + " " + stopPid(serverPid, true));
+    }
+  } else {
+    notes.push("no recorded server");
+  }
+  const browserPid = recordedPid("browser.pid");
+  if (browserPid) {
+    const command = cmdline(browserPid);
+    const profile = path.join(RUN, "chrome-profile");
+    if (command.indexOf("chrome") === -1 || command.indexOf(profile) === -1) {
+      notes.push("refused to kill pid " + browserPid + " (not this run's Chrome)");
+    } else {
+      notes.push("browser " + browserPid + " " + stopPid(browserPid, false));
+    }
+  }
+  if (exists(RUN)) fs.rmSync(RUN, { recursive: true, force: true });
+  const kept = exists(EVIDENCE_ROOT) ? EVIDENCE_ROOT : "(none yet)";
+  notes.push("evidence kept: " + kept);
+  console.log(notes.join("\n"));
+}
+
+function chromePath() {
+  const candidates = [
+    process.env.CHROME_PATH,
+    "/usr/bin/google-chrome",
+    "/usr/bin/google-chrome-stable",
+    "/usr/local/bin/google-chrome"
+  ].filter(Boolean);
+  for (let i = 0; i < candidates.length; i += 1) {
+    if (exists(candidates[i])) return candidates[i];
+  }
+  return "";
+}
+
+function loadPuppeteer() {
+  try {
+    return require("puppeteer-core");
+  } catch (err) {
+    console.error("puppeteer-core is not installed for the helper.");
+    console.error("Run: npm install --prefix .cursor/skills/verify-motorhome-payload/helpers");
+    process.exit(1);
+  }
+}
+
+async function openBrowser() {
+  const puppeteer = loadPuppeteer();
+  const executablePath = chromePath();
+  if (!executablePath) {
+    console.error("Google Chrome was not found. Set CHROME_PATH.");
+    process.exit(1);
+  }
+  const profile = path.join(RUN, "chrome-profile");
+  fs.rmSync(profile, { recursive: true, force: true });
+  fs.mkdirSync(profile, { recursive: true });
+  const browser = await puppeteer.launch({
+    executablePath: executablePath,
+    headless: true,
+    userDataDir: profile,
+    args: [
+      "--no-sandbox",
+      "--disable-dev-shm-usage",
+      "--disable-gpu",
+      "--user-data-dir=" + profile
+    ]
+  });
+  const proc = browser.process();
+  if (proc && proc.pid) writeText(path.join(RUN, "browser.pid"), String(proc.pid));
+  return browser;
+}
+
+async function drive(feature) {
+  if (FEATURES.indexOf(feature) === -1) {
+    console.error("Unknown feature: " + (feature || "(none)"));
+    console.error("Use one of: " + FEATURES.join(", "));
+    process.exit(2);
+  }
+  const health = await doctor();
+  const evidence = evidenceDir();
+  if (evidence) writeText(path.join(evidence, "doctor.txt"), health.text);
+  console.log(health.text);
+  if (!health.ok) process.exit(1);
+  const drives = require("./drives");
+  const browser = await openBrowser();
+  let failed = 0;
+  try {
+    failed = await drives.run(feature, {
+      browser: browser,
+      baseUrl: health.url,
+      evidence: path.join(evidence, feature),
+      repo: REPO,
+      missingLog: path.join(RUN, "missing-sizes.jsonl")
+    });
+  } finally {
+    await browser.close().catch(function () {});
+    const browserPid = path.join(RUN, "browser.pid");
+    if (exists(browserPid)) fs.rmSync(browserPid, { force: true });
+  }
+  if (failed) process.exit(1);
+  console.log("drive " + feature + " passed");
+  console.log("evidence: " + path.join(evidence, feature));
+}
+
+async function main() {
+  const command = process.argv[2];
+  if (command === "launch") return launch();
+  if (command === "doctor") {
+    const health = await doctor();
+    const evidence = evidenceDir();
+    if (evidence) writeText(path.join(evidence, "doctor.txt"), health.text);
+    console.log(health.text);
+    process.exit(health.ok ? 0 : 1);
+  }
+  if (command === "cleanup") return cleanup();
+  if (command === "drive") return drive(process.argv[3]);
+  console.error("Usage: verify-motorhome <launch|doctor|drive|cleanup>");
+  console.error("drive features: " + FEATURES.join(", "));
+  process.exit(2);
+}
+
+main().catch(function (err) {
+  console.error(err && err.stack ? err.stack : err);
+  process.exit(1);
+});

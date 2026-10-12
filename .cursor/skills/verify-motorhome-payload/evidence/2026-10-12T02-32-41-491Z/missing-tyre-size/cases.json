@@ -1,0 +1,23 @@
+[
+  {
+    "input": "Uncovered P-metric sidewall 205/55R16 91V",
+    "expected": "We don’t have this size yet",
+    "actual": "We don’t have this size yet",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "Research form is on the page",
+    "expected": "Send this size",
+    "actual": "Send this size",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "Auto-note side effect in the verification log",
+    "expected": "source auto for 205/55R16 91V and email empty",
+    "actual": "source auto for 205/55R16 91V and email empty",
+    "difference": "none",
+    "pass": true
+  }
+]
