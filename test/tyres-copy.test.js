@@ -131,7 +131,7 @@ describe("tyres opt-in restore", function () {
     assert.match(html, /VIN plate \(often axle maximums, not today’s weight\)/);
   });
 
-  it("locks Wayne’s LT-first copy, sticker nudge, AMBER warning, and honest Michelin CP refuse", function () {
+  it("locks the LT-first copy, sticker nudge, AMBER warning, and honest Michelin CP refuse", function () {
     assert.match(html, /Use this for LT tyres, or when the wheels or tyres are different to the originals\./);
     assert.match(html, /Same-size C or CP renewals: use the door sticker or handbook/);
     assert.match(html, /Van axle, wheel and legal limits still win/);

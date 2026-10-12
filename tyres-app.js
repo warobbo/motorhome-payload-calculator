@@ -661,7 +661,6 @@
 
   var capturePrefillKey = "";
   var captureSubmittedKey = "";
-  var captureMailtoTo = "";
   var autoNoteTimer = 0;
   var AUTO_NOTE_STORE = "mh-tyres-autonote-v1";
 
@@ -768,29 +767,8 @@
   function updateMailtoLink() {
     var link = $("captureMailto");
     if (!link) return;
-    if (!captureMailtoTo) {
-      link.hidden = true;
-      return;
-    }
-    var payload = capturePayload();
-    var subject = "Missing tyre size: " + (payload.size || "unknown");
-    var body = [
-      "Missing tyre size (research only — do not invent a pressure).",
-      "",
-      "Tyre size: " + (payload.size || ""),
-      "Load index: " + (payload.loadIndex || "(not given)"),
-      "Speed rating: " + (payload.speedRating || "(not given)"),
-      "Brand / model: " + (payload.brand || "(not given)"),
-      "Sidewall line: " + captureSidewallLine(),
-      "Note: " + (payload.note || "(none)"),
-      "Reply email: " + (payload.email || "(not given)"),
-      "",
-      "We only add sizes from manufacturer databooks."
-    ].join("\n");
-    link.href = "mailto:" + captureMailtoTo +
-      "?subject=" + encodeURIComponent(subject) +
-      "&body=" + encodeURIComponent(body);
-    link.hidden = false;
+    link.hidden = true;
+    link.removeAttribute("href");
   }
 
   function syncCapturePanel() {
@@ -871,14 +849,7 @@
   }
 
   function showMailtoFallback(message) {
-    if (!captureMailtoTo) {
-      updateMailtoLink();
-    }
-    if (captureMailtoTo) {
-      $("captureMailto").hidden = false;
-      setCaptureStatus(message + " You can email the same note instead.", true);
-      return;
-    }
+    updateMailtoLink();
     setCaptureStatus(message + " Copy the sidewall line if you want to send it yourself.", true);
   }
 
@@ -904,7 +875,6 @@
       });
     }).then(function (out) {
       btn.disabled = false;
-      if (out.data && out.data.mailto) captureMailtoTo = out.data.mailto;
       if (out.res.ok && out.data && out.data.ok) {
         captureSubmittedKey = capturePrefillKey;
         $("missingSizeForm").hidden = true;
@@ -917,15 +887,6 @@
       btn.disabled = false;
       showMailtoFallback("Could not reach the server.");
     });
-  }
-
-  function loadMailtoConfig() {
-    fetch("/api/missing-size").then(function (res) { return res.json(); }).then(function (data) {
-      if (data && data.mailto) {
-        captureMailtoTo = data.mailto;
-        updateMailtoLink();
-      }
-    }).catch(function () { /* file:// or offline — copy / mailto fallback still works */ });
   }
 
   function bindPair(barId, psiId) {
@@ -1055,7 +1016,6 @@
   decodeInto("sidewall", { sync: true });
   renderAnswers();
   lastKnown = snapshotForm();
-  loadMailtoConfig();
   syncSavedTyresBanner();
   if (!pageLoadSnapshot) setSaveNote("Nothing saved yet.");
   window.requestAnimationFrame(function () {

@@ -21,7 +21,7 @@ const {
   MichelinDb,
   AmberDb,
   detectMaker,
-  WAYNE_EXAMPLE,
+  SAMPLE_LT265,
   getChart,
   suggestChartId,
   resolvePressurePath,
@@ -88,7 +88,7 @@ describe("loadIndexToKg", function () {
 });
 
 describe("parseSidewall", function () {
-  it("decodes Wayne’s General Grabber LT marking and keeps the LT family", function () {
+  it("decodes the General Grabber LT marking and keeps the LT family", function () {
     const a = parseSidewall("LT265/65R17 120/117S");
     const b = parseSidewall("265/65 R17 120/117S");
     const c = parseSidewall("General Grabber LT265/65R17 120/117S");
@@ -491,15 +491,15 @@ describe("coldPressureForAxle", function () {
     assert.equal(coldPressureForAxle({ axleLoadKg: 1600, tyresOnAxle: 0, loadIndex: 109, chartId: "c375" }).error, "tyres");
   });
 
-  it("uses the Continental databook for Wayne’s Grabber, not the C-type ETRTO path", function () {
+  it("uses the Continental databook for the Grabber sample, not the C-type ETRTO path", function () {
     const lt = coldPressureForAxle({
-      sidewall: WAYNE_EXAMPLE.sidewall,
-      axleLoadKg: WAYNE_EXAMPLE.frontAxleKg,
+      sidewall: SAMPLE_LT265.sidewall,
+      axleLoadKg: SAMPLE_LT265.frontAxleKg,
       tyresOnAxle: 2
     });
     const cType = coldPressureForAxle({
       sidewall: "215/70 R15C 109/107 Q",
-      axleLoadKg: WAYNE_EXAMPLE.frontAxleKg,
+      axleLoadKg: SAMPLE_LT265.frontAxleKg,
       tyresOnAxle: 2,
       chartId: "c375"
     });
@@ -584,15 +584,15 @@ describe("LT265/65R17 Continental Databook 2025", function () {
     assert.equal(resolvePressurePath(parseSidewall("265/65 R17 120/117S")).path, "lt-databook");
   });
 
-  it("shows Wayne’s sample as 3.5 bar front and 4.0 bar rear", function () {
+  it("shows the sample as 3.5 bar front and 4.0 bar rear", function () {
     const front = coldPressureForAxle({
-      sidewall: WAYNE_EXAMPLE.sidewall,
-      axleLoadKg: WAYNE_EXAMPLE.frontAxleKg,
+      sidewall: SAMPLE_LT265.sidewall,
+      axleLoadKg: SAMPLE_LT265.frontAxleKg,
       tyresOnAxle: 2
     });
     const rear = coldPressureForAxle({
-      sidewall: WAYNE_EXAMPLE.sidewall,
-      axleLoadKg: WAYNE_EXAMPLE.rearAxleKg,
+      sidewall: SAMPLE_LT265.sidewall,
+      axleLoadKg: SAMPLE_LT265.rearAxleKg,
       tyresOnAxle: 2
     });
     assert.equal(front.bar, 3.5);
@@ -622,14 +622,14 @@ describe("LT265/65R17 Continental Databook 2025", function () {
 
   it("covers 2800 kg Single at 5.5 bar and fails 2801", function () {
     const ok = coldPressureForAxle({
-      sidewall: WAYNE_EXAMPLE.sidewall,
+      sidewall: SAMPLE_LT265.sidewall,
       axleLoadKg: 2800,
       tyresOnAxle: 2
     });
     assert.equal(ok.status, "ok");
     assert.equal(ok.bar, 5.5);
     const fail = coldPressureForAxle({
-      sidewall: WAYNE_EXAMPLE.sidewall,
+      sidewall: SAMPLE_LT265.sidewall,
       axleLoadKg: 2801,
       tyresOnAxle: 2
     });
@@ -1038,15 +1038,15 @@ describe("load index is a separate row", function () {
 });
 
 describe("Continental / General coverage extras", function () {
-  it("keeps Wayne’s Grabber LT265/65R17 120/117 at 3.5 / 4.0 bar", function () {
+  it("keeps the Grabber LT265/65R17 120/117 at 3.5 / 4.0 bar", function () {
     const front = coldPressureForAxle({
-      sidewall: WAYNE_EXAMPLE.sidewall,
-      axleLoadKg: WAYNE_EXAMPLE.frontAxleKg,
+      sidewall: SAMPLE_LT265.sidewall,
+      axleLoadKg: SAMPLE_LT265.frontAxleKg,
       tyresOnAxle: 2
     });
     const rear = coldPressureForAxle({
-      sidewall: WAYNE_EXAMPLE.sidewall,
-      axleLoadKg: WAYNE_EXAMPLE.rearAxleKg,
+      sidewall: SAMPLE_LT265.sidewall,
+      axleLoadKg: SAMPLE_LT265.rearAxleKg,
       tyresOnAxle: 2
     });
     assert.equal(front.bar, 3.5);

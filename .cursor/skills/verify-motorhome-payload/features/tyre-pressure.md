@@ -44,7 +44,7 @@ The brand text General Grabber still resolves this listed size on the GREEN data
 | Click Load an example | Front 3.0 bar / 43.5 PSI. Rear 3.5 bar / 50.8 PSI. Dock `3.0 / 3.5 bar`. Badge contains GREEN. | Filled by `drive tyre-pressure` | | |
 | Converter bar 4.5 | PSI field 65.3 | same evidence file | | |
 
-`lib/tyre-calc.js` `WAYNE_EXAMPLE` is a different size (`LT265/65R17 120/117S`) and is not what the button loads. Do not expect 3.5 bar front / 4.0 bar rear from Load an example.
+`lib/tyre-calc.js` `SAMPLE_LT265` is a different size (`LT265/65R17 120/117S`) and is not what the button loads. Do not expect 3.5 bar front / 4.0 bar rear from Load an example.
 
 ## Gotchas
 

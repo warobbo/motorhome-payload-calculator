@@ -48,10 +48,8 @@ async function handleMissingSize(req, res) {
   }
 
   if (req.method === "GET") {
-    const email = missing.notifyEmail();
     send(res, 200, {
       ok: true,
-      mailto: email || null,
       capture: true
     });
     return;
@@ -92,8 +90,7 @@ async function handleMissingSize(req, res) {
   missing.persistRecord(built.record);
   send(res, 200, {
     ok: true,
-    saved: true,
-    mailto: missing.notifyEmail() || null
+    saved: true
   });
 }
 
