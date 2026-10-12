@@ -1,0 +1,51 @@
+[
+  {
+    "input": "Look up DEMO3500",
+    "expected": "status contains Demo record",
+    "actual": "status contains Demo record",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "DEMO3500 identity",
+    "expected": "Fiat Ducato (2018)",
+    "actual": "Fiat Ducato (2018)",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "DEMO3500 MAM field",
+    "expected": "3500",
+    "actual": "3500",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "DEMO3500 Mass in Service field",
+    "expected": "3080",
+    "actual": "3080",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "DEMO3500 status names the catalogue figure",
+    "expected": "status contains 3080",
+    "actual": "status contains 3080",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "Look up make Fiat, model Ducato, year 2018",
+    "expected": "status contains Fiat Ducato X290",
+    "actual": "status contains Fiat Ducato X290",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "Catalogue Mass in Service field",
+    "expected": "3080",
+    "actual": "3080",
+    "difference": "none",
+    "pass": true
+  }
+]

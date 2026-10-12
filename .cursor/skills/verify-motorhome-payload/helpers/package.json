@@ -1,0 +1,8 @@
+{
+  "name": "verify-motorhome-payload-helpers",
+  "private": true,
+  "description": "Browser driver for the Motorhome Payload verification skill. Not used by the website.",
+  "dependencies": {
+    "puppeteer-core": "24.22.0"
+  }
+}

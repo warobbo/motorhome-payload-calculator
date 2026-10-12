@@ -1,0 +1,10 @@
+pid: 2263
+url: http://127.0.0.1:4183/
+missing-size log: /workspace/.cursor/skills/verify-motorhome-payload/run/missing-sizes.jsonl
+git: fca1cd7a456d881654a0d401a6eabf5e4f907503
+
+Motorhome Payload Calculator ready
+  Local:   http://localhost:4183/
+  Lookup:  POST /api/vehicle-lookup
+  Missing: POST /api/missing-size
+  DVLA:    not configured
