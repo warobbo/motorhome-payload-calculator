@@ -43,6 +43,20 @@ function indexHtmlRedirectLocation(reqUrl) {
   return "/" + query;
 }
 
+function hasDotSegment(value) {
+  const parts = String(value || "").split("/");
+  for (let i = 0; i < parts.length; i += 1) {
+    const segment = parts[i];
+    if (segment.startsWith(".") && segment !== "." && segment !== "..") return true;
+  }
+  return false;
+}
+
+function notFound(res) {
+  res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
+  res.end("Not found");
+}
+
 const server = http.createServer((req, res) => {
   const urlPath = decodeURIComponent((req.url || "/").split("?")[0]);
 
@@ -69,6 +83,11 @@ const server = http.createServer((req, res) => {
   const requested = path.normalize(
     (urlPath === "/" ? "index.html" : urlPath).replace(/^\/+/, "")
   );
+  if (hasDotSegment(urlPath) || hasDotSegment(requested)) {
+    notFound(res);
+    return;
+  }
+
   let filePath = path.join(ROOT, requested);
 
   if (!filePath.startsWith(ROOT)) {
@@ -77,17 +96,9 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  const baseName = path.basename(filePath);
-  if (baseName.startsWith(".") && baseName !== ".") {
-    res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
-    res.end("Not found");
-    return;
-  }
-
   fs.readFile(filePath, (err, data) => {
     if (err) {
-      res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
-      res.end("Not found");
+      notFound(res);
       return;
     }
     const ext = path.extname(filePath);

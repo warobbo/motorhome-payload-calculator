@@ -49,7 +49,7 @@ describe("sitemap lastmod", function () {
   });
 });
 
-describe("301 /index.html to /", function () {
+describe("static server", function () {
   let child;
   let port;
 
@@ -110,5 +110,72 @@ describe("301 /index.html to /", function () {
     const map = await request(port, "/sitemap.xml");
     assert.equal(map.status, 200);
     assert.match(map.body, /<lastmod>2026-09-15<\/lastmod>/);
+  });
+
+  it("returns 404 for dotfiles and dot-folders without changing public routes", async function () {
+    const hidden = [
+      "/.gitignore",
+      "/.env",
+      "/.env.example",
+      "/.node-version",
+      "/.git/config",
+      "/.git/",
+      "/.cursor/",
+      "/.cursor/skills/verify-motorhome-payload/SKILL.md",
+      "/.cursor/skills/verify-motorhome-payload/helpers/package.json",
+      "/.cursor/skills/verify-motorhome-payload/.gitignore",
+      "/%2eenv",
+      "/%2Egitignore",
+      "/%2ecursor/skills/verify-motorhome-payload/SKILL.md",
+      "/styles.css/../.cursor/skills/verify-motorhome-payload/SKILL.md",
+      "/.cursor/skills/verify-motorhome-payload/SKILL.md?raw=1",
+    ];
+    for (let i = 0; i < hidden.length; i += 1) {
+      const urlPath = hidden[i];
+      const hiddenRes = await request(port, urlPath);
+      assert.equal(hiddenRes.status, 404, urlPath);
+      if (hiddenRes.body !== "Not found") {
+        assert.fail(urlPath + " body was " + hiddenRes.body.length + " bytes");
+      }
+    }
+
+    const setup = await request(port, "/?setup=1");
+    assert.equal(setup.status, 200);
+    assert.match(setup.body, /<h1>Motorhome Payload Calculator<\/h1>/);
+
+    const tyresQuery = await request(port, "/tyres.html?axle=rear");
+    assert.equal(tyresQuery.status, 200);
+    assert.match(tyresQuery.body, /<h1>Motorhome Tyre Pressure<\/h1>/);
+
+    const encodedCss = await request(port, "/styles%2ecss");
+    assert.equal(encodedCss.status, 200, "percent-decoded public asset");
+    assert.equal(encodedCss.body.includes("{"), true);
+
+    const css = await request(port, "/styles.css");
+    assert.equal(css.status, 200);
+    assert.equal(css.body.includes("{"), true);
+
+    const app = await request(port, "/app.js");
+    assert.equal(app.status, 200);
+    assert.equal(app.body.includes("function"), true);
+
+    const robots = await request(port, "/robots.txt");
+    assert.equal(robots.status, 200);
+    assert.equal(robots.body.includes("User-agent"), true);
+
+    const brand = await request(port, "/brand/payload-32.png");
+    assert.equal(brand.status, 200);
+    assert.equal(brand.body === "Not found", false);
+
+    const lookup = await request(port, "/api/vehicle-lookup");
+    assert.equal(lookup.status, 200);
+    const lookupJson = JSON.parse(lookup.body);
+    assert.equal(lookupJson.ok, true);
+    assert.equal(Array.isArray(lookupJson.demoPlates), true);
+
+    const missing = await request(port, "/api/missing-size");
+    assert.equal(missing.status, 200);
+    const missingJson = JSON.parse(missing.body);
+    assert.equal(missingJson.ok, true);
   });
 });

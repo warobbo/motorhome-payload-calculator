@@ -5,7 +5,7 @@ description: Drive the Motorhome Payload Calculator website (payload page and ty
 
 # Verify Motorhome Payload
 
-The user-facing surface is the website. Payload is `index.html` (`/`). Tyres is `tyres.html`. A small Node server (`server.js`, `npm start`) serves those pages and `POST /api/vehicle-lookup` plus `POST /api/missing-size`. Maths runs in the browser. There is no login. Demo plates work without a DVLA key. Do not print `.env`, `DVLA_API_KEY`, or `MOT_API_KEY`.
+The user-facing surface is the website. Payload is `index.html` (`/`). Tyres is `tyres.html`. A small Node server (`server.js`, `npm start`) serves those pages and `POST /api/vehicle-lookup` plus `POST /api/missing-size`. A dotfile or a dot-folder, including anything inside one, is 404. Maths runs in the browser. There is no login. Demo plates work without a DVLA key. Do not print `.env`, `DVLA_API_KEY`, or `MOT_API_KEY`.
 
 Two servers can run if they use different ports. This skill's server is not the user's `npm start` on port 4173. Default verification port is **4183**, or the next free port. Read `run/port` after launch. Do not drive a server this run did not start.
 
@@ -40,9 +40,10 @@ Read-only. It passes only when all of these are true:
 - `GET /` is 200 and contains `<h1>Motorhome Payload Calculator</h1>`
 - `GET /tyres.html` is 200 and contains `<h1>Motorhome Tyre Pressure</h1>`
 - `GET /api/vehicle-lookup` is JSON with `ok: true` and a `demoPlates` array
+- `GET /.gitignore`, `GET /.env`, `GET /.git/config`, and `GET /.cursor/skills/verify-motorhome-payload/SKILL.md` are each 404 with body `Not found`
 - none of those bodies contain `DVLA_API_KEY` or `MOT_API_KEY` if those variables are set
 
-It prints `liveDvla: true` or `liveDvla: false` and never the key. Run doctor before the first drive, and again after a drive that behaved oddly.
+It prints `dot paths: 404`, then `liveDvla: true` or `liveDvla: false`, and never the key. Run doctor before the first drive, and again after a drive that behaved oddly.
 
 ## Drive
 

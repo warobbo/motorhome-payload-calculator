@@ -194,6 +194,23 @@ async function doctor() {
   if (secretInBody(home.body + tyres.body + lookup.body)) {
     return fail("a response contained a secret. Refusing to print it.");
   }
+  const dotPaths = [
+    "/.gitignore",
+    "/.env",
+    "/.git/config",
+    "/.cursor/skills/verify-motorhome-payload/SKILL.md"
+  ];
+  for (let i = 0; i < dotPaths.length; i += 1) {
+    let hidden;
+    try {
+      hidden = await httpGet("http://127.0.0.1:" + port + dotPaths[i]);
+    } catch (err) {
+      return fail("HTTP check failed: " + err.message);
+    }
+    if (hidden.status !== 404 || hidden.body !== "Not found") {
+      return fail("dot path " + dotPaths[i] + " is not a plain 404 (status " + hidden.status + ").");
+    }
+  }
   let lookupJson = null;
   try {
     lookupJson = JSON.parse(lookup.body);
@@ -212,6 +229,7 @@ async function doctor() {
   lines.push("payload h1: Motorhome Payload Calculator");
   lines.push("tyres h1: Motorhome Tyre Pressure");
   lines.push("lookup ok: true");
+  lines.push("dot paths: 404");
   lines.push("liveDvla: " + (lookupJson.liveDvla === true ? "true" : "false"));
   lines.push("demoPlates: " + lookupJson.demoPlates.join(","));
   lines.push("git at launch: " + (head || "unknown"));
