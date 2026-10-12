@@ -69,8 +69,9 @@ Optional Render env vars (Dashboard → Environment — do not commit values):
 
 | Variable | What it does |
 | --- | --- |
-| `MISSING_SIZE_NOTIFY_EMAIL` | Public contact used only for the **Email this instead** mailto fallback if the POST fails |
 | `MISSING_SIZE_LOG_PATH` | JSONL file path if you attach a Render disk. Leave blank on the free web service — the disk is ephemeral, so stdout/Render logs are the store |
+
+A missing-size note is a log line. The site does not email it and does not publish a contact address.
 
 ## Hosting on Render
 

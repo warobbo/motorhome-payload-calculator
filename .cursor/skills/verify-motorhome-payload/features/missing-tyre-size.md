@@ -43,5 +43,5 @@ Goodyear and Yokohama are also refusals (`brand-later`). They are not in the aut
 - The auto note is a real POST. Cleanup deletes `run/missing-sizes.jsonl`. The evidence copy is the proof that remains.
 - Clicking Send posts a second line. The helper stops on the auto note so the run does not double-write.
 - A honeypot value makes the server ignore the note (`ignored: true`) and the panel can still look successful. Leave Website empty.
-- The mailto fallback appears only when the server has `MISSING_SIZE_NOTIFY_EMAIL`. Do not set that for a drive.
+- The Email this instead control stays hidden. The server does not publish a notify address in `/api/missing-size`. Do not set `MISSING_SIZE_NOTIFY_EMAIL` expecting a mailto link.
 - Rate limit is 30 notes per 10 minutes per client. A tight retry loop will get HTTP 429.

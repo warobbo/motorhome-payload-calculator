@@ -8,7 +8,7 @@ const vm = require("node:vm");
 const { parseWeightInput, isMissing } = require("../lib/mass-in-service");
 
 describe("parseWeightInput", function () {
-  it("reads Wayne’s V5 figure", function () {
+  it("reads a V5 figure", function () {
     assert.equal(parseWeightInput(3430), 3430);
     assert.equal(parseWeightInput("3430"), 3430);
     assert.equal(parseWeightInput("3,430"), 3430);

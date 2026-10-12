@@ -237,7 +237,7 @@ describe("payload page identity and honesty", function () {
     assert.equal((html.match(/Find a weighbridge near you/g) || []).length, 1);
   });
 
-  it("locks Wayne’s payload copy: legally, VIN plate path, empty make/year, driver and fuel helpers", function () {
+  it("locks the payload copy: legally, VIN plate path, empty make/year, driver and fuel helpers", function () {
     assert.match(html, /Also from the VIN plate:<\/strong> MAM and front\/rear axle limits \(allowed weights — not today’s load\)\./);
     assert.doesNotMatch(html, /<li><strong>Third best:/);
     assert.match(html, /id="make"[^>]*autocomplete="off"/);

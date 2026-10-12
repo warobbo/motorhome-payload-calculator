@@ -24,7 +24,7 @@ describe("missing-size research intake", function () {
       speedRating: "m",
       brand: "Goodyear Kmax",
       note: "from the sidewall",
-      email: "Wayne@example.com",
+      email: "visitor@example.com",
       bar: 4.5,
       psi: 65
     });
@@ -32,7 +32,7 @@ describe("missing-size research intake", function () {
     assert.equal(built.record.size, "245/70 R19.5 136/134M");
     assert.equal(built.record.loadIndex, "136");
     assert.equal(built.record.speedRating, "M");
-    assert.equal(built.record.email, "wayne@example.com");
+    assert.equal(built.record.email, "visitor@example.com");
     assert.equal(built.record.bar, undefined);
     assert.equal(built.record.psi, undefined);
     assert.equal(built.record.source, "form");
@@ -146,13 +146,28 @@ describe("POST /api/missing-size", function () {
     assert.match(bad.body, /tyre size/);
 
     const prev = process.env.MISSING_SIZE_NOTIFY_EMAIL;
-    process.env.MISSING_SIZE_NOTIFY_EMAIL = "wayne@example.com";
+    const prevPath = process.env.MISSING_SIZE_LOG_PATH;
+    const dest = path.join(os.tmpdir(), "mh-missing-secret-" + Date.now() + ".jsonl");
+    const secret = "notify@example.com";
+    process.env.MISSING_SIZE_NOTIFY_EMAIL = secret;
+    process.env.MISSING_SIZE_LOG_PATH = dest;
     const getRes = mockRes();
     await handleMissingSize(mockReq("GET"), getRes);
     const data = JSON.parse(getRes.body);
     assert.equal(data.ok, true);
-    assert.equal(data.mailto, "wayne@example.com");
+    assert.equal(data.capture, true);
+    assert.equal(Object.prototype.hasOwnProperty.call(data, "mailto"), false);
+    assert.equal(getRes.body.includes(secret), false);
+
+    const postRes = mockRes();
+    await handleMissingSize(mockReq("POST", { size: "205/75 R16C 113R" }), postRes);
+    assert.equal(postRes.statusCode, 200);
+    assert.equal(postRes.body.includes(secret), false);
+    assert.equal(postRes.body.includes("mailto"), false);
     if (prev == null) delete process.env.MISSING_SIZE_NOTIFY_EMAIL;
     else process.env.MISSING_SIZE_NOTIFY_EMAIL = prev;
+    if (prevPath == null) delete process.env.MISSING_SIZE_LOG_PATH;
+    else process.env.MISSING_SIZE_LOG_PATH = prevPath;
+    try { fs.unlinkSync(dest); } catch (err) { /* ignore */ }
   });
 });
