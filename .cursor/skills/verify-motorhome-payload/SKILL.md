@@ -11,7 +11,7 @@ Two servers can run if they use different ports. This skill's server is not the 
 
 Browser state is a throwaway Chrome profile under `run/chrome-profile`. Missing-size notes from this server go to `run/missing-sizes.jsonl`, not `data/missing-sizes.jsonl`.
 
-Update this feature map in the same PR whenever a build changes pages or tools. There is no scheduled or weekly maintain pass.
+Update this feature map in the same PR whenever a build changes pages or tools. A weekly maintain pass runs on Mondays, run by Freddie the Font2's routine. That pass edits only this verify folder, opens at most one PR through the review loop, and stays quiet unless blocked.
 
 ## Launch
 

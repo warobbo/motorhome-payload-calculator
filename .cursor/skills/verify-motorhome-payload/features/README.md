@@ -2,7 +2,7 @@
 
 This directory is the maintained source for verifying the user-facing behaviour of the Motorhome Payload Calculator. Read this index before driving the site, then use the matching feature file as the recipe.
 
-Update this feature map in the same PR whenever a build changes pages or tools. There is no scheduled or weekly maintain pass.
+Update this feature map in the same PR whenever a build changes pages or tools. A weekly maintain pass runs on Mondays, run by Freddie the Font2's routine. That pass edits only this verify folder, opens at most one PR through the review loop, and stays quiet unless blocked.
 
 ## Baseline preconditions
 
