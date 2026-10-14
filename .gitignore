@@ -1,4 +1,6 @@
 .env
+.dev.vars
+.dev.vars.*
 og-image.png
 node_modules/
 data/

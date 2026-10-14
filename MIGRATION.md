@@ -2,7 +2,7 @@
 
 The calculator pages are static files. Demo plates, the van catalogue, and the payload and tyre maths run in the browser. Production does not need a Node server.
 
-`/api/missing-size` on the public site is a Cloudflare Worker. The form reads `window.MISSING_SIZE_ENDPOINT` from `site-config.js`. The publish step writes that file from `MISSING_SIZE_ENDPOINT` when the variable is set. If it is unset, the page posts to `/api/missing-size`, which only the local verification server implements.
+`/api/missing-size` and `/api/vehicle-lookup` on the public site are routes on one Cloudflare Worker. The tyres form reads `window.MISSING_SIZE_ENDPOINT` from `site-config.js`. The payload page reads `window.VEHICLE_LOOKUP_ENDPOINT` from the same file. The publish step writes that file from `MISSING_SIZE_ENDPOINT` and `VEHICLE_LOOKUP_ENDPOINT` when either variable is set. If they are unset, the page uses `/api/missing-size` and `/api/vehicle-lookup`, which only the local verification server implements. If the lookup request fails, the page uses demo plates and the catalogue in the browser.
 
 `scripts/publish-public.sh` copies `scripts/published-files.txt` into `public/`. That allowlist is the HTML, CSS, browser JS, brand images, `robots.txt`, `sitemap.xml`, and `og-image.png`. README, this file, `render.yaml`, the Worker, tests, and dotfiles are not copied. `public/` is not committed.
 
@@ -23,6 +23,7 @@ Do these in order. Do not delete the existing web service.
 
    - `SKIP_INSTALL_DEPS` = `true`
    - `MISSING_SIZE_ENDPOINT` = the Worker URL from step 3, including the path if you add one. Leave it empty until the Worker exists, then set it and redeploy so `site-config.js` points at the Worker.
+   - `VEHICLE_LOOKUP_ENDPOINT` = that same Worker URL plus `/api/vehicle-lookup`. Leave it empty until the secret in step 3 is set, then set it and redeploy. The page posts lookups there.
 
    Redirects / Rewrites:
 
@@ -35,11 +36,25 @@ Do these in order. Do not delete the existing web service.
    npx wrangler deploy
    ```
 
-   Wrangler prints a `*.workers.dev` URL. Put that URL in the static site’s `MISSING_SIZE_ENDPOINT` and redeploy the static site.
+   Wrangler prints a `*.workers.dev` URL. Keep it for the environment variables below.
 
-   The Worker was not deployed from the environment that opened the pull request. `npx wrangler deploy --dry-run` (Wrangler 4) packages the script. `wrangler whoami` was not authenticated, and `wrangler login` is required before a real deploy.
+   The Worker was not deployed from the environment that opened the pull request. `npx wrangler deploy --dry-run` (Wrangler 4) packages the script. `wrangler login` is required before a real deploy.
 
-   `GET` on the Worker returns `{"ok":true,"capture":true}`.
+   Set the DVLA key as a Worker secret. The name is `DVLA_API_KEY`, the same name the Node service uses. The value is not written into this repo, `wrangler.toml`, or the static site. Wrangler prompts for the value and does not print it back:
+
+   ```bash
+   npx wrangler secret put DVLA_API_KEY
+   ```
+
+   Optional, and only if the Node service already has it: `npx wrangler secret put MOT_API_KEY`. That fills the model when DVLA does not. Leave it unset and the lookup still returns make and revenue weight.
+
+   `secret put` publishes a new Worker version. Do this after the first deploy. Then set `MISSING_SIZE_ENDPOINT` to the Worker URL and `VEHICLE_LOOKUP_ENDPOINT` to that URL plus `/api/vehicle-lookup`, and redeploy the static site.
+
+   `GET /api/vehicle-lookup` on the Worker returns `{"ok":true,"liveDvla":true,"demoPlates":[...]}` when `DVLA_API_KEY` is set, and `liveDvla` false when it is not. The JSON never includes the key. `POST` with a registration calls DVLA the same way the Node route does. Demo plates and a make / model / year catalogue row do not need the key. Error statuses match the Node route (`400`, `401`, `404`, `405`, `500`, `502`).
+
+   Browser calls are allowed only from `https://motorhomepayload.co.uk`. Any other `Origin` is refused before DVLA is called. A basic per-IP limit allows 30 lookup requests in 10 minutes on that isolate. The table keeps at most 512 addresses and drops an address once its window expires. It is a guard against a burst, not a global quota.
+
+   `GET` on the Worker root returns `{"ok":true,"capture":true}`.
 
    A filled honeypot field (`website`) returns `{"ok":true,"ignored":true}` and is not logged. A real note is one JSON log line. The response never includes a notify address.
 
@@ -54,10 +69,10 @@ Do these in order. Do not delete the existing web service.
 
 4. **Move the custom domain.** On the new static site, add `motorhomepayload.co.uk`. Remove that domain from the old web service so the hostname follows the static site. Keep the canonical host non-www. `robots.txt` and `sitemap.xml` stay the files in this repo (`Allow: /`, `Disallow: /api/`, and the Sitemap line).
 
-5. **Check the cut-over.** Open `/` and `/tyres.html`. Look up `DEMO3500` and a Fiat Ducato 2018 catalogue row. Open `/robots.txt` and `/sitemap.xml`. On the tyres page, an uncovered sidewall should show “We don’t have this size yet” and the Worker log should gain a line when the endpoint is the Worker URL.
+5. **Check the cut-over.** Open `/` and `/tyres.html`. Look up `DEMO3500` and a Fiat Ducato 2018 catalogue row. Open `/robots.txt` and `/sitemap.xml`. On the tyres page, an uncovered sidewall should show “We don’t have this size yet” and the Worker log should gain a line when the endpoint is the Worker URL. `GET` the lookup URL and confirm `liveDvla` is true and the body has no key. Do not paste a registration into the check notes.
 
 6. **Suspend the old web service.** Dashboard → the Node web service → Suspend. Do not delete it. A suspended service stops the free-tier spin-down `robots.txt` (`Disallow: /`) from answering the hostname once the domain has moved. Leave the service in the account so it can be resumed.
 
 ## Local checks
 
-`npm start` still serves the folder for development and for the verification helper. `npm test` includes the browser lookup fixture, the Worker capture, and the publish allowlist. `npm run build` fills `public/`.
+`npm start` still serves the folder for development and for the verification helper. The Node `/api/vehicle-lookup` route is unchanged. `npm test` includes the browser lookup fixture, the Worker capture, the Worker lookup, and the publish allowlist. `npm run build` fills `public/`.
