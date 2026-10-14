@@ -429,6 +429,22 @@ async function sitePages(ctx) {
   compare(rows, "GET /", "200 and payload h1", home.status === 200 && home.body.indexOf("<h1>Motorhome Payload Calculator</h1>") !== -1 ? "200 and payload h1" : String(home.status));
   compare(rows, "GET /tyres.html", "200 and tyres h1", tyres.status === 200 && tyres.body.indexOf("<h1>Motorhome Tyre Pressure</h1>") !== -1 ? "200 and tyres h1" : String(tyres.status));
   compare(rows, "GET /index.html", "301 to /", redirect.status === 301 && redirect.location === "/" ? "301 to /" : (redirect.status + " " + redirect.location));
+  const robots = await httpGet(origin + "/robots.txt");
+  const robotsLines = String(robots.body || "").split(/\r?\n/).map(function (line) { return line.trim(); }).filter(function (line) {
+    return line && line.charAt(0) !== "#";
+  });
+  const robotsOk = robots.status === 200
+    && robotsLines.indexOf("User-agent: *") !== -1
+    && robotsLines.indexOf("Allow: /") !== -1
+    && robotsLines.indexOf("Disallow: /api/") !== -1
+    && robotsLines.indexOf("Disallow: /") === -1
+    && robotsLines.indexOf("Sitemap: https://motorhomepayload.co.uk/sitemap.xml") !== -1;
+  compare(rows, "GET /robots.txt", "200 allow /, disallow /api/, sitemap", robotsOk ? "200 allow /, disallow /api/, sitemap" : (robots.status + " " + String(robots.body || "").replace(/\s+/g, " ").trim()));
+  const sitemap = await httpGet(origin + "/sitemap.xml");
+  const sitemapOk = sitemap.status === 200
+    && sitemap.body.indexOf("https://motorhomepayload.co.uk/</loc>") !== -1
+    && sitemap.body.indexOf("https://motorhomepayload.co.uk/tyres.html") !== -1;
+  compare(rows, "GET /sitemap.xml", "200 and both public URLs", sitemapOk ? "200 and both public URLs" : String(sitemap.status));
   const opened = await openPage(ctx.browser, ctx.baseUrl);
   try {
     await click(opened.page, 'nav[aria-label="Hub tools"] a[href="tyres.html"]');

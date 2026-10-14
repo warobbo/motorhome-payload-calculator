@@ -9,6 +9,24 @@ const { spawn } = require("node:child_process");
 
 const root = path.join(__dirname, "..");
 const sitemap = fs.readFileSync(path.join(root, "sitemap.xml"), "utf8");
+const robotsFile = fs.readFileSync(path.join(root, "robots.txt"), "utf8");
+
+function robotsLines(text) {
+  return text.split(/\r?\n/).map(function (line) {
+    return line.trim();
+  }).filter(function (line) {
+    return line && line.charAt(0) !== "#";
+  });
+}
+
+function assertCrawlPolicy(text) {
+  const lines = robotsLines(text);
+  assert.equal(lines.includes("User-agent: *"), true);
+  assert.equal(lines.includes("Allow: /"), true);
+  assert.equal(lines.includes("Disallow: /api/"), true);
+  assert.equal(lines.includes("Disallow: /"), false);
+  assert.equal(lines.includes("Sitemap: https://motorhomepayload.co.uk/sitemap.xml"), true);
+}
 
 function request(port, urlPath) {
   return new Promise(function (resolve, reject) {
@@ -37,6 +55,12 @@ function request(port, urlPath) {
     req.end();
   });
 }
+
+describe("robots.txt", function () {
+  it("allows crawling, disallows the API, and names the sitemap", function () {
+    assertCrawlPolicy(robotsFile);
+  });
+});
 
 describe("sitemap lastmod", function () {
   it("dates the homepage and tyres URLs", function () {
@@ -161,7 +185,7 @@ describe("static server", function () {
 
     const robots = await request(port, "/robots.txt");
     assert.equal(robots.status, 200);
-    assert.equal(robots.body.includes("User-agent"), true);
+    assertCrawlPolicy(robots.body);
 
     const brand = await request(port, "/brand/payload-32.png");
     assert.equal(brand.status, 200);
