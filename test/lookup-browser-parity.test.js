@@ -145,12 +145,14 @@ describe("browser lookup matches the server fixture", function () {
     assert.equal(body.ok, true);
   });
 
-  it("keeps the payload page on the browser functions", function () {
+  it("asks the Node route first and falls back to the browser functions", function () {
     const app = fs.readFileSync(path.join(root, "app.js"), "utf8");
     const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
-    assert.match(app, /VehicleLookup\.lookupVehicle/);
+    const apiAt = app.indexOf('fetch("/api/vehicle-lookup"');
+    const browserAt = app.indexOf("VehicleLookup.lookupVehicle");
+    assert.ok(apiAt > 0, "page must call the lookup route");
+    assert.ok(browserAt > apiAt, "browser lookup is the fallback");
     assert.match(app, /VehicleLookup\.lookupByMakeModelYear/);
-    assert.doesNotMatch(app, /\/api\/vehicle-lookup/);
     assert.match(html, /lib\/van-catalogue\.js/);
     assert.match(html, /lib\/vehicle-lookup\.js/);
   });

@@ -78,6 +78,12 @@ describe("missing-size worker", function () {
     return { status: response.status, text: text };
   }
 
+  it("imports the shared module so the upload contains it", function () {
+    const src = fs.readFileSync(path.join(__dirname, "../worker/src/index.js"), "utf8");
+    assert.match(src, /import missing from "\.\.\/\.\.\/lib\/missing-size\.js"/);
+    assert.equal(src.includes("createRequire"), false);
+  });
+
   it("answers GET with the capture flag and no notify address", async function () {
     const out = await callWorker("GET", undefined, {
       MISSING_SIZE_NOTIFY_EMAIL: "notify@example.com",

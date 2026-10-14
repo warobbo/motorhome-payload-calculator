@@ -1,6 +1,6 @@
 # Vehicle lookup
 
-Lookup fills make, year, and a MAM figure. Mass in Service is not on a DVLA record. Demo plates and the catalogue run in the browser from `lib/vehicle-lookup.js` and `lib/van-catalogue.js`. They do not call `/api/vehicle-lookup`. The verification server still answers `GET /api/vehicle-lookup` from those same functions so doctor can read `ok` and `demoPlates`. Make, model, and year can apply a catalogue Mass in Service.
+Lookup fills make, year, and a MAM figure. Mass in Service is not on a DVLA record. On this verification server the page posts to `POST /api/vehicle-lookup`, and that route calls `lib/vehicle-lookup.js` and `lib/van-catalogue.js`. The static site has no such route, so the page calls those same functions in the browser. `GET /api/vehicle-lookup` is what doctor reads for `ok` and `demoPlates`. Make, model, and year can apply a catalogue Mass in Service.
 
 ## Sub-features
 

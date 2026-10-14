@@ -31,7 +31,7 @@ Update this feature map in the same PR whenever a build changes pages or tools. 
 
 ## Pages
 
-- `https://motorhomepayload.co.uk/` and local `/` — payload calculator. Demo plates and the catalogue run in the page. Production publishes `public/` only.
+- `https://motorhomepayload.co.uk/` and local `/` — payload calculator. The live Node host and this server answer lookup on `/api/vehicle-lookup`. The static publish (`public/`) has no API route, so that copy looks up in the page.
 - `https://motorhomepayload.co.uk/tyres.html` and local `/tyres.html` — tyre pressures. The research note posts to `site-config.js` (`/api/missing-size` on this verification server, the Worker URL in production).
 - `/index.html` redirects to `/`
 - `/robots.txt` is the static file `robots.txt`: allow `/`, disallow `/api/`, and a sitemap line. `/sitemap.xml` lists the payload page and the tyres page.

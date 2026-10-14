@@ -1,10 +1,33 @@
 services:
-  # Static site. Render Blueprints express that as type: web and runtime: static.
-  # This does not convert the existing Node web service. Follow MIGRATION.md:
-  # create a new static site, move the domain, then suspend the old service.
+  # Live site. Auto-deploy from main runs this Node service until the domain
+  # moves. Runtime stays Node so / and /api keep working. Do not change this
+  # name or runtime — a Blueprint sync matches the existing service by name.
+  # A Free web service answers /robots.txt with Disallow: / while it is spun down.
+  # That response is Render's, not robots.txt, and it does not start the app.
+  # https://render.com/docs/free#automatic-robotstxt-responses
+  - type: web
+    name: motorhome-payload-calculator
+    runtime: node
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: NODE_ENV
+        value: production
+      - key: DVLA_API_KEY
+        sync: false
+      - key: MOT_API_KEY
+        sync: false
+      - key: MISSING_SIZE_LOG_PATH
+        sync: false
+
+  # New static site. A different name so a sync cannot convert the Node service.
+  # Render Blueprints express a static site as type: web and runtime: static.
   - type: web
     runtime: static
-    name: motorhome-payload-calculator
+    name: motorhome-payload-static
     buildCommand: bash scripts/publish-public.sh
     staticPublishPath: public
     routes:

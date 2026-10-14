@@ -44,16 +44,18 @@ This is an **estimate**. Confirm on a calibrated weighbridge before you treat th
 
 The official DVLA Vehicle Enquiry API returns **make** and **year**, plus **revenue weight** (kg). **Model** and **Mass in Service** are not on the DVLA record. After a live plate lookup the model field stays blank unless MOT history supplies an exact van-maker model — converter brands (Hymer and similar coachbuilts) are never filled with Ducato, Boxer, Relay or Sprinter. Pick the platform from the list if you know it. Mass in Service is cleared so you can enter an empty weighbridge ticket (best) or the V5 figure. You can also choose make, model and year and press **Look up make / model / year** to apply typical catalogue figures (often 3.5 t examples).
 
-Without an API key, these demo plates still work in the browser:
+Without an API key, these demo plates still work:
 
 - `DEMO3500` — Fiat Ducato 3,500 kg
 - `BOXER35` — Peugeot Boxer 3,500 kg
 - `RELAY35` — Citroën Relay 3,500 kg
 - `SPRINT35` — Mercedes-Benz Sprinter 3,500 kg
 
-Live UK plates need a free [DVLA Vehicle Enquiry](https://developer-portal.driver-vehicle-licensing.api.gov.uk/) key. Do not commit a key. The static site does not keep a server-side key.
+Live UK plates need a free [DVLA Vehicle Enquiry](https://developer-portal.driver-vehicle-licensing.api.gov.uk/) key. Do not commit a key.
 
-**In the browser:** open `/?setup=1` (not linked from the public page) and paste a Vehicle Enquiry key. It is stored in this browser only (`localStorage`). A live lookup is sent from that browser to DVLA. The government API may refuse a browser call. Demo plates and the catalogue do not need the key. A key you saved earlier is still used when the setup form is hidden. Optional MOT history key is the same browser-only path.
+**On the current site:** `DVLA_API_KEY` stays on the Node web service. The page posts the lookup to `/api/vehicle-lookup`, which uses that key. Optional `MOT_API_KEY` fills the model when DVLA does not.
+
+**After the static cut-over:** the page uses the same lookup functions in the browser, because that host has no `/api` route. Open `/?setup=1` (not linked from the public page) and paste a Vehicle Enquiry key. It is stored in this browser only (`localStorage`). A live lookup is sent from that browser to DVLA. The government API may refuse a browser call. Demo plates and the catalogue do not need the key. A key you saved earlier is still used when the setup form is hidden. Optional MOT history key is the same browser-only path.
 
 ## Missing tyre sizes
 
@@ -65,10 +67,10 @@ On the static site the same form posts to the Cloudflare Worker in `worker/`. Th
 
 ## Hosting on Render
 
-Production is a static site. `render.yaml` uses `runtime: static` and publishes `public/`. The build command is `bash scripts/publish-public.sh`. Dashboard steps, the Worker deploy, the domain move, and suspending the old web service are in [MIGRATION.md](MIGRATION.md). Do not delete the old web service.
+`render.yaml` keeps the live Node service (`npm start`, so `/api` stays up) and adds a separate static site named `motorhome-payload-static`. That site publishes `public/` with build command `bash scripts/publish-public.sh`. Dashboard steps, the Worker deploy, the domain move, and suspending the old web service are in [MIGRATION.md](MIGRATION.md). Do not delete the old web service.
 
 `npm run build` writes `public/` from `scripts/published-files.txt`. Dotfiles, README, `render.yaml`, and this migration note are not in that directory. `og-image.png` is generated during the build and is gitignored.
 
-`npm start` remains the local preview. It binds `0.0.0.0` and uses `PORT` (default 4173). It is not the production process.
+`npm start` is the live Node process and the local preview. It binds `0.0.0.0` and uses `PORT` (default 4173). It keeps serving pages and `/api` until the domain moves to the static site.
 
 Public URL is [https://motorhomepayload.co.uk](https://motorhomepayload.co.uk) (non-www). Tyres: [https://motorhomepayload.co.uk/tyres.html](https://motorhomepayload.co.uk/tyres.html). `robots.txt`, `sitemap.xml` and `og-image.png` are static files next to `index.html`.

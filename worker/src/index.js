@@ -4,10 +4,9 @@
  * A filled honeypot is ignored. Notify runs only when MISSING_SIZE_NOTIFY_URL
  * is set; otherwise the note is a log line and nothing else.
  */
-import { createRequire } from "node:module";
-
-const require = createRequire(import.meta.url);
-const missing = require("../../lib/missing-size.js");
+// Static import so the Worker bundle includes this module. A runtime
+// require leaves the file off the upload, and the isolate has no repo disk.
+import missing from "../../lib/missing-size.js";
 
 const MAX_BODY = 8192;
 

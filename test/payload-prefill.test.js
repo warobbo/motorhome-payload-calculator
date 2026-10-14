@@ -334,9 +334,9 @@ describe("page wiring", function () {
     const html = fs.readFileSync(path.join(__dirname, "../index.html"), "utf8");
     const app = fs.readFileSync(path.join(__dirname, "../app.js"), "utf8");
     assert.match(html, /lib\/payload-prefill\.js\?v=20260918prefill/);
-    assert.match(html, /app\.js\?v=20260923qa/);
+    assert.match(html, /app\.js\?v=20261014lookup/);
     const prefillAt = html.indexOf("lib/payload-prefill.js");
-    const appAt = html.indexOf("app.js?v=20260923qa");
+    const appAt = html.indexOf("app.js?v=20261014lookup");
     assert.ok(prefillAt > 0 && appAt > prefillAt, "prefill lib should load before app.js");
     assert.match(app, /applyPayloadPrefillToState/);
     assert.match(app, /buildPayloadPrefillHref/);

@@ -85,9 +85,11 @@ describe("static publish allowlist", { concurrency: 1 }, function () {
       "window.MISSING_SIZE_ENDPOINT = \"/api/missing-size\";\n"
     );
     const yaml = fs.readFileSync(path.join(root, "render.yaml"), "utf8");
+    assert.match(yaml, /name: motorhome-payload-calculator\n\s+runtime: node/);
+    assert.match(yaml, /startCommand: npm start/);
+    assert.match(yaml, /name: motorhome-payload-static\n\s+buildCommand: bash scripts\/publish-public\.sh/);
     assert.match(yaml, /runtime: static/);
     assert.match(yaml, /staticPublishPath: public/);
-    assert.match(yaml, /bash scripts\/publish-public\.sh/);
     assert.equal(fs.existsSync(path.join(publicDir, "render.yaml")), false);
   });
 });

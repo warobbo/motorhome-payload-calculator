@@ -12,7 +12,7 @@ Render Blueprints describe a static site as `type: web` with `runtime: static`. 
 
 Do these in order. Do not delete the existing web service.
 
-1. **Create a new static site.** In the Render dashboard, create a Static Site from this repository. Do not convert the existing Node web service: its runtime stays a web service after it is created. If the name `motorhome-payload-calculator` is already the Node service, name the new site something else (for example `motorhome-payload-static`) and keep the build settings below. Do not apply a blueprint sync that would delete the running web service.
+1. **Create a new static site.** `render.yaml` still describes the existing Node service `motorhome-payload-calculator` (`runtime: node`, `npm start`) and adds a second service, `motorhome-payload-static` (`runtime: static`). A Blueprint sync matches by name, so it must not change the Node service's runtime. Syncing can create the static site beside it. If you create the static site by hand instead, use the name `motorhome-payload-static` and the build settings below. Do not convert or delete the running web service.
 
 2. **Build settings** (Dashboard → the new static site → Settings → Build & Deploy). Git deploy does not always apply `render.yaml` to a service that was created by hand. Set both fields:
 

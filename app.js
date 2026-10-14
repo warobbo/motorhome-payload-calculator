@@ -1129,14 +1129,58 @@
       setLookupStatus(defaultLookupHint());
     }
   }
+  function lookupPayloadFromApi(body) {
+    return fetch("/api/vehicle-lookup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    }).then(function (res) { return res.json(); }).then(function (data) {
+      if (!data || typeof data.ok !== "boolean") throw new Error("not-json");
+      return data;
+    });
+  }
+
+  function lookupInBrowser(body) {
+    if (!window.VehicleLookup) throw new Error("missing lookup");
+    if (body.registrationNumber) {
+      return window.VehicleLookup.lookupVehicle({
+        vrm: body.registrationNumber,
+        apiKey: body.apiKey,
+        motApiKey: body.motApiKey
+      });
+    }
+    return window.VehicleLookup.lookupByMakeModelYear({
+      make: body.make,
+      model: body.model,
+      year: body.year
+    });
+  }
+
+  // The live Node service still answers /api/vehicle-lookup, including with the
+  // server DVLA key. Use that response when it is JSON. The static site has no
+  // such route, so the same call falls through to the browser functions.
+  function lookupFromPage(body) {
+    return lookupPayloadFromApi(body).catch(function () {
+      return lookupInBrowser(body);
+    });
+  }
+
   function probeLookupStatus() {
-    try {
-      var api = window.VehicleLookup;
-      var stored = (readStored(DVLA_KEY_STORAGE) || "").trim();
-      var data = api && api.lookupHealth({ liveDvla: !!stored });
-      if (data && data.ok && data.liveDvla) lookupLiveDvla = true;
-    } catch (err) { /* hint stays the offline default */ }
-    applyDefaultLookupHint();
+    fetch("/api/vehicle-lookup")
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        if (data && data.ok && data.liveDvla) lookupLiveDvla = true;
+        applyDefaultLookupHint();
+      })
+      .catch(function () {
+        try {
+          var api = window.VehicleLookup;
+          var stored = (readStored(DVLA_KEY_STORAGE) || "").trim();
+          var data = api && api.lookupHealth({ liveDvla: !!stored });
+          if (data && data.ok && data.liveDvla) lookupLiveDvla = true;
+        } catch (err) { /* hint stays the offline default */ }
+        applyDefaultLookupHint();
+      });
   }
 
   async function lookupRegistration() {
@@ -1149,13 +1193,11 @@
     btn.disabled = true;
     setLookupStatus("Looking up " + vrm.toUpperCase().replace(/\s+/g, "") + "\u2026");
     var keys = lookupKeys();
+    var payload = { registrationNumber: vrm };
+    if (keys.apiKey) payload.apiKey = keys.apiKey;
+    if (keys.motApiKey) payload.motApiKey = keys.motApiKey;
     try {
-      if (!window.VehicleLookup) throw new Error("missing lookup");
-      var data = await window.VehicleLookup.lookupVehicle({
-        vrm: vrm,
-        apiKey: keys.apiKey,
-        motApiKey: keys.motApiKey
-      });
+      var data = await lookupFromPage(payload);
       if (!data.ok || !data.vehicle) {
         var extra = "";
         if (data.yearFromPlate) {
@@ -1233,8 +1275,7 @@
     btn.disabled = true;
     setLookupStatus("Looking up typical weights for " + make + " " + model + (year ? " (" + year + ")" : "") + "\u2026");
     try {
-      if (!window.VehicleLookup) throw new Error("missing lookup");
-      var data = window.VehicleLookup.lookupByMakeModelYear({ make: make, model: model, year: year });
+      var data = await lookupFromPage({ make: make, model: model, year: year });
       if (!data.ok || !data.vehicle) {
         setLookupStatus(data.message || "No typical weights for that van.", "err");
         return;
