@@ -1,0 +1,8 @@
+{
+  "name": "motorhome-payload-missing-size",
+  "private": true,
+  "type": "module",
+  "devDependencies": {
+    "wrangler": "^4.151.0"
+  }
+}

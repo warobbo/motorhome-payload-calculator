@@ -415,7 +415,7 @@
                 <div class="field">
                   <label for="dvlaApiKey">DVLA Vehicle Enquiry API key</label>
                   <input id="dvlaApiKey" type="password" autocomplete="off" spellcheck="false" placeholder="Stored only in this browser">
-                  <span class="hint">For every visitor, set <code>DVLA_API_KEY</code> on the Render web service (Environment). This box is a browser-only fallback, shown with <code>?setup=1</code>. Get a key from the <a href="https://developer-portal.driver-vehicle-licensing.api.gov.uk/" target="_blank" rel="noopener">DVLA developer portal</a>.</span>
+                  <span class="hint">Optional. Stored only in this browser and sent to DVLA from this device. Demo plates and make / model / year work without it. Shown with <code>?setup=1</code>. Get a key from the <a href="https://developer-portal.driver-vehicle-licensing.api.gov.uk/" target="_blank" rel="noopener">DVLA developer portal</a>.</span>
                 </div>
                 <div class="field" style="margin-top:0.55rem">
                   <label for="motApiKey">MOT history API key (optional)</label>
@@ -1044,7 +1044,7 @@
 
     <section class="prose" id="privacy">
       <h2>Privacy</h2>
-      <p>No account and no advertising cookies. Calculator figures stay in this browser’s local storage and are not filled in until you restore them. A registration lookup is sent only to this site’s proxy. We don’t upload your van.</p>
+      <p>No account and no advertising cookies. Calculator figures stay in this browser’s local storage and are not filled in until you restore them. Demo plates and make, model and year stay in this browser. A registration lookup is sent to this site when it can answer it. Otherwise a live lookup is sent to DVLA only if this browser has a key saved. We don’t upload your van.</p>
     </section>
   </main>
 
@@ -1093,6 +1093,8 @@
   <script src="lib/still-need.js?v=20260911amend1"></script>
   <script src="lib/mass-limits.js?v=20260923qa"></script>
   <script src="lib/payload-prefill.js?v=20260918prefill"></script>
-  <script src="app.js?v=20260923qa"></script>
+  <script src="lib/van-catalogue.js?v=20261014static"></script>
+  <script src="lib/vehicle-lookup.js?v=20261014static"></script>
+  <script src="app.js?v=20261014lookup"></script>
 </body>
 </html>

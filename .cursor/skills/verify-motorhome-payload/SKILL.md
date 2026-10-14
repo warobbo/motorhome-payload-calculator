@@ -5,7 +5,7 @@ description: Drive the Motorhome Payload Calculator website (payload page and ty
 
 # Verify Motorhome Payload
 
-The user-facing surface is the website. Payload is `index.html` (`/`). Tyres is `tyres.html`. A small Node server (`server.js`, `npm start`) serves those pages and `POST /api/vehicle-lookup` plus `POST /api/missing-size`. A dotfile or a dot-folder, including anything inside one, is 404. Maths runs in the browser. There is no login. Demo plates work without a DVLA key. Do not print `.env`, `DVLA_API_KEY`, or `MOT_API_KEY`.
+The user-facing surface is the website. Payload is `index.html` (`/`). Tyres is `tyres.html`. Payload maths and tyre maths run in the browser. While this Node server is answering, the payload page posts registration and catalogue lookups to `POST /api/vehicle-lookup` (the same route the live site uses). If that route is missing, the page uses `lib/vehicle-lookup.js` and `lib/van-catalogue.js` instead. The missing-size form posts to `window.MISSING_SIZE_ENDPOINT` (a Cloudflare Worker on the static site). This skill launches a local Node server (`server.js`) that serves those pages, answers `GET /api/vehicle-lookup` for doctor, and appends `POST /api/missing-size` to the verification JSONL. A dotfile or a dot-folder, including anything inside one, is 404. There is no login. Demo plates work without a DVLA key. Do not print `.env`, `DVLA_API_KEY`, or `MOT_API_KEY`.
 
 Two servers can run if they use different ports. This skill's server is not the user's `npm start` on port 4173. Default verification port is **4183**, or the next free port. Read `run/port` after launch. Do not drive a server this run did not start.
 

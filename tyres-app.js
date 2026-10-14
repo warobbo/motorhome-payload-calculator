@@ -695,6 +695,12 @@
     if (el) el.hidden = !visible;
   }
 
+  function missingSizeEndpoint() {
+    var configured = window.MISSING_SIZE_ENDPOINT;
+    if (configured && String(configured).trim()) return String(configured).trim();
+    return "/api/missing-size";
+  }
+
   function postAutoNote(target) {
     if (!target || !String(target.size || "").trim()) return;
     var key = autoNoteKey(target);
@@ -702,7 +708,7 @@
       showAutoNoteLine(true);
       return;
     }
-    fetch("/api/missing-size", {
+    fetch(missingSizeEndpoint(), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -863,7 +869,7 @@
     }
     btn.disabled = true;
     setCaptureStatus("Sending…");
-    fetch("/api/missing-size", {
+    fetch(missingSizeEndpoint(), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)

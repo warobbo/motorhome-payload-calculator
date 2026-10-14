@@ -5,7 +5,7 @@ When the sidewall is outside the published tables, the tyres page shows We donâ€
 ## Sub-features
 
 - `missing-panel` shows the research form for an uncovered size.
-- `missing-auto` posts that size to `/api/missing-size` about 800 ms later, with no email.
+- `missing-auto` posts that size to `window.MISSING_SIZE_ENDPOINT` about 800 ms later, with no email. On this verification server `site-config.js` sets that to `/api/missing-size`. Production sets it to the Cloudflare Worker.
 - `missing-send` is the Send this size button. The helper does not press it.
 
 ## How to get to it (user POV)
@@ -42,6 +42,6 @@ Goodyear and Yokohama are also refusals (`brand-later`). They are not in the aut
 
 - The auto note is a real POST. Cleanup deletes `run/missing-sizes.jsonl`. The evidence copy is the proof that remains.
 - Clicking Send posts a second line. The helper stops on the auto note so the run does not double-write.
-- A honeypot value makes the server ignore the note (`ignored: true`) and the panel can still look successful. Leave Website empty.
-- The Email this instead control stays hidden. The server does not publish a notify address in `/api/missing-size`. Do not set `MISSING_SIZE_NOTIFY_EMAIL` expecting a mailto link.
+- A honeypot value makes the capture ignore the note (`ignored: true`) and the panel can still look successful. Leave Website empty.
+- The Email this instead control stays hidden. The capture does not publish a notify address. The Worker is log-only unless `MISSING_SIZE_NOTIFY_URL` is set. Do not expect a mailto link.
 - Rate limit is 30 notes per 10 minutes per client. A tight retry loop will get HTTP 429.
