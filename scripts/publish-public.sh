@@ -36,11 +36,16 @@ while IFS= read -r rel || [ -n "$rel" ]; do
   expected="${expected}${rel}"$'\n'
 done < "$list"
 
-if [ -n "${MISSING_SIZE_ENDPOINT:-}" ]; then
+if [ -n "${MISSING_SIZE_ENDPOINT:-}" ] || [ -n "${VEHICLE_LOOKUP_ENDPOINT:-}" ]; then
   node -e '
     const fs = require("fs");
-    const endpoint = process.env.MISSING_SIZE_ENDPOINT;
-    fs.writeFileSync(process.argv[1], "window.MISSING_SIZE_ENDPOINT = " + JSON.stringify(endpoint) + ";\n");
+    const missing = process.env.MISSING_SIZE_ENDPOINT || "/api/missing-size";
+    const lookup = process.env.VEHICLE_LOOKUP_ENDPOINT || "/api/vehicle-lookup";
+    const text = [
+      "window.MISSING_SIZE_ENDPOINT = " + JSON.stringify(missing) + ";",
+      "window.VEHICLE_LOOKUP_ENDPOINT = " + JSON.stringify(lookup) + ";"
+    ].join("\n") + "\n";
+    fs.writeFileSync(process.argv[1], text);
   ' "$dest_root/site-config.js"
 fi
 

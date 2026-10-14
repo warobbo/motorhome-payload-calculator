@@ -1,5 +1,7 @@
-# Missing-size research capture for the static payload site.
-# Deploy from this folder. Without notify env vars the Worker only logs.
+# Missing-size capture and /api/vehicle-lookup for the static payload site.
+# Deploy from this folder. Without notify env vars the capture only logs.
+# DVLA_API_KEY and optional MOT_API_KEY are Worker secrets. Do not put them
+# in this file. See MIGRATION.md.
 name = "motorhome-payload-missing-size"
 main = "src/index.js"
 compatibility_date = "2026-10-14"

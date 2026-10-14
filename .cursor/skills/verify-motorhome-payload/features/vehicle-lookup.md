@@ -1,6 +1,6 @@
 # Vehicle lookup
 
-Lookup fills make, year, and a MAM figure. Mass in Service is not on a DVLA record. On this verification server the page posts to `POST /api/vehicle-lookup`, and that route calls `lib/vehicle-lookup.js` and `lib/van-catalogue.js`. The static site has no such route, so the page calls those same functions in the browser. `GET /api/vehicle-lookup` is what doctor reads for `ok` and `demoPlates`. Make, model, and year can apply a catalogue Mass in Service.
+Lookup fills make, year, and a MAM figure. Mass in Service is not on a DVLA record. On this verification server `site-config.js` sets `window.VEHICLE_LOOKUP_ENDPOINT` to `/api/vehicle-lookup`, and the page posts there. That route calls `lib/vehicle-lookup.js` and `lib/van-catalogue.js`. The static site sets the same variable to the Cloudflare Worker route, which calls DVLA with the Worker secret. If that request fails, the page calls those same functions in the browser (demo plates and the catalogue). `GET /api/vehicle-lookup` is what doctor reads for `ok` and `demoPlates`. Make, model, and year can apply a catalogue Mass in Service.
 
 ## Sub-features
 

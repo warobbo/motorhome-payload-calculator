@@ -1129,8 +1129,13 @@
       setLookupStatus(defaultLookupHint());
     }
   }
+  function vehicleLookupEndpoint() {
+    var configured = window.VEHICLE_LOOKUP_ENDPOINT;
+    if (configured && String(configured).trim()) return String(configured).trim();
+    return "/api/vehicle-lookup";
+  }
   function lookupPayloadFromApi(body) {
-    return fetch("/api/vehicle-lookup", {
+    return fetch(vehicleLookupEndpoint(), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body)
@@ -1157,8 +1162,10 @@
   }
 
   // The live Node service still answers /api/vehicle-lookup, including with the
-  // server DVLA key. Use that response when it is JSON. The static site has no
-  // such route, so the same call falls through to the browser functions.
+  // server DVLA key. site-config.js points VEHICLE_LOOKUP_ENDPOINT there.
+  // The static site points the same variable at the Worker. Use that JSON
+  // response when it arrives. If the Worker or route is unavailable, demo
+  // plates and the catalogue run in the browser.
   function lookupFromPage(body) {
     return lookupPayloadFromApi(body).catch(function () {
       return lookupInBrowser(body);
@@ -1166,7 +1173,7 @@
   }
 
   function probeLookupStatus() {
-    fetch("/api/vehicle-lookup")
+    fetch(vehicleLookupEndpoint())
       .then(function (res) { return res.json(); })
       .then(function (data) {
         if (data && data.ok && data.liveDvla) lookupLiveDvla = true;

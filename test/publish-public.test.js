@@ -31,7 +31,10 @@ describe("static publish allowlist", { concurrency: 1 }, function () {
   it("copies only the public calculator files", function () {
     execFileSync("bash", ["scripts/publish-public.sh"], {
       cwd: root,
-      env: Object.assign({}, process.env, { MISSING_SIZE_ENDPOINT: "" }),
+      env: Object.assign({}, process.env, {
+        MISSING_SIZE_ENDPOINT: "",
+        VEHICLE_LOOKUP_ENDPOINT: ""
+      }),
       stdio: "pipe"
     });
     const files = listFiles(publicDir);
@@ -71,18 +74,27 @@ describe("static publish allowlist", { concurrency: 1 }, function () {
     assert.match(fs.readFileSync(path.join(publicDir, "tyres.html"), "utf8"), /site-config\.js/);
   });
 
-  it("writes the worker endpoint only into the published config", function () {
-    const endpoint = "https://motorhome-payload-missing-size.example.workers.dev";
+  it("writes the worker endpoints only into the published config", function () {
+    const missing = "https://motorhome-payload-missing-size.example.workers.dev";
+    const lookup = missing + "/api/vehicle-lookup";
     execFileSync("bash", ["scripts/publish-public.sh"], {
       cwd: root,
-      env: Object.assign({}, process.env, { MISSING_SIZE_ENDPOINT: endpoint }),
+      env: Object.assign({}, process.env, {
+        MISSING_SIZE_ENDPOINT: missing,
+        VEHICLE_LOOKUP_ENDPOINT: lookup
+      }),
       stdio: "pipe"
     });
     const published = fs.readFileSync(path.join(publicDir, "site-config.js"), "utf8");
-    assert.equal(published, "window.MISSING_SIZE_ENDPOINT = " + JSON.stringify(endpoint) + ";\n");
+    assert.equal(published, [
+      "window.MISSING_SIZE_ENDPOINT = " + JSON.stringify(missing) + ";",
+      "window.VEHICLE_LOOKUP_ENDPOINT = " + JSON.stringify(lookup) + ";",
+      ""
+    ].join("\n"));
     assert.equal(
       fs.readFileSync(path.join(root, "site-config.js"), "utf8"),
-      "window.MISSING_SIZE_ENDPOINT = \"/api/missing-size\";\n"
+      "window.MISSING_SIZE_ENDPOINT = \"/api/missing-size\";\n" +
+      "window.VEHICLE_LOOKUP_ENDPOINT = \"/api/vehicle-lookup\";\n"
     );
     const yaml = fs.readFileSync(path.join(root, "render.yaml"), "utf8");
     assert.match(yaml, /name: motorhome-payload-calculator\n\s+runtime: node/);
@@ -90,6 +102,22 @@ describe("static publish allowlist", { concurrency: 1 }, function () {
     assert.match(yaml, /name: motorhome-payload-static\n\s+buildCommand: bash scripts\/publish-public\.sh/);
     assert.match(yaml, /runtime: static/);
     assert.match(yaml, /staticPublishPath: public/);
+    assert.match(yaml, /key: VEHICLE_LOOKUP_ENDPOINT\n\s+sync: false/);
+    assert.match(yaml, /key: DVLA_API_KEY\n\s+sync: false/);
     assert.equal(fs.existsSync(path.join(publicDir, "render.yaml")), false);
+
+    execFileSync("bash", ["scripts/publish-public.sh"], {
+      cwd: root,
+      env: Object.assign({}, process.env, {
+        MISSING_SIZE_ENDPOINT: missing,
+        VEHICLE_LOOKUP_ENDPOINT: ""
+      }),
+      stdio: "pipe"
+    });
+    assert.equal(
+      fs.readFileSync(path.join(publicDir, "site-config.js"), "utf8"),
+      "window.MISSING_SIZE_ENDPOINT = " + JSON.stringify(missing) + ";\n" +
+      "window.VEHICLE_LOOKUP_ENDPOINT = \"/api/vehicle-lookup\";\n"
+    );
   });
 });

@@ -55,7 +55,7 @@ Live UK plates need a free [DVLA Vehicle Enquiry](https://developer-portal.drive
 
 **On the current site:** `DVLA_API_KEY` stays on the Node web service. The page posts the lookup to `/api/vehicle-lookup`, which uses that key. Optional `MOT_API_KEY` fills the model when DVLA does not.
 
-**After the static cut-over:** the page uses the same lookup functions in the browser, because that host has no `/api` route. Open `/?setup=1` (not linked from the public page) and paste a Vehicle Enquiry key. It is stored in this browser only (`localStorage`). A live lookup is sent from that browser to DVLA. The government API may refuse a browser call. Demo plates and the catalogue do not need the key. A key you saved earlier is still used when the setup form is hidden. Optional MOT history key is the same browser-only path.
+**On the static site:** the page posts to `window.VEHICLE_LOOKUP_ENDPOINT` (`site-config.js`). Locally and on the Node service that is `/api/vehicle-lookup`. The publish step can point it at the Worker route `/api/vehicle-lookup`. The Worker calls DVLA with the `DVLA_API_KEY` secret (same name as the Node service, set with Wrangler, never committed). Optional `MOT_API_KEY` is the same kind of secret. If that request fails, the page uses demo plates and the catalogue in the browser. `/?setup=1` (not linked from the public page) still stores a browser-only key for that fallback. A key you saved earlier is still sent when the setup form is hidden.
 
 ## Missing tyre sizes
 

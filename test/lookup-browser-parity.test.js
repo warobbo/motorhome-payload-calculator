@@ -145,14 +145,24 @@ describe("browser lookup matches the server fixture", function () {
     assert.equal(body.ok, true);
   });
 
-  it("asks the Node route first and falls back to the browser functions", function () {
+  it("calls the configured lookup route and falls back to the browser functions", function () {
     const app = fs.readFileSync(path.join(root, "app.js"), "utf8");
     const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
-    const apiAt = app.indexOf('fetch("/api/vehicle-lookup"');
-    const browserAt = app.indexOf("VehicleLookup.lookupVehicle");
-    assert.ok(apiAt > 0, "page must call the lookup route");
-    assert.ok(browserAt > apiAt, "browser lookup is the fallback");
+    const config = fs.readFileSync(path.join(root, "site-config.js"), "utf8");
+    assert.match(config, /window\.VEHICLE_LOOKUP_ENDPOINT = "\/api\/vehicle-lookup";/);
+    assert.match(app, /window\.VEHICLE_LOOKUP_ENDPOINT/);
+    assert.match(app, /return "\/api\/vehicle-lookup"/);
+    const endpointAt = app.indexOf("function vehicleLookupEndpoint");
+    const fetchAt = app.indexOf("fetch(vehicleLookupEndpoint()");
+    const browserAt = app.indexOf("function lookupInBrowser");
+    const fromPage = app.indexOf("function lookupFromPage");
+    assert.ok(endpointAt > 0 && fetchAt > endpointAt, "page must call the lookup route");
+    assert.ok(browserAt > fetchAt && fromPage > browserAt, "browser lookup is the fallback");
+    assert.match(app, /lookupPayloadFromApi\(body\)\.catch/);
     assert.match(app, /VehicleLookup\.lookupByMakeModelYear/);
+    const configAt = html.indexOf("site-config.js");
+    const appAt = html.indexOf("app.js?");
+    assert.ok(configAt > 0 && appAt > configAt, "site-config.js loads before app.js");
     assert.match(html, /lib\/van-catalogue\.js/);
     assert.match(html, /lib\/vehicle-lookup\.js/);
   });

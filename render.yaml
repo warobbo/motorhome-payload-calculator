@@ -39,3 +39,5 @@ services:
         value: "true"
       - key: MISSING_SIZE_ENDPOINT
         sync: false
+      - key: VEHICLE_LOOKUP_ENDPOINT
+        sync: false
