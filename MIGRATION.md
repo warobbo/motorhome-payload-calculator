@@ -52,7 +52,7 @@ Do these in order. Do not delete the existing web service.
 
    `GET /api/vehicle-lookup` on the Worker returns `{"ok":true,"liveDvla":true,"demoPlates":[...]}` when `DVLA_API_KEY` is set, and `liveDvla` false when it is not. The JSON never includes the key. `POST` with a registration calls DVLA the same way the Node route does. Demo plates and a make / model / year catalogue row do not need the key. Error statuses match the Node route (`400`, `401`, `404`, `405`, `500`, `502`).
 
-   Browser calls are allowed only from `https://motorhomepayload.co.uk`. Any other `Origin` is refused before DVLA is called. A basic per-IP limit allows 30 lookup requests in 10 minutes on that isolate. It is a guard against a burst, not a global quota.
+   Browser calls are allowed only from `https://motorhomepayload.co.uk`. Any other `Origin` is refused before DVLA is called. A basic per-IP limit allows 30 lookup requests in 10 minutes on that isolate. The table keeps at most 512 addresses and drops an address once its window expires. It is a guard against a burst, not a global quota.
 
    `GET` on the Worker root returns `{"ok":true,"capture":true}`.
 

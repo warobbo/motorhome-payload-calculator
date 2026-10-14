@@ -320,6 +320,31 @@ describe("vehicle-lookup worker", function () {
     }
     assert.equal(worker.allowVehicleLookup(stamp, 1_000), false);
     assert.equal(worker.allowVehicleLookup(stamp, 1_000 + worker.LOOKUP_WINDOW_MS), true);
+    assert.equal(worker.vehicleLookupBucketCount(), 1);
+  });
+
+  it("keeps the lookup rate-limit table bounded", function () {
+    assert.equal(worker.LOOKUP_BUCKET_CAP, 512);
+    worker.resetVehicleLookupRateLimit();
+    const now = 50_000;
+    const keep = "203.0.113.50";
+    for (let i = 0; i < worker.LOOKUP_BUCKET_CAP - 1; i += 1) {
+      assert.equal(worker.allowVehicleLookup("old-" + i, now), true);
+    }
+    for (let i = 0; i < worker.LOOKUP_RATE_MAX; i += 1) {
+      assert.equal(worker.allowVehicleLookup(keep, now), true);
+    }
+    assert.equal(worker.vehicleLookupBucketCount(), worker.LOOKUP_BUCKET_CAP);
+    assert.equal(worker.allowVehicleLookup(keep, now), false);
+
+    for (let i = 0; i < 40; i += 1) {
+      assert.equal(worker.allowVehicleLookup("new-" + i, now), true);
+    }
+    assert.equal(worker.vehicleLookupBucketCount(), worker.LOOKUP_BUCKET_CAP);
+    assert.equal(worker.allowVehicleLookup(keep, now), false);
+
+    assert.equal(worker.allowVehicleLookup("after-window", now + worker.LOOKUP_WINDOW_MS), true);
+    assert.equal(worker.vehicleLookupBucketCount(), 1);
   });
 
   it("routes lookup and missing-size on the same Worker", async function () {

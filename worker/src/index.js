@@ -154,20 +154,50 @@ export async function handleMissingSize(request, env, ctx) {
 export const LOOKUP_ORIGIN = "https://motorhomepayload.co.uk";
 export const LOOKUP_RATE_MAX = 30;
 export const LOOKUP_WINDOW_MS = 10 * 60 * 1000;
+export const LOOKUP_BUCKET_CAP = 512;
 const lookupBuckets = new Map();
 
 export function resetVehicleLookupRateLimit() {
   lookupBuckets.clear();
 }
 
+export function vehicleLookupBucketCount() {
+  return lookupBuckets.size;
+}
+
+function pruneLookupBuckets(now) {
+  for (const [id, times] of lookupBuckets) {
+    let keep = 0;
+    for (let i = 0; i < times.length; i += 1) {
+      if (now - times[i] < LOOKUP_WINDOW_MS) {
+        times[keep] = times[i];
+        keep += 1;
+      }
+    }
+    if (keep === 0) lookupBuckets.delete(id);
+    else times.length = keep;
+  }
+}
+
 export function allowVehicleLookup(key, nowMs) {
   const now = nowMs || Date.now();
-  const stamp = key || "anon";
-  const list = (lookupBuckets.get(stamp) || []).filter(function (t) {
-    return now - t < LOOKUP_WINDOW_MS;
-  });
-  if (list.length >= LOOKUP_RATE_MAX) return false;
+  const stamp = String(key || "anon").slice(0, 64);
+  pruneLookupBuckets(now);
+  let list = lookupBuckets.get(stamp);
+  if (!list) {
+    while (lookupBuckets.size >= LOOKUP_BUCKET_CAP) {
+      const oldest = lookupBuckets.keys().next().value;
+      lookupBuckets.delete(oldest);
+    }
+    list = [];
+  }
+  if (list.length >= LOOKUP_RATE_MAX) {
+    lookupBuckets.delete(stamp);
+    lookupBuckets.set(stamp, list);
+    return false;
+  }
   list.push(now);
+  lookupBuckets.delete(stamp);
   lookupBuckets.set(stamp, list);
   return true;
 }
