@@ -4,6 +4,7 @@
   "description": "Free UK campervan and motorhome payload calculator for any plated Maximum Authorised Mass (MAM).",
   "scripts": {
     "start": "node server.js",
+    "build": "bash scripts/publish-public.sh",
     "postinstall": "node scripts/write-og-image.js",
     "test": "node --test && node .cursor/skills/verify-motorhome-payload/helpers/scan-public-names.js"
   },

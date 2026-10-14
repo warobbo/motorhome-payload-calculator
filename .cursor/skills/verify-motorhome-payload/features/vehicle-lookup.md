@@ -1,6 +1,6 @@
 # Vehicle lookup
 
-Lookup fills make, year, and a MAM figure. Mass in Service is not on a DVLA record. Demo plates work with no API key. Make, model, and year can apply a catalogue Mass in Service.
+Lookup fills make, year, and a MAM figure. Mass in Service is not on a DVLA record. Demo plates and the catalogue run in the browser from `lib/vehicle-lookup.js` and `lib/van-catalogue.js`. They do not call `/api/vehicle-lookup`. The verification server still answers `GET /api/vehicle-lookup` from those same functions so doctor can read `ok` and `demoPlates`. Make, model, and year can apply a catalogue Mass in Service.
 
 ## Sub-features
 
@@ -38,7 +38,7 @@ From `lib/vehicle-lookup.js` and `lib/van-catalogue.js`: `DEMO3500` is a 2018 Fi
 | Registration DEMO3500 | Status contains Demo record and 3080. Identity Fiat Ducato (2018). MAM field 3500. Mass in Service field 3080. | Filled by `drive vehicle-lookup` | | |
 | Make Fiat, model Ducato, year 2018 | Status contains Fiat Ducato X290. Mass in Service field 3080. | same evidence file | | |
 
-Other demo plates in the server list are `BOXER35`, `RELAY35`, and `SPRINT35`. They are not in the automated drive. Do not invent their Mass in Service: read the matching catalogue row first.
+Other demo plates in `lib/vehicle-lookup.js` are `BOXER35`, `RELAY35`, and `SPRINT35`. They are not in the automated drive. Do not invent their Mass in Service: read the matching catalogue row first.
 
 A live plate is not given an EXPECTED Mass in Service here. DVLA does not supply it, and this drive must not send one.
 

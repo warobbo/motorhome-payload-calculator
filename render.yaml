@@ -1,21 +1,18 @@
 services:
-  # A Free web service answers /robots.txt with Disallow: / while it is spun down.
-  # That response is Render's, not robots.txt, and it does not start the app.
-  # https://render.com/docs/free#automatic-robotstxt-responses
+  # Static site. Render Blueprints express that as type: web and runtime: static.
+  # This does not convert the existing Node web service. Follow MIGRATION.md:
+  # create a new static site, move the domain, then suspend the old service.
   - type: web
+    runtime: static
     name: motorhome-payload-calculator
-    runtime: node
-    buildCommand: npm install
-    startCommand: npm start
-    healthCheckPath: /
+    buildCommand: bash scripts/publish-public.sh
+    staticPublishPath: public
+    routes:
+      - type: redirect
+        source: /index.html
+        destination: /
     envVars:
-      - key: NODE_VERSION
-        value: "22"
-      - key: NODE_ENV
-        value: production
-      - key: DVLA_API_KEY
-        sync: false
-      - key: MOT_API_KEY
-        sync: false
-      - key: MISSING_SIZE_LOG_PATH
+      - key: SKIP_INSTALL_DEPS
+        value: "true"
+      - key: MISSING_SIZE_ENDPOINT
         sync: false

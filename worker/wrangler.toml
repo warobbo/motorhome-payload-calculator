@@ -1,0 +1,12 @@
+# Missing-size research capture for the static payload site.
+# Deploy from this folder. Without notify env vars the Worker only logs.
+name = "motorhome-payload-missing-size"
+main = "src/index.js"
+compatibility_date = "2026-10-14"
+compatibility_flags = ["nodejs_compat"]
+
+[observability]
+enabled = true
+
+[observability.traces]
+enabled = true

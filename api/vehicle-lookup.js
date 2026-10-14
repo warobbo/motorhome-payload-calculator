@@ -1,6 +1,6 @@
 "use strict";
 
-const { lookupVehicle, lookupByMakeModelYear, DEMO_PLATES } = require("../lib/vehicle-lookup");
+const { lookupVehicle, lookupByMakeModelYear, lookupHealth } = require("../lib/vehicle-lookup");
 
 function send(res, status, body) {
   res.statusCode = status;
@@ -63,11 +63,7 @@ async function handleLookup(req, res) {
 
   if (!vrm && !make && !model) {
     if (req.method === "GET") {
-      send(res, 200, {
-        ok: true,
-        liveDvla: !!(process.env.DVLA_API_KEY),
-        demoPlates: DEMO_PLATES,
-      });
+      send(res, 200, lookupHealth());
       return;
     }
     send(res, 400, {

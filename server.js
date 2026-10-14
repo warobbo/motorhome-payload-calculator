@@ -1,6 +1,9 @@
 #!/usr/bin/env node
 /**
- * Tiny static server for the payload calculator, plus /api/vehicle-lookup.
+ * Local static server for the payload calculator.
+ * The pages calculate in the browser. This process still answers
+ * /api/vehicle-lookup (same functions as the page) and /api/missing-size
+ * so verification can record a JSONL line. Production does not run it.
  */
 const http = require("http");
 const fs = require("fs");

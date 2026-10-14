@@ -1130,15 +1130,13 @@
     }
   }
   function probeLookupStatus() {
-    fetch("/api/vehicle-lookup")
-      .then(function (res) { return res.json(); })
-      .then(function (data) {
-        if (data && data.ok && data.liveDvla) lookupLiveDvla = true;
-        applyDefaultLookupHint();
-      })
-      .catch(function () {
-        applyDefaultLookupHint();
-      });
+    try {
+      var api = window.VehicleLookup;
+      var stored = (readStored(DVLA_KEY_STORAGE) || "").trim();
+      var data = api && api.lookupHealth({ liveDvla: !!stored });
+      if (data && data.ok && data.liveDvla) lookupLiveDvla = true;
+    } catch (err) { /* hint stays the offline default */ }
+    applyDefaultLookupHint();
   }
 
   async function lookupRegistration() {
@@ -1151,16 +1149,13 @@
     btn.disabled = true;
     setLookupStatus("Looking up " + vrm.toUpperCase().replace(/\s+/g, "") + "\u2026");
     var keys = lookupKeys();
-    var payload = { registrationNumber: vrm };
-    if (keys.apiKey) payload.apiKey = keys.apiKey;
-    if (keys.motApiKey) payload.motApiKey = keys.motApiKey;
     try {
-      var res = await fetch("/api/vehicle-lookup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
+      if (!window.VehicleLookup) throw new Error("missing lookup");
+      var data = await window.VehicleLookup.lookupVehicle({
+        vrm: vrm,
+        apiKey: keys.apiKey,
+        motApiKey: keys.motApiKey
       });
-      var data = await res.json();
       if (!data.ok || !data.vehicle) {
         var extra = "";
         if (data.yearFromPlate) {
@@ -1175,7 +1170,7 @@
       }
       applyLookup(data.vehicle);
     } catch (err) {
-      setLookupStatus("Lookup needs the site running over http (npm start).", "err");
+      setLookupStatus("Couldn't look up that registration live. Type make, model and year instead.", "err");
     } finally {
       btn.disabled = false;
     }
@@ -1238,19 +1233,15 @@
     btn.disabled = true;
     setLookupStatus("Looking up typical weights for " + make + " " + model + (year ? " (" + year + ")" : "") + "\u2026");
     try {
-      var res = await fetch("/api/vehicle-lookup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ make: make, model: model, year: year })
-      });
-      var data = await res.json();
+      if (!window.VehicleLookup) throw new Error("missing lookup");
+      var data = window.VehicleLookup.lookupByMakeModelYear({ make: make, model: model, year: year });
       if (!data.ok || !data.vehicle) {
         setLookupStatus(data.message || "No typical weights for that van.", "err");
         return;
       }
       applyLookup(data.vehicle);
     } catch (err) {
-      setLookupStatus("Typical-weight lookup needs the site running over http (npm start).", "err");
+      setLookupStatus("No typical weights for that van.", "err");
     } finally {
       btn.disabled = false;
     }
