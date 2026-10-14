@@ -34,6 +34,7 @@ Update this feature map in the same PR whenever a build changes pages or tools. 
 - `https://motorhomepayload.co.uk/` and local `/` — payload calculator
 - `https://motorhomepayload.co.uk/tyres.html` and local `/tyres.html` — tyre pressures
 - `/index.html` redirects to `/`
+- `/robots.txt` is the static file `robots.txt`: allow `/`, disallow `/api/`, and a sitemap line. `/sitemap.xml` lists the payload page and the tyres page.
 - `/privacy` is a section on the payload page (`#privacy`), not a separate route
 - Header Home points at `https://motorhometools.co.uk/`. That site is outside this repo.
 
@@ -45,4 +46,4 @@ Update this feature map in the same PR whenever a build changes pages or tools. 
 - [Tyre pressure](./tyre-pressure.md) — cold inflation from the published tables, plus the bar/PSI converter.
 - [Missing tyre size](./missing-tyre-size.md) — refusal and the research note. No invented pressure.
 - [Saved on this device](./saved-figures.md) — restore and clear for the van and for tyres.
-- [Site pages](./site-pages.md) — the two tools, the `/index.html` redirect, and the header links between them.
+- [Site pages](./site-pages.md) — the two tools, the `/index.html` redirect, the header links between them, and the crawl rules in `/robots.txt`.

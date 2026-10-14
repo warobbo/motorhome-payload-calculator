@@ -1,4 +1,7 @@
 services:
+  # A Free web service answers /robots.txt with Disallow: / while it is spun down.
+  # That response is Render's, not robots.txt, and it does not start the app.
+  # https://render.com/docs/free#automatic-robotstxt-responses
   - type: web
     name: motorhome-payload-calculator
     runtime: node
