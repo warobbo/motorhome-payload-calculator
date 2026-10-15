@@ -65,6 +65,15 @@ describe("go-live legal pages", function () {
     assert.match(cookies, /not written into a cookie/);
   });
 
+  it("names Render as the static host and Cloudflare Workers as the lookup processor", function () {
+    assert.match(privacy, /Render is the host for static hosting/);
+    assert.match(privacy, /Cloudflare Workers is the processor for the lookup proxy/);
+    assert.match(privacy, /writes only a short operational log that is not a list of customers or plates/);
+    assert.match(privacy, /outside the United Kingdom under its published terms/);
+    assert.doesNotMatch(privacy, /does not publish a personal name or an email address/);
+    assert.doesNotMatch(privacy, /mailto:/i);
+  });
+
   it("says there are no tracking cookies and plate lookups use a Worker to reach DVLA", function () {
     assert.match(privacy, /does not use tracking cookies/);
     assert.match(privacy, /Cloudflare Worker/);
@@ -105,6 +114,14 @@ describe("go-live checklist", function () {
     assert.match(read("accessibility.html"), /contact form/);
     assert.doesNotMatch(read("accessibility.html"), /Ask form/);
     assert.doesNotMatch(read("accessibility.html"), /mailto:/i);
+  });
+
+  it("adds the payload apple touch icon on the legal pages and the 404", function () {
+    const icon = '<link rel="apple-touch-icon" sizes="180x180" href="brand/payload-180.png?v=20260915logos2">';
+    [privacy, cookies, terms, read("accessibility.html")].forEach(function (html) {
+      assert.ok(html.includes(icon));
+    });
+    assert.ok(missing.includes('<link rel="apple-touch-icon" sizes="180x180" href="/brand/payload-180.png?v=20260915logos2">'));
   });
 
   it("adds Twitter cards on the privacy, terms, cookies and accessibility pages", function () {

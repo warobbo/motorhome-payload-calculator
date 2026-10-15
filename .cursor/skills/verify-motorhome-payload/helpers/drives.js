@@ -471,6 +471,8 @@ async function sitePages(ctx) {
   const privacyOk = privacy.status === 200
     && privacy.body.indexOf("<h1>Privacy</h1>") !== -1
     && privacy.body.indexOf("Cloudflare Worker") !== -1
+    && privacy.body.indexOf("Render is the host for static hosting") !== -1
+    && privacy.body.indexOf("Cloudflare Workers is the processor for the lookup proxy") !== -1
     && privacy.body.indexOf("DVLA") !== -1
     && privacy.body.indexOf("The controller is Motorhome Payload Calculator") !== -1
     && privacy.body.indexOf("https://ico.org.uk/make-a-complaint/") !== -1
