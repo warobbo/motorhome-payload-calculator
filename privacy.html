@@ -23,6 +23,7 @@
   <link rel="icon" href="/favicon.ico" sizes="32x32">
   <link rel="icon" type="image/svg+xml" href="brand/payload.svg?v=20260915logos2">
   <link rel="icon" type="image/png" sizes="32x32" href="brand/payload-32.png?v=20260915logos2">
+  <link rel="apple-touch-icon" sizes="180x180" href="brand/payload-180.png?v=20260915logos2">
   <link rel="stylesheet" href="styles.css?v=20261015golive">
   <script type="application/ld+json">
   {
@@ -92,12 +93,14 @@
     </ul>
 
     <h2>Who else receives it</h2>
-    <p>The Cloudflare Worker receives a registration lookup and any tyre note. DVLA receives the registration when a live lookup runs. The MOT history service receives it when a model is requested. Cloudflare may process that request outside the United Kingdom under its published terms. DVLA and the MOT service are UK public services.</p>
+    <p>Render is the host for static hosting and serves these pages as files over HTTPS, so it does not receive calculator figures, a registration, or a tyre note.</p>
+    <p>Cloudflare Workers is the processor for the lookup proxy: it receives a registration lookup and any tyre note, asks DVLA, writes only a short operational log that is not a list of customers or plates, and may process that request outside the United Kingdom under its published terms.</p>
+    <p>DVLA receives the registration when a live lookup runs. The MOT history service receives it when a model is requested. DVLA and the MOT service are UK public services.</p>
     <p>We do not sell data, and we do not use an advertising or analytics tag. Links to Motorhome Tools, guides and a weighbridge map leave this site. Those sites have their own notices. This site does not send your calculator figures with those links.</p>
 
     <h2>How long we keep data</h2>
     <p>Figures and any saved key stay in this browser until you clear them or clear this site’s data. We do not hold a second copy of the key.</p>
-    <p>A lookup is not stored as a vehicle profile. The Worker writes a short operational log of the request status. That log is kept only for as long as the host retains logs, and it is not a list of customers or plates.</p>
+    <p>A lookup is not stored as a vehicle profile. The Worker writes a short operational log of the request status. That log is kept only for as long as Cloudflare retains logs, and it is not a list of customers or plates.</p>
     <p>A tyre research note, including an email if you typed one, is a log line kept so the size can be checked against a manufacturer table. It is not a mailing list. Use the contact form if you want a note that included your email removed, and we will do that where the log is still available.</p>
 
     <h2>Your rights</h2>
