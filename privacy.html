@@ -63,12 +63,12 @@
 
     <h2>What stays on this device</h2>
     <p>Payload figures and tyre figures are kept in this browser’s local storage. They are not filled in until you tap Restore. Clearing the site data in your browser removes them. We don’t upload your van or your tyres as a profile.</p>
-    <p>A hidden setup form (<code>?setup=1</code>) can store a DVLA or MOT key in this browser only. You do not need that form. The published site does not put a key in the page.</p>
+    <p>A hidden setup form (<code>?setup=1</code>) can store a DVLA or MOT key in this browser. You do not need that form. The published site does not put a key in the page.</p>
 
     <h2>Plate lookups</h2>
-    <p>When you look up a UK registration, this page sends that registration to a Cloudflare Worker run for Motorhome Payload Calculator. The Worker asks the Driver and Vehicle Licensing Agency (DVLA) and returns make, year and revenue weight to your browser. Your browser does not call DVLA itself, and the lookup does not set a cookie.</p>
+    <p>When you look up a UK registration, this page sends that registration to a Cloudflare Worker run for Motorhome Payload Calculator. The Worker asks the Driver and Vehicle Licensing Agency (DVLA) and returns make, year and revenue weight to your browser. The lookup does not set a cookie.</p>
     <p>DVLA does not supply Mass in Service. Check the VIN plate and your V5 or a weighbridge ticket before you treat a figure as plated weight.</p>
-    <p>Demo plates, and a make, model and year catalogue row, can be answered without DVLA. If the Worker cannot be reached, the page uses those in this browser instead.</p>
+    <p>Demo plates, and a make, model and year catalogue row, can be answered without DVLA. If the Worker cannot be reached, the page uses those in this browser. If a DVLA or MOT key is saved here, a lookup that reaches the Worker sends that key with the registration, and the fallback asks DVLA from this device. A saved MOT key is sent the same way. The server does not keep a copy of either key.</p>
 
     <h2>Tyre notes</h2>
     <p>Nothing you type on the tyre page is sent to the payload lookup. If a size is refused, the size, load index and brand already typed may be posted to the same Cloudflare Worker so a manufacturer table can be checked. You’ll see “We’ve noted this size for research.” The form on that page is optional. If you type an email there, it is sent with the note. We will not email a pressure.</p>

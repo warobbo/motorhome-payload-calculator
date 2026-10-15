@@ -64,10 +64,10 @@ describe("robots.txt", function () {
 
 describe("sitemap lastmod", function () {
   it("dates the homepage and tyres URLs", function () {
-    assert.match(sitemap, /<loc>https:\/\/motorhomepayload\.co\.uk\/<\/loc>\s*<lastmod>2026-09-15<\/lastmod>/);
+    assert.match(sitemap, /<loc>https:\/\/motorhomepayload\.co\.uk\/<\/loc>\s*<lastmod>2026-10-15<\/lastmod>/);
     assert.match(
       sitemap,
-      /<loc>https:\/\/motorhomepayload\.co\.uk\/tyres\.html<\/loc>\s*<lastmod>2026-09-15<\/lastmod>/
+      /<loc>https:\/\/motorhomepayload\.co\.uk\/tyres\.html<\/loc>\s*<lastmod>2026-10-15<\/lastmod>/
     );
     assert.match(
       sitemap,
@@ -146,7 +146,7 @@ describe("static server", function () {
 
     const map = await request(port, "/sitemap.xml");
     assert.equal(map.status, 200);
-    assert.match(map.body, /<lastmod>2026-09-15<\/lastmod>/);
+    assert.match(map.body, /<lastmod>2026-10-15<\/lastmod>/);
     assert.match(map.body, /privacy\.html/);
     assert.match(map.body, /cookies\.html/);
     assert.match(map.body, /terms\.html/);

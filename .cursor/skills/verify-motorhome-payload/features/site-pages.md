@@ -20,7 +20,7 @@ The site the user can open in this repo is the payload tool and the tyres tool. 
 - Footer links repeat Payload and Tyres, leave for Power, Water and Guides, and open Privacy, Cookies and Terms on this site (`privacy.html`, `cookies.html`, `terms.html`).
 - The payload FAQ, a short privacy note, and the guides list are on `/`. The full privacy, cookie and terms notices are their own pages.
 - Crawlers read `/robots.txt` and `/sitemap.xml`. Both are static files next to `index.html`. The server does not generate them. The sitemap lists `/`, `tyres.html`, `privacy.html`, `cookies.html` and `terms.html`.
-- An unknown public path (for example `/no-such-page`) is status 404 and the body is `404.html`. `GET /404.html` is 200 because the file exists. Render’s static host serves that same file automatically for a missing path. A dot path is still plain text `Not found`.
+- An unknown public path (for example `/no-such-page`) is status 404 and the body is `404.html`. `GET /404.html` is 200 because the file exists. Render’s static host serves that same file automatically for a missing path, and the browser keeps the missing address. Links and images in `404.html` are root-absolute (`/tyres.html`, `/styles.css`) so a nested miss such as `/missing/page` still loads the page and can open the tools. A dot path is still plain text `Not found`.
 
 ## Driving it with verify-motorhome
 

@@ -45,6 +45,12 @@ describe("go-live legal pages", function () {
     assert.match(terms, /<h1>Terms<\/h1>/);
     assert.match(privacy, /does not publish a personal name or an email address/);
     assert.match(terms, /do not publish a personal name or an email address/);
+    assert.match(privacy, /sends that key with the registration/);
+    assert.match(privacy, /asks DVLA from this device/);
+    assert.match(privacy, /A saved MOT key is sent the same way/);
+    assert.doesNotMatch(privacy, /does not call DVLA itself/);
+    assert.match(cookies, /send that key with the registration/);
+    assert.match(cookies, /not written into a cookie/);
   });
 
   it("says there are no tracking cookies and plate lookups use a Worker to reach DVLA", function () {
@@ -64,7 +70,11 @@ describe("go-live legal pages", function () {
     assert.match(missing, /<h1>Page not found<\/h1>/);
     assert.match(missing, /name="robots" content="noindex"/);
     assert.match(missing, /class="btn btn-primary" href="\/"/);
-    assert.match(missing, /href="privacy\.html"/);
+    assert.match(missing, /href="\/privacy\.html"/);
+    assert.match(missing, /href="\/styles\.css\?v=20261015a11y"/);
+    assert.match(missing, /src="\/brand\/payload\.svg/);
+    assert.match(missing, /href="\/tyres\.html"/);
+    assert.doesNotMatch(missing, /(?:href|src)="(?![/#]|https?:)[^"]+"/);
   });
 });
 
