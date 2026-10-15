@@ -1,7 +1,23 @@
 /* =========================================================================
    Motorhome Payload Calculator — embedded styles
    Mobile-first, high-contrast, print-friendly
+   Outfit and Fraunces are self-hosted (SIL Open Font License).
+   License text: fonts/OFL-Outfit.txt and fonts/OFL-Fraunces.txt
    ========================================================================= */
+@font-face {
+  font-family: "Outfit";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("fonts/outfit-latin.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Fraunces";
+  font-style: normal;
+  font-weight: 600 700;
+  font-display: swap;
+  src: url("fonts/fraunces-latin.woff2") format("woff2");
+}
 :root {
   --bg: #efe6d6;
   --bg-deep: #e2d4be;
@@ -1150,6 +1166,8 @@ body.doc-page .wrap { flex: 1 0 auto; padding-bottom: 2.5rem; }
   margin: 0.35rem 0 0.45rem;
 }
 .legal h2 { font-family: var(--display); font-size: 1.35rem; margin: 1.4rem 0 0.4rem; }
+.legal ul { margin: 0.4rem 0 0.8rem; padding-left: 1.2rem; }
+.legal li { margin: 0.35rem 0; }
 .legal .updated { color: var(--muted); margin-top: 0; }
 .missing-page { max-width: 36rem; }
 .missing-page .eyebrow { margin-bottom: 0.35rem; }

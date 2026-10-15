@@ -4,7 +4,7 @@ The calculator pages are static files. Demo plates, the van catalogue, and the p
 
 `/api/missing-size` and `/api/vehicle-lookup` on the public site are routes on one Cloudflare Worker. The tyres form reads `window.MISSING_SIZE_ENDPOINT` from `site-config.js`. The payload page reads `window.VEHICLE_LOOKUP_ENDPOINT` from the same file. The publish step writes that file from `MISSING_SIZE_ENDPOINT` and `VEHICLE_LOOKUP_ENDPOINT` when either variable is set. If they are unset, the page uses `/api/missing-size` and `/api/vehicle-lookup`, which only the local verification server implements. If the lookup request fails, the page uses demo plates and the catalogue in the browser.
 
-`scripts/publish-public.sh` copies `scripts/published-files.txt` into `public/`. That allowlist is the HTML, CSS, browser JS, brand images, `robots.txt`, `sitemap.xml`, and `og-image.png`. README, this file, `render.yaml`, the Worker, tests, and dotfiles are not copied. `public/` is not committed.
+`scripts/publish-public.sh` copies `scripts/published-files.txt` into `public/`. That allowlist is the HTML, CSS, browser JS, brand images, self-hosted fonts, `favicon.ico`, `robots.txt`, `sitemap.xml`, and `og-image.png`. README, this file, `render.yaml`, the Worker, tests, and dotfiles are not copied. `public/` is not committed.
 
 Render Blueprints describe a static site as `type: web` with `runtime: static`. There is no separate `type: static`.
 
@@ -28,6 +28,19 @@ Do these in order. Do not delete the existing web service.
    Redirects / Rewrites:
 
    - Source `/index.html` → destination `/` (redirect). The local server already answers that with HTTP 301. The rule is also in `render.yaml` for a site created from the blueprint.
+
+   Headers. `render.yaml` sets these on `motorhome-payload-static` for path `/*`. A static site created by hand does not always take blueprint headers. If service `srv-db7t0v6q1p3s73emg4c0` does not send them after a sync, add the same rules in Dashboard → that static site → Settings → Headers. One rule per header. Path `/*` for every row:
+
+   | Header | Value |
+   | --- | --- |
+   | `Strict-Transport-Security` | `max-age=31536000; includeSubDomains` |
+   | `Content-Security-Policy` | `default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self'; connect-src 'self' https://*.workers.dev https://driver-vehicle-licensing.api.gov.uk https://beta.check-mot.service.gov.uk; upgrade-insecure-requests` |
+   | `X-Frame-Options` | `DENY` |
+   | `Referrer-Policy` | `strict-origin-when-cross-origin` |
+   | `Permissions-Policy` | `accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()` |
+   | `X-Content-Type-Options` | `nosniff` |
+
+   `style-src` allows `'unsafe-inline'` because the calculator pages set a few `style` attributes. `font-src` is `'self'` because Outfit and Fraunces are files on this site. `connect-src` allows the Worker on `workers.dev`. The source `https://*.workers.dev` matches one or more labels, including `name.workers.dev` and `name.account.workers.dev`. A source with two asterisks is not valid CSP, and Chrome ignores it, so it is not listed. The DVLA and MOT hosts are the ones the page calls only when that Worker cannot be reached. `frame-ancestors 'none'` is the same rule as `X-Frame-Options: DENY`.
 
 3. **Deploy the Worker.** From a machine logged into Cloudflare:
 

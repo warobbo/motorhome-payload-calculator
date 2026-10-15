@@ -447,28 +447,45 @@ async function sitePages(ctx) {
     && sitemap.body.indexOf("https://motorhomepayload.co.uk/privacy.html") !== -1
     && sitemap.body.indexOf("https://motorhomepayload.co.uk/cookies.html") !== -1
     && sitemap.body.indexOf("https://motorhomepayload.co.uk/terms.html") !== -1
+    && sitemap.body.indexOf("https://motorhomepayload.co.uk/accessibility.html") !== -1
     && sitemap.body.indexOf("404.html") === -1;
   compare(rows, "GET /sitemap.xml", "200 and the public pages", sitemapOk ? "200 and the public pages" : String(sitemap.status));
   const legalLocal = home.body.indexOf('href="privacy.html"') !== -1
     && home.body.indexOf('href="cookies.html"') !== -1
     && home.body.indexOf('href="terms.html"') !== -1
+    && home.body.indexOf('href="accessibility.html"') !== -1
+    && home.body.indexOf('href="https://motorhometools.co.uk/ask/"') !== -1
     && home.body.indexOf("motorhometools.co.uk/privacy.html") === -1
     && home.body.indexOf("motorhometools.co.uk/cookies.html") === -1
     && home.body.indexOf("motorhometools.co.uk/disclaimer.html") === -1
     && tyres.body.indexOf('href="privacy.html"') !== -1
+    && tyres.body.indexOf('href="accessibility.html"') !== -1
+    && tyres.body.indexOf('href="https://motorhometools.co.uk/ask/"') !== -1
     && tyres.body.indexOf("motorhometools.co.uk/privacy.html") === -1;
-  compare(rows, "Footer legal links", "local privacy, cookies and terms", legalLocal ? "local privacy, cookies and terms" : "off-site or missing");
+  compare(rows, "Footer legal links", "local privacy, cookies, terms, accessibility, contact", legalLocal ? "local privacy, cookies, terms, accessibility, contact" : "off-site or missing");
   const privacy = await httpGet(origin + "/privacy.html");
   const cookies = await httpGet(origin + "/cookies.html");
   const termsPage = await httpGet(origin + "/terms.html");
   const missingFile = await httpGet(origin + "/404.html");
   const missing = await httpGet(origin + "/no-such-page");
-  const privacyOk = privacy.status === 200 && privacy.body.indexOf("<h1>Privacy</h1>") !== -1 && privacy.body.indexOf("Cloudflare Worker") !== -1 && privacy.body.indexOf("DVLA") !== -1;
+  const privacyOk = privacy.status === 200
+    && privacy.body.indexOf("<h1>Privacy</h1>") !== -1
+    && privacy.body.indexOf("Cloudflare Worker") !== -1
+    && privacy.body.indexOf("DVLA") !== -1
+    && privacy.body.indexOf("The controller is Motorhome Payload Calculator") !== -1
+    && privacy.body.indexOf("https://ico.org.uk/make-a-complaint/") !== -1
+    && privacy.body.indexOf("does not publish a personal name or an email address") === -1;
   compare(rows, "GET /privacy.html", "200 Privacy, Worker, DVLA", privacyOk ? "200 Privacy, Worker, DVLA" : String(privacy.status));
   const cookiesOk = cookies.status === 200 && cookies.body.indexOf("<h1>Cookies</h1>") !== -1 && cookies.body.indexOf("does not use tracking cookies") !== -1;
   compare(rows, "GET /cookies.html", "200 Cookies, no tracking cookies", cookiesOk ? "200 Cookies, no tracking cookies" : String(cookies.status));
   const termsOk = termsPage.status === 200 && termsPage.body.indexOf("<h1>Terms</h1>") !== -1;
   compare(rows, "GET /terms.html", "200 Terms", termsOk ? "200 Terms" : String(termsPage.status));
+  const access = await httpGet(origin + "/accessibility.html");
+  const accessOk = access.status === 200 && access.body.indexOf("<h1>Accessibility</h1>") !== -1;
+  compare(rows, "GET /accessibility.html", "200 Accessibility", accessOk ? "200 Accessibility" : String(access.status));
+  const favicon = await httpGet(origin + "/favicon.ico");
+  const faviconOk = favicon.status === 200 && favicon.body.indexOf("\u0000\u0000\u0001\u0000") === 0;
+  compare(rows, "GET /favicon.ico", "200 ICO", faviconOk ? "200 ICO" : String(favicon.status));
   const fileOk = missingFile.status === 200 && missingFile.body.indexOf("<h1>Page not found</h1>") !== -1 && missingFile.body.indexOf("Motorhome Payload Calculator") !== -1;
   compare(rows, "GET /404.html", "200 branded missing page", fileOk ? "200 branded missing page" : String(missingFile.status));
   const missingOk = missing.status === 404 && missing.body.indexOf("<h1>Page not found</h1>") !== -1;
@@ -490,6 +507,20 @@ async function sitePages(ctx) {
     });
     compare(rows, "Footer Privacy link", "Privacy", await text(opened.page, "h1"));
     await shot(opened.page, path.join(dir, "privacy-page.png"));
+    const fontCheck = await opened.page.evaluate(async function () {
+      await document.fonts.ready;
+      const outfit = document.fonts.check("16px Outfit");
+      const fraunces = document.fonts.check("700 32px Fraunces");
+      return outfit && fraunces ? "Outfit and Fraunces" : "missing";
+    });
+    compare(rows, "Self-hosted fonts", "Outfit and Fraunces", fontCheck);
+    await click(opened.page, 'footer.site-footer a[href="accessibility.html"]');
+    await opened.page.waitForFunction(function () {
+      const heading = document.querySelector("h1");
+      return heading && heading.textContent.trim() === "Accessibility";
+    });
+    compare(rows, "Footer Accessibility link", "Accessibility", await text(opened.page, "h1"));
+    await shot(opened.page, path.join(dir, "accessibility-page.png"));
     await opened.page.goto(ctx.baseUrl, { waitUntil: "domcontentloaded" });
     await opened.page.waitForSelector("#lookupBtn");
     await boot(opened.page);
