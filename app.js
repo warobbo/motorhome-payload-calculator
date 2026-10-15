@@ -675,15 +675,18 @@
     }
     root.innerHTML = state.customItems.map(function (item) {
       var kgView = item.kg === "" || item.kg == null ? "" : roundView(item.kg, "weight");
+      var nameId = item.id + "-name";
+      var kgId = item.id + "-kg";
+      var qtyId = item.id + "-qty";
       return '<div class="custom-kit-row" data-kit-id="' + escapeHtml(item.id) + '">' +
-        '<div class="field"><label>Item</label>' +
-        '<input type="text" class="kit-name" maxlength="80" autocomplete="off" placeholder="e.g. extra chairs" value="' + escapeHtml(item.name) + '"></div>' +
-        '<div class="field"><label>Weight each</label>' +
-        '<input type="number" class="kit-kg" inputmode="decimal" min="0" step="0.1" value="' + escapeHtml(kgView) + '"></div>' +
-        '<div class="field"><label>Quantity</label><div class="stepper">' +
-        '<button type="button" class="stepper-btn kit-step" data-step="-1" aria-label="Fewer of this item">\u2212</button>' +
-        '<input type="number" class="kit-qty" inputmode="numeric" min="0" step="1" value="' + escapeHtml(item.qty) + '">' +
-        '<button type="button" class="stepper-btn kit-step" data-step="1" aria-label="More of this item">+</button>' +
+        '<div class="field"><label for="' + escapeHtml(nameId) + '">Item</label>' +
+        '<input id="' + escapeHtml(nameId) + '" type="text" class="kit-name" maxlength="80" autocomplete="off" placeholder="e.g. extra chairs" value="' + escapeHtml(item.name) + '"></div>' +
+        '<div class="field"><label for="' + escapeHtml(kgId) + '">Weight each</label>' +
+        '<input id="' + escapeHtml(kgId) + '" type="number" class="kit-kg" inputmode="decimal" min="0" step="0.1" value="' + escapeHtml(kgView) + '"></div>' +
+        '<div class="field"><label for="' + escapeHtml(qtyId) + '">Quantity</label><div class="stepper">' +
+        '<button type="button" class="stepper-btn kit-step" data-step="-1" aria-label="\u2212 Fewer of this item">\u2212</button>' +
+        '<input id="' + escapeHtml(qtyId) + '" type="number" class="kit-qty" inputmode="numeric" min="0" step="1" value="' + escapeHtml(item.qty) + '">' +
+        '<button type="button" class="stepper-btn kit-step" data-step="1" aria-label="+ More of this item">+</button>' +
         '</div></div>' +
         '<button type="button" class="btn kit-remove" aria-label="Remove ' + escapeHtml(item.name || "custom item") + '">Remove</button>' +
         '</div>';

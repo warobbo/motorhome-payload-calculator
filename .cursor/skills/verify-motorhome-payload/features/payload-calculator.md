@@ -19,6 +19,7 @@ The payload page turns a plated MAM and a van base (Mass in Service, or an empty
 - The results sit in Loaded weight vs MAM (`#results`) and in the bottom dock (`#dockValue`).
 - Presets are the four buttons under Start from a typical van. A selected preset is a soft pine outline (`aria-pressed="true"`). It does not become a second filled button. Look up vehicle stays the only filled call to action.
 - Sections Vehicle base, People & pets, Fluids, Gas bottles, Electrical & solar, and Gear & other hold the inputs. Gas, Electrical, and Gear start closed.
+- Each + or − stepper’s accessible name includes that visible symbol, for example `− Fewer additional adults` and `+ More additional adults`. Custom kit rows use `− Fewer of this item` and `+ More of this item`, and the Item, Weight each and Quantity fields have labels.
 - Metric and Imperial are the unit radios in the header.
 
 ## Driving it with verify-motorhome
