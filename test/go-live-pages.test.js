@@ -43,8 +43,17 @@ describe("go-live legal pages", function () {
     assert.match(privacy, /<h1>Privacy<\/h1>/);
     assert.match(cookies, /<h1>Cookies<\/h1>/);
     assert.match(terms, /<h1>Terms<\/h1>/);
-    assert.match(privacy, /does not publish a personal name or an email address/);
+    assert.doesNotMatch(privacy, /does not publish a personal name or an email address/);
     assert.match(terms, /do not publish a personal name or an email address/);
+    assert.match(privacy, /The controller is Motorhome Payload Calculator/);
+    assert.match(privacy, /Lawful basis/);
+    assert.match(privacy, /How long we keep data/);
+    assert.match(privacy, /Your rights/);
+    assert.match(privacy, /https:\/\/ico\.org\.uk\/make-a-complaint\//);
+    assert.match(privacy, /https:\/\/motorhometools\.co\.uk\/contact\.html/);
+    assert.match(privacy, /local storage/);
+    assert.match(privacy, /do not load Google Fonts/);
+    assert.doesNotMatch(privacy, /fonts\.googleapis\.com/);
     assert.match(privacy, /sends that key with the registration/);
     assert.match(privacy, /asks DVLA from this device/);
     assert.match(privacy, /A saved MOT key is sent the same way/);
@@ -71,10 +80,69 @@ describe("go-live legal pages", function () {
     assert.match(missing, /name="robots" content="noindex"/);
     assert.match(missing, /class="btn btn-primary" href="\/"/);
     assert.match(missing, /href="\/privacy\.html"/);
-    assert.match(missing, /href="\/styles\.css\?v=20261015a11y"/);
+    assert.match(missing, /href="\/styles\.css\?v=20261015golive"/);
     assert.match(missing, /src="\/brand\/payload\.svg/);
     assert.match(missing, /href="\/tyres\.html"/);
     assert.doesNotMatch(missing, /(?:href|src)="(?![/#]|https?:)[^"]+"/);
+  });
+});
+
+describe("go-live checklist", function () {
+  const pages = [index, tyres, privacy, cookies, terms, missing, read("accessibility.html")];
+
+  it("links Contact and Accessibility from every footer", function () {
+    pages.forEach(function (html) {
+      assert.match(html, /href="(?:\/)?accessibility\.html"/);
+      assert.match(html, /href="https:\/\/motorhometools\.co\.uk\/contact\.html">Contact</);
+    });
+    assert.equal(allow.split(/\n/).includes("accessibility.html"), true);
+    assert.match(sitemap, /https:\/\/motorhomepayload\.co\.uk\/accessibility\.html/);
+    assert.match(read("accessibility.html"), /<h1>Accessibility<\/h1>/);
+    assert.doesNotMatch(read("accessibility.html"), /mailto:/i);
+  });
+
+  it("adds Twitter cards on the privacy, terms and cookies pages", function () {
+    [privacy, cookies, terms].forEach(function (html) {
+      assert.match(html, /<meta name="twitter:card" content="summary_large_image">/);
+      assert.match(html, /<meta name="twitter:title" content="[^"]+">/);
+      assert.match(html, /<meta name="twitter:description" content="[^"]+">/);
+      assert.match(html, /<meta name="twitter:image" content="https:\/\/motorhomepayload\.co\.uk\/og-image\.png">/);
+    });
+  });
+
+  it("serves a real favicon and self-hosts the typefaces", function () {
+    assert.equal(allow.split(/\n/).includes("favicon.ico"), true);
+    const ico = fs.readFileSync(path.join(root, "favicon.ico"));
+    assert.equal(ico.readUInt16LE(0), 0);
+    assert.equal(ico.readUInt16LE(2), 1);
+    assert.ok(ico.readUInt16LE(4) >= 1);
+    pages.forEach(function (html) {
+      assert.match(html, /href="\/favicon\.ico"/);
+      assert.doesNotMatch(html, /fonts\.googleapis\.com/);
+      assert.doesNotMatch(html, /fonts\.gstatic\.com/);
+    });
+    assert.match(read("styles.css"), /fonts\/outfit-latin\.woff2/);
+    assert.match(read("styles.css"), /fonts\/fraunces-latin\.woff2/);
+    assert.equal(allow.split(/\n/).includes("fonts/outfit-latin.woff2"), true);
+    assert.equal(allow.split(/\n/).includes("fonts/fraunces-latin.woff2"), true);
+  });
+
+  it("sets the static-site security headers in the blueprint", function () {
+    const yaml = read("render.yaml");
+    const staticAt = yaml.indexOf("name: motorhome-payload-static");
+    assert.ok(staticAt > 0);
+    const headers = yaml.slice(staticAt);
+    assert.match(headers, /name: Strict-Transport-Security\n\s+value: max-age=31536000; includeSubDomains/);
+    assert.match(headers, /name: Content-Security-Policy/);
+    assert.match(headers, /font-src 'self'/);
+    assert.match(headers, /https:\/\/\*\.workers\.dev/);
+    assert.match(headers, /https:\/\/\*\.\*\.workers\.dev/);
+    assert.match(headers, /frame-ancestors 'none'/);
+    assert.match(headers, /name: X-Frame-Options\n\s+value: DENY/);
+    assert.match(headers, /name: Referrer-Policy\n\s+value: strict-origin-when-cross-origin/);
+    assert.match(headers, /name: Permissions-Policy/);
+    assert.match(headers, /name: X-Content-Type-Options\n\s+value: nosniff/);
+    assert.match(read("MIGRATION.md"), /Settings → Headers/);
   });
 });
 

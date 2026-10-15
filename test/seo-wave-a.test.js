@@ -81,8 +81,12 @@ describe("sitemap lastmod", function () {
       sitemap,
       /<loc>https:\/\/motorhomepayload\.co\.uk\/terms\.html<\/loc>\s*<lastmod>2026-10-15<\/lastmod>/
     );
+    assert.match(
+      sitemap,
+      /<loc>https:\/\/motorhomepayload\.co\.uk\/accessibility\.html<\/loc>\s*<lastmod>2026-10-15<\/lastmod>/
+    );
     assert.doesNotMatch(sitemap, /404\.html/);
-    assert.equal((sitemap.match(/<lastmod>/g) || []).length, 5);
+    assert.equal((sitemap.match(/<lastmod>/g) || []).length, 6);
   });
 });
 

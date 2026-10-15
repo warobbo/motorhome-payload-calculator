@@ -16,9 +16,14 @@
   <meta property="og:image" content="https://motorhomepayload.co.uk/og-image.png">
   <meta property="og:locale" content="en_GB">
   <meta property="og:site_name" content="Motorhome Payload Calculator">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Privacy | Motorhome Payload Calculator">
+  <meta name="twitter:description" content="No account and no tracking cookies. A UK plate lookup is sent through a Cloudflare Worker to DVLA.">
+  <meta name="twitter:image" content="https://motorhomepayload.co.uk/og-image.png">
+  <link rel="icon" href="/favicon.ico" sizes="32x32">
   <link rel="icon" type="image/svg+xml" href="brand/payload.svg?v=20260915logos2">
   <link rel="icon" type="image/png" sizes="32x32" href="brand/payload-32.png?v=20260915logos2">
-  <link rel="stylesheet" href="styles.css?v=20261015a11y">
+  <link rel="stylesheet" href="styles.css?v=20261015golive">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -59,24 +64,48 @@
   <main class="wrap legal" id="notice">
     <h1>Privacy</h1>
     <p class="updated">Last updated 15 October 2026. This notice is published by Motorhome Payload Calculator for <a href="https://motorhomepayload.co.uk/">motorhomepayload.co.uk</a>.</p>
-    <p>There is no account. The site does not use tracking cookies, analytics cookies or advertising cookies. It does not publish a personal name or an email address.</p>
 
-    <h2>What stays on this device</h2>
+    <h2>Who the controller is</h2>
+    <p>The controller is Motorhome Payload Calculator, the brand that publishes this site. This notice covers the payload calculator and the tyre tool. There is no account.</p>
+
+    <h2>How to contact the controller</h2>
+    <p>Write through the contact form at <a href="https://motorhometools.co.uk/contact.html">motorhometools.co.uk/contact.html</a>. Use that form for a privacy request, including access, correction, deletion, or an objection.</p>
+
+    <h2>What we collect</h2>
+    <p>The site does not use tracking cookies, analytics cookies or advertising cookies.</p>
     <p>Payload figures and tyre figures are kept in this browser’s local storage. They are not filled in until you tap Restore. Clearing the site data in your browser removes them. We don’t upload your van or your tyres as a profile.</p>
-    <p>A hidden setup form (<code>?setup=1</code>) can store a DVLA or MOT key in this browser. You do not need that form. The published site does not put a key in the page.</p>
-
-    <h2>Plate lookups</h2>
-    <p>When you look up a UK registration, this page sends that registration to a Cloudflare Worker run for Motorhome Payload Calculator. The Worker asks the Driver and Vehicle Licensing Agency (DVLA) and returns make, year and revenue weight to your browser. The lookup does not set a cookie.</p>
+    <p>A hidden setup form (<code>?setup=1</code>) can store a DVLA or MOT key in this browser’s local storage. You do not need that form. The published site does not put a key in the page. A lookup that reaches the Worker sends that key with the registration. If the Worker cannot be reached, the page asks DVLA from this device. A saved MOT key is sent the same way. The server does not keep a copy of either key.</p>
+    <p>When you look up a UK registration, this page sends that registration to a Cloudflare Worker run for Motorhome Payload Calculator. The Worker asks the Driver and Vehicle Licensing Agency (DVLA) and can ask the MOT history service for a model. It returns make, year and revenue weight to your browser. The lookup does not set a cookie.</p>
     <p>DVLA does not supply Mass in Service. Check the VIN plate and your V5 or a weighbridge ticket before you treat a figure as plated weight.</p>
-    <p>Demo plates, and a make, model and year catalogue row, can be answered without DVLA. If the Worker cannot be reached, the page uses those in this browser. If a DVLA or MOT key is saved here, a lookup that reaches the Worker sends that key with the registration, and the fallback asks DVLA from this device. A saved MOT key is sent the same way. The server does not keep a copy of either key.</p>
-
-    <h2>Tyre notes</h2>
+    <p>Demo plates, and a make, model and year catalogue row, can be answered without DVLA. If the Worker cannot be reached, the page uses those in this browser.</p>
     <p>Nothing you type on the tyre page is sent to the payload lookup. If a size is refused, the size, load index and brand already typed may be posted to the same Cloudflare Worker so a manufacturer table can be checked. You’ll see “We’ve noted this size for research.” The form on that page is optional. If you type an email there, it is sent with the note. We will not email a pressure.</p>
+    <p>Outfit and Fraunces are font files on this site. The pages do not load Google Fonts, and they do not send your visit to a font host.</p>
 
-    <h2>Other sites</h2>
-    <p>Links to Motorhome Tools, guides and a weighbridge map leave this site. Those sites have their own notices. The calculator pages also load typefaces from Google Fonts. This site does not add a tracking cookie to that request.</p>
+    <h2>Lawful basis</h2>
+    <p>UK GDPR needs a lawful basis for each use of personal data.</p>
+    <ul>
+      <li>A registration lookup uses our legitimate interest in answering the lookup you asked for (UK GDPR Article 6(1)(f)). We send the registration so DVLA can return make and revenue weight. You can object.</li>
+      <li>A key you saved is sent only to complete that same lookup, on the same legitimate interest. The tool works without a key.</li>
+      <li>A refused tyre’s size, load index and brand are sent so a manufacturer table can be checked, on legitimate interests. Those fields describe a tyre, not an account.</li>
+      <li>An email on a tyre note is optional. The basis is consent (UK GDPR Article 6(1)(a)), because the note can be sent without it. You can withdraw that consent through the contact form. Withdrawal does not undo a note already used for research before you asked.</li>
+      <li>Calculator figures stay in this browser. We do not receive them as a profile. Running the calculator in your browser is our legitimate interest in providing the tool you opened.</li>
+    </ul>
 
-    <p>See also <a href="cookies.html">Cookies</a> and <a href="terms.html">Terms</a>.</p>
+    <h2>Who else receives it</h2>
+    <p>The Cloudflare Worker receives a registration lookup and any tyre note. DVLA receives the registration when a live lookup runs. The MOT history service receives it when a model is requested. Cloudflare may process that request outside the United Kingdom under its published terms. DVLA and the MOT service are UK public services.</p>
+    <p>We do not sell data, and we do not use an advertising or analytics tag. Links to Motorhome Tools, guides and a weighbridge map leave this site. Those sites have their own notices. This site does not send your calculator figures with those links.</p>
+
+    <h2>How long we keep data</h2>
+    <p>Figures and any saved key stay in this browser until you clear them or clear this site’s data. We do not hold a second copy of the key.</p>
+    <p>A lookup is not stored as a vehicle profile. The Worker writes a short operational log of the request status. That log is kept only for as long as the host retains logs, and it is not a list of customers or plates.</p>
+    <p>A tyre research note, including an email if you typed one, is a log line kept so the size can be checked against a manufacturer table. It is not a mailing list. Ask through the contact form if you want a note that included your email removed, and we will do that where the log is still available.</p>
+
+    <h2>Your rights</h2>
+    <p>Under UK GDPR you can ask to access the personal data we hold, to correct it, to erase it, to restrict how it is used, and to object where the basis is legitimate interests. Where the basis is consent, you can withdraw consent. Where automated processing is based on consent, you can ask for a portable copy. The calculator does not make a legal or similarly significant decision about you.</p>
+    <p>Because figures stay on your device, clearing site data removes that copy. For a lookup or a tyre note, use the <a href="https://motorhometools.co.uk/contact.html">contact form</a>. We will respond to a rights request.</p>
+    <p>You can complain to the Information Commissioner’s Office (ICO), the UK regulator for data protection: <a href="https://ico.org.uk/make-a-complaint/">ico.org.uk/make-a-complaint</a>.</p>
+
+    <p>See also <a href="cookies.html">Cookies</a>, <a href="terms.html">Terms</a> and <a href="accessibility.html">Accessibility</a>.</p>
   </main>
   <footer class="site-footer">
     <div class="footer-inner">
@@ -88,6 +117,8 @@
         <a href="privacy.html" aria-current="page">Privacy</a>
         <a href="cookies.html">Cookies</a>
         <a href="terms.html">Terms</a>
+        <a href="accessibility.html">Accessibility</a>
+        <a href="https://motorhometools.co.uk/contact.html">Contact</a>
       </nav>
       <p class="fine"><a href="privacy.html">Privacy</a>, <a href="cookies.html">Cookies</a> and <a href="terms.html">Terms</a> are on this site.</p>
     </div>

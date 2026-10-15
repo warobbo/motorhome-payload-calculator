@@ -3,7 +3,9 @@ tyres.html
 privacy.html
 cookies.html
 terms.html
+accessibility.html
 404.html
+favicon.ico
 styles.css
 app.js
 tyres-app.js
@@ -19,6 +21,10 @@ brand/tyres.svg
 brand/tyres-32.png
 brand/tyres-180.png
 brand/tyres-512.png
+fonts/fraunces-latin.woff2
+fonts/outfit-latin.woff2
+fonts/OFL-Fraunces.txt
+fonts/OFL-Outfit.txt
 lib/fuel-payload.js
 lib/driver-payload.js
 lib/mass-in-service.js

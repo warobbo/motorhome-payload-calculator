@@ -1,0 +1,135 @@
+[
+  {
+    "input": "GET /",
+    "expected": "200 and payload h1",
+    "actual": "200 and payload h1",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "GET /tyres.html",
+    "expected": "200 and tyres h1",
+    "actual": "200 and tyres h1",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "GET /index.html",
+    "expected": "301 to /",
+    "actual": "301 to /",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "GET /robots.txt",
+    "expected": "200 allow /, disallow /api/, sitemap",
+    "actual": "200 allow /, disallow /api/, sitemap",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "GET /sitemap.xml",
+    "expected": "200 and the public pages",
+    "actual": "200 and the public pages",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "Footer legal links",
+    "expected": "local privacy, cookies, terms, accessibility, contact",
+    "actual": "local privacy, cookies, terms, accessibility, contact",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "GET /privacy.html",
+    "expected": "200 Privacy, Worker, DVLA",
+    "actual": "200 Privacy, Worker, DVLA",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "GET /cookies.html",
+    "expected": "200 Cookies, no tracking cookies",
+    "actual": "200 Cookies, no tracking cookies",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "GET /terms.html",
+    "expected": "200 Terms",
+    "actual": "200 Terms",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "GET /accessibility.html",
+    "expected": "200 Accessibility",
+    "actual": "200 Accessibility",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "GET /favicon.ico",
+    "expected": "200 ICO",
+    "actual": "200 ICO",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "GET /404.html",
+    "expected": "200 branded missing page",
+    "actual": "200 branded missing page",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "GET /no-such-page",
+    "expected": "404 branded missing page",
+    "actual": "404 branded missing page",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "Header Tyres link",
+    "expected": "Motorhome Tyre Pressure",
+    "actual": "Motorhome Tyre Pressure",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "Header Payload link",
+    "expected": "Motorhome Payload Calculator",
+    "actual": "Motorhome Payload Calculator",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "Footer Privacy link",
+    "expected": "Privacy",
+    "actual": "Privacy",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "Self-hosted fonts",
+    "expected": "Outfit and Fraunces",
+    "actual": "Outfit and Fraunces",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "Footer Accessibility link",
+    "expected": "Accessibility",
+    "actual": "Accessibility",
+    "difference": "none",
+    "pass": true
+  },
+  {
+    "input": "Filled call to action",
+    "expected": "lookupBtn",
+    "actual": "lookupBtn",
+    "difference": "none",
+    "pass": true
+  }
+]
