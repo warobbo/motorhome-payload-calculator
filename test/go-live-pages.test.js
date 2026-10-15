@@ -50,8 +50,10 @@ describe("go-live legal pages", function () {
     assert.match(privacy, /How long we keep data/);
     assert.match(privacy, /Your rights/);
     assert.match(privacy, /https:\/\/ico\.org\.uk\/make-a-complaint\//);
-    assert.match(privacy, /https:\/\/motorhometools\.co\.uk\/ask\//);
-    assert.doesNotMatch(privacy, /contact\.html/);
+    assert.match(privacy, /https:\/\/motorhometools\.co\.uk\/contact\.html/);
+    assert.match(privacy, /contact form/);
+    assert.doesNotMatch(privacy, /Ask form/);
+    assert.doesNotMatch(privacy, /motorhometools\.co\.uk\/ask\//);
     assert.match(privacy, /local storage/);
     assert.match(privacy, /do not load Google Fonts/);
     assert.doesNotMatch(privacy, /fonts\.googleapis\.com/);
@@ -94,12 +96,14 @@ describe("go-live checklist", function () {
   it("links Contact and Accessibility from every footer", function () {
     pages.forEach(function (html) {
       assert.match(html, /href="(?:\/)?accessibility\.html"/);
-      assert.match(html, /href="https:\/\/motorhometools\.co\.uk\/ask\/">Contact</);
-      assert.doesNotMatch(html, /contact\.html/);
+      assert.match(html, /href="https:\/\/motorhometools\.co\.uk\/contact\.html">Contact</);
+      assert.doesNotMatch(html, /motorhometools\.co\.uk\/ask\//);
     });
     assert.equal(allow.split(/\n/).includes("accessibility.html"), true);
     assert.match(sitemap, /https:\/\/motorhomepayload\.co\.uk\/accessibility\.html/);
     assert.match(read("accessibility.html"), /<h1>Accessibility<\/h1>/);
+    assert.match(read("accessibility.html"), /contact form/);
+    assert.doesNotMatch(read("accessibility.html"), /Ask form/);
     assert.doesNotMatch(read("accessibility.html"), /mailto:/i);
   });
 
