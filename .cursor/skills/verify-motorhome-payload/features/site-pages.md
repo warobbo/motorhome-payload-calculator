@@ -17,7 +17,7 @@ The site the user can open in this repo is the payload tool and the tyres tool. 
 - Open the site root.
 - Use the header nav labelled Hub tools: Home, Payload, Tyres.
 - Home is `https://motorhometools.co.uk/`. Payload is `/`. Tyres is `tyres.html`.
-- Footer links repeat Payload and Tyres, leave for Power, Water and Guides, and open Privacy, Cookies, Terms and Accessibility on this site (`privacy.html`, `cookies.html`, `terms.html`, `accessibility.html`). Contact opens `https://motorhometools.co.uk/contact.html`.
+- Footer links repeat Payload and Tyres, leave for Power, Water and Guides, and open Privacy, Cookies, Terms and Accessibility on this site (`privacy.html`, `cookies.html`, `terms.html`, `accessibility.html`). Contact opens `https://motorhometools.co.uk/ask/`.
 - The payload FAQ, a short privacy note, and the guides list are on `/`. The full privacy, cookie, terms and accessibility notices are their own pages.
 - Crawlers read `/robots.txt` and `/sitemap.xml`. Both are static files next to `index.html`. The server does not generate them. The sitemap lists `/`, `tyres.html`, `privacy.html`, `cookies.html`, `terms.html` and `accessibility.html`. Every listed URL has `<lastmod>2026-10-15</lastmod>`.
 - An unknown public path (for example `/no-such-page`) is status 404 and the body is `404.html`. `GET /404.html` is 200 because the file exists. Render’s static host serves that same file automatically for a missing path, and the browser keeps the missing address. Links and images in `404.html` are root-absolute (`/tyres.html`, `/styles.css`) so a nested miss such as `/missing/page` still loads the page and can open the tools. A dot path is still plain text `Not found`.
@@ -38,7 +38,7 @@ Preconditions:
 - **Header.** From `/`, click `nav[aria-label="Hub tools"] a[href="tyres.html"]`. The h1 is Motorhome Tyre Pressure. Click `nav[aria-label="Hub tools"] a[href="/"]`. The h1 is Motorhome Payload Calculator.
 - **Robots.** `GET /robots.txt` returns 200. The body includes the lines `User-agent: *`, `Disallow: /api/`, `Allow: /`, and `Sitemap: https://motorhomepayload.co.uk/sitemap.xml`. It has no line that is exactly `Disallow: /`.
 - **Sitemap.** `GET /sitemap.xml` returns 200 and lists `https://motorhomepayload.co.uk/`, `https://motorhomepayload.co.uk/tyres.html`, `privacy.html`, `cookies.html`, `terms.html` and `accessibility.html`. It does not list `404.html`.
-- **Legal pages.** `GET /privacy.html` is 200 and the body contains `<h1>Privacy</h1>`, `Cloudflare Worker`, `DVLA`, `The controller is Motorhome Payload Calculator` and `https://ico.org.uk/make-a-complaint/`. `GET /cookies.html` is 200 and contains `<h1>Cookies</h1>` and `does not use tracking cookies`. `GET /terms.html` is 200 and contains `<h1>Terms</h1>`. `GET /accessibility.html` is 200 and contains `<h1>Accessibility</h1>`. The payload and tyres HTML link `privacy.html`, `cookies.html`, `terms.html` and `accessibility.html`, and Contact points at `https://motorhometools.co.uk/contact.html`. They do not link `motorhometools.co.uk/privacy.html`, `cookies.html` or `disclaimer.html`.
+- **Legal pages.** `GET /privacy.html` is 200 and the body contains `<h1>Privacy</h1>`, `Cloudflare Worker`, `DVLA`, `The controller is Motorhome Payload Calculator` and `https://ico.org.uk/make-a-complaint/`. `GET /cookies.html` is 200 and contains `<h1>Cookies</h1>` and `does not use tracking cookies`. `GET /terms.html` is 200 and contains `<h1>Terms</h1>`. `GET /accessibility.html` is 200 and contains `<h1>Accessibility</h1>`. The payload and tyres HTML link `privacy.html`, `cookies.html`, `terms.html` and `accessibility.html`, and Contact points at `https://motorhometools.co.uk/ask/`. They do not link `motorhometools.co.uk/privacy.html`, `cookies.html` or `disclaimer.html`.
 - **Favicon.** `GET /favicon.ico` is 200 and the body starts with the ICO signature (reserved `0`, type `1`).
 - **Missing page.** `GET /404.html` is 200 and contains `<h1>Page not found</h1>` and `Motorhome Payload Calculator`. `GET /no-such-page` is 404 and contains `<h1>Page not found</h1>`.
 - **Footer.** From `/`, click `footer.site-footer a[href="privacy.html"]`. The h1 is Privacy.
@@ -70,7 +70,7 @@ There is no calculator EXPECTED on this feature. A 200 with the wrong h1 is a fa
 
 ## Gotchas
 
-- Do not follow Home, the guide links, or the footer Contact link for this proof. They are a different site. Contact is `https://motorhometools.co.uk/contact.html`. The footer Privacy, Cookies, Terms and Accessibility links stay on this site; the drive opens Privacy.
+- Do not follow Home, the guide links, or the footer Contact link for this proof. They are a different site. Contact is `https://motorhometools.co.uk/ask/`. The footer Privacy, Cookies, Terms and Accessibility links stay on this site; the drive opens Privacy.
 - Do not follow the 404 page’s Home link.
 - `/?setup=1` is a hidden key form, not a public page to complete.
 - Sitemap URLs use the live host `https://motorhomepayload.co.uk/`. This drive checks the local server, not the live host. The legal URLs are on that same host.

@@ -42,7 +42,7 @@ services:
         value: max-age=31536000; includeSubDomains
       - path: "/*"
         name: Content-Security-Policy
-        value: "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self'; connect-src 'self' https://*.workers.dev https://*.*.workers.dev https://driver-vehicle-licensing.api.gov.uk https://beta.check-mot.service.gov.uk; upgrade-insecure-requests"
+        value: "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self'; connect-src 'self' https://*.workers.dev https://driver-vehicle-licensing.api.gov.uk https://beta.check-mot.service.gov.uk; upgrade-insecure-requests"
       - path: "/*"
         name: X-Frame-Options
         value: DENY

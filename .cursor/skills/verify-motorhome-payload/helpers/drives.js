@@ -454,13 +454,13 @@ async function sitePages(ctx) {
     && home.body.indexOf('href="cookies.html"') !== -1
     && home.body.indexOf('href="terms.html"') !== -1
     && home.body.indexOf('href="accessibility.html"') !== -1
-    && home.body.indexOf('href="https://motorhometools.co.uk/contact.html"') !== -1
+    && home.body.indexOf('href="https://motorhometools.co.uk/ask/"') !== -1
     && home.body.indexOf("motorhometools.co.uk/privacy.html") === -1
     && home.body.indexOf("motorhometools.co.uk/cookies.html") === -1
     && home.body.indexOf("motorhometools.co.uk/disclaimer.html") === -1
     && tyres.body.indexOf('href="privacy.html"') !== -1
     && tyres.body.indexOf('href="accessibility.html"') !== -1
-    && tyres.body.indexOf('href="https://motorhometools.co.uk/contact.html"') !== -1
+    && tyres.body.indexOf('href="https://motorhometools.co.uk/ask/"') !== -1
     && tyres.body.indexOf("motorhometools.co.uk/privacy.html") === -1;
   compare(rows, "Footer legal links", "local privacy, cookies, terms, accessibility, contact", legalLocal ? "local privacy, cookies, terms, accessibility, contact" : "off-site or missing");
   const privacy = await httpGet(origin + "/privacy.html");

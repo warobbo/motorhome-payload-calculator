@@ -50,7 +50,8 @@ describe("go-live legal pages", function () {
     assert.match(privacy, /How long we keep data/);
     assert.match(privacy, /Your rights/);
     assert.match(privacy, /https:\/\/ico\.org\.uk\/make-a-complaint\//);
-    assert.match(privacy, /https:\/\/motorhometools\.co\.uk\/contact\.html/);
+    assert.match(privacy, /https:\/\/motorhometools\.co\.uk\/ask\//);
+    assert.doesNotMatch(privacy, /contact\.html/);
     assert.match(privacy, /local storage/);
     assert.match(privacy, /do not load Google Fonts/);
     assert.doesNotMatch(privacy, /fonts\.googleapis\.com/);
@@ -93,7 +94,8 @@ describe("go-live checklist", function () {
   it("links Contact and Accessibility from every footer", function () {
     pages.forEach(function (html) {
       assert.match(html, /href="(?:\/)?accessibility\.html"/);
-      assert.match(html, /href="https:\/\/motorhometools\.co\.uk\/contact\.html">Contact</);
+      assert.match(html, /href="https:\/\/motorhometools\.co\.uk\/ask\/">Contact</);
+      assert.doesNotMatch(html, /contact\.html/);
     });
     assert.equal(allow.split(/\n/).includes("accessibility.html"), true);
     assert.match(sitemap, /https:\/\/motorhomepayload\.co\.uk\/accessibility\.html/);
@@ -101,8 +103,8 @@ describe("go-live checklist", function () {
     assert.doesNotMatch(read("accessibility.html"), /mailto:/i);
   });
 
-  it("adds Twitter cards on the privacy, terms and cookies pages", function () {
-    [privacy, cookies, terms].forEach(function (html) {
+  it("adds Twitter cards on the privacy, terms, cookies and accessibility pages", function () {
+    [privacy, cookies, terms, read("accessibility.html")].forEach(function (html) {
       assert.match(html, /<meta name="twitter:card" content="summary_large_image">/);
       assert.match(html, /<meta name="twitter:title" content="[^"]+">/);
       assert.match(html, /<meta name="twitter:description" content="[^"]+">/);
@@ -135,8 +137,11 @@ describe("go-live checklist", function () {
     assert.match(headers, /name: Strict-Transport-Security\n\s+value: max-age=31536000; includeSubDomains/);
     assert.match(headers, /name: Content-Security-Policy/);
     assert.match(headers, /font-src 'self'/);
-    assert.match(headers, /https:\/\/\*\.workers\.dev/);
-    assert.match(headers, /https:\/\/\*\.\*\.workers\.dev/);
+    assert.match(headers, /connect-src 'self' https:\/\/\*\.workers\.dev https:\/\/driver-vehicle-licensing\.api\.gov\.uk/);
+    assert.doesNotMatch(headers, /https:\/\/\*\.\*\.workers\.dev/);
+    const csp = headers.match(/name: Content-Security-Policy\n\s+value: "([^"]+)"/);
+    assert.ok(csp, "CSP value");
+    assert.ok(read("MIGRATION.md").includes(csp[1]));
     assert.match(headers, /frame-ancestors 'none'/);
     assert.match(headers, /name: X-Frame-Options\n\s+value: DENY/);
     assert.match(headers, /name: Referrer-Policy\n\s+value: strict-origin-when-cross-origin/);

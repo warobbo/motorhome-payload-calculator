@@ -34,13 +34,13 @@ Do these in order. Do not delete the existing web service.
    | Header | Value |
    | --- | --- |
    | `Strict-Transport-Security` | `max-age=31536000; includeSubDomains` |
-   | `Content-Security-Policy` | `default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self'; connect-src 'self' https://*.workers.dev https://*.*.workers.dev https://driver-vehicle-licensing.api.gov.uk https://beta.check-mot.service.gov.uk; upgrade-insecure-requests` |
+   | `Content-Security-Policy` | `default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self'; connect-src 'self' https://*.workers.dev https://driver-vehicle-licensing.api.gov.uk https://beta.check-mot.service.gov.uk; upgrade-insecure-requests` |
    | `X-Frame-Options` | `DENY` |
    | `Referrer-Policy` | `strict-origin-when-cross-origin` |
    | `Permissions-Policy` | `accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()` |
    | `X-Content-Type-Options` | `nosniff` |
 
-   `style-src` allows `'unsafe-inline'` because the calculator pages set a few `style` attributes. `font-src` is `'self'` because Outfit and Fraunces are files on this site. `connect-src` allows the Worker on `workers.dev` (one or two labels, such as `name.account.workers.dev`) and the DVLA and MOT hosts the page calls only when that Worker cannot be reached. `frame-ancestors 'none'` is the same rule as `X-Frame-Options: DENY`.
+   `style-src` allows `'unsafe-inline'` because the calculator pages set a few `style` attributes. `font-src` is `'self'` because Outfit and Fraunces are files on this site. `connect-src` allows the Worker on `workers.dev`. The source `https://*.workers.dev` matches one or more labels, including `name.workers.dev` and `name.account.workers.dev`. A source with two asterisks is not valid CSP, and Chrome ignores it, so it is not listed. The DVLA and MOT hosts are the ones the page calls only when that Worker cannot be reached. `frame-ancestors 'none'` is the same rule as `X-Frame-Options: DENY`.
 
 3. **Deploy the Worker.** From a machine logged into Cloudflare:
 
