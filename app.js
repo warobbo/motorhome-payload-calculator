@@ -1311,8 +1311,6 @@
   function setActivePreset(presetId) {
     document.querySelectorAll(".preset-btn").forEach(function (btn) {
       var on = btn.id === presetId;
-      btn.classList.toggle("btn-primary", on);
-      btn.classList.toggle("btn-ghost", btn.id === "preset-reset" && !on);
       btn.setAttribute("aria-pressed", on ? "true" : "false");
     });
   }

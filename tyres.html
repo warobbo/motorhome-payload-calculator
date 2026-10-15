@@ -136,8 +136,8 @@
 }
   </script>
 
-  <!-- ASSET_VERSION=20260923qa — bump this query on CSS/JS below to force-refresh cached assets. -->
-  <link rel="stylesheet" href="styles.css?v=20260923qa">
+  <!-- ASSET_VERSION=20261015golive — bump this query on CSS/JS below to force-refresh cached assets. -->
+  <link rel="stylesheet" href="styles.css?v=20261015golive">
 </head>
 <body>
   <a class="skip" href="#tyres">Skip to tyre tool</a>
@@ -186,7 +186,7 @@
     <div class="saved-van" id="savedTyresBanner" hidden>
       <p class="saved-van-trust">Saved on this phone only. We don’t upload your tyres.</p>
       <div class="saved-van-actions">
-        <button type="button" class="btn btn-primary" id="restoreTyres">Restore last tyres</button>
+        <button type="button" class="btn" id="restoreTyres">Restore last tyres</button>
         <button type="button" class="btn" id="clearTyres">Clear saved</button>
       </div>
     </div>
@@ -258,7 +258,7 @@
           <span class="hint">Only if useful for a question about this size. We will not email a pressure.</span>
         </div>
         <div class="missing-size-actions">
-          <button type="submit" class="btn btn-primary" id="captureSend">Send this size</button>
+          <button type="submit" class="btn" id="captureSend">Send this size</button>
           <button type="button" class="btn btn-ghost" id="captureCopy">Copy the sidewall line</button>
           <a class="btn btn-ghost" id="captureMailto" hidden href="#">Email this instead</a>
         </div>
@@ -444,7 +444,7 @@
       <div class="body">
         <p class="lede">Optional notepad for the <em>calculated</em> cold pressures. Saved on this phone only.</p>
         <div class="result-actions">
-          <button type="button" class="btn btn-primary" id="copyAnswers">Copy the calculated pressures here</button>
+          <button type="button" class="btn" id="copyAnswers">Copy the calculated pressures here</button>
         </div>
         <h4 class="field-heading">Front</h4>
         <div class="grid-2">
@@ -533,7 +533,7 @@
 
     <section class="prose" id="privacy">
       <h2>Privacy</h2>
-      <p>No account and no advertising cookies. Numbers stay in this browser’s local storage and are not filled in until you restore them. Nothing you type is sent to the payload lookup server. If a size is refused, the size, load index and brand already typed may be posted automatically so we can research a manufacturer table — you’ll see “We’ve noted this size for research.” The form is for an optional extra note or email. We will not email a pressure. We don’t upload your tyres.</p>
+      <p>No account and no tracking or advertising cookies. Numbers stay in this browser’s local storage and are not filled in until you restore them. Nothing you type is sent to the payload lookup server. If a size is refused, the size, load index and brand already typed may be posted automatically so we can research a manufacturer table — you’ll see “We’ve noted this size for research.” The form is for an optional extra note or email. We will not email a pressure. We don’t upload your tyres. The full notice is on the <a href="privacy.html">privacy page</a>.</p>
     </section>
   </main>
 
@@ -542,7 +542,7 @@
       <div class="hint" id="dockHint">Cold front / rear</div>
       <strong id="dockValue">—</strong>
     </div>
-    <a class="btn btn-primary" href="#answers">Full answer</a>
+    <a class="btn" href="#answers">Full answer</a>
   </div>
 
   <footer class="site-footer">
@@ -555,7 +555,9 @@
         <a href="#how-to-use">How to use</a>
         <a href="#sources">Sources</a>
         <a href="#faq">FAQ</a>
-        <a href="#privacy">Privacy</a>
+        <a href="privacy.html">Privacy</a>
+        <a href="cookies.html">Cookies</a>
+        <a href="terms.html">Terms</a>
       </nav>
       <section class="footer-hubs" aria-labelledby="footer-hubs-title">
         <h2 id="footer-hubs-title">More calculators</h2>
@@ -566,7 +568,7 @@
           <a href="https://motorhometools.co.uk/guides/">Guides</a>
         </nav>
       </section>
-      <p class="fine">Full legal pages live on the tools home site: <a href="https://motorhometools.co.uk/privacy.html">Privacy</a>, <a href="https://motorhometools.co.uk/cookies.html">Cookies</a>, <a href="https://motorhometools.co.uk/disclaimer.html">Disclaimer</a>.</p>
+      <p class="fine"><a href="privacy.html">Privacy</a>, <a href="cookies.html">Cookies</a> and <a href="terms.html">Terms</a> are on this site.</p>
       <p class="fine">Not affiliated with Fiat, Peugeot, Citroën, General Tire, Michelin or any tyre maker. © <span id="yearNow"></span></p>
     </div>
   </footer>

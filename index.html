@@ -237,8 +237,8 @@
 }
   </script>
 
-  <!-- ASSET_VERSION=20260923qa — bump this query on CSS/JS below to force-refresh cached assets. -->
-  <link rel="stylesheet" href="styles.css?v=20260923qa">
+  <!-- ASSET_VERSION=20261015golive — bump this query on CSS/JS below to force-refresh cached assets. -->
+  <link rel="stylesheet" href="styles.css?v=20261015golive">
 
 </head>
 <body>
@@ -340,7 +340,7 @@
             <div class="saved-van" id="savedVanBanner" hidden>
               <p class="saved-van-trust">Saved on this phone only. We don’t upload your van.</p>
               <div class="saved-van-actions">
-                <button type="button" class="btn btn-primary" id="restoreVan">Restore last van</button>
+                <button type="button" class="btn" id="restoreVan">Restore last van</button>
                 <button type="button" class="btn" id="clearVan">Clear saved van</button>
               </div>
             </div>
@@ -409,7 +409,7 @@
               </datalist>
               <p class="hint" style="margin-top:0.35rem">Coachbuilt converters (Hymer and similar) are left blank after a registration lookup — pick the chassis platform if you know it.</p>
               <div class="presets" style="margin-top:0.65rem">
-                <button type="button" class="btn" id="lookupSpecBtn">Look up make / model / year</button>
+                <button type="button" class="btn btn-ghost" id="lookupSpecBtn">Look up make / model / year</button>
               </div>
               <div id="setup" class="api-key-box" hidden>
                 <div class="field">
@@ -1008,7 +1008,7 @@
     <section class="prose" id="more-tools">
       <h2>Also on this hub</h2>
       <p>Fitted a different tyre size? The Tyres tool turns the sidewall plus front and rear axle weights into cold front and rear bar and PSI from the published tables listed on that page.</p>
-      <p><a class="btn btn-primary" href="tyres.html">Open the Tyres tool</a></p>
+      <p><a class="btn" href="tyres.html">Open the Tyres tool</a></p>
     </section>
 
     <section class="prose more-calculators" id="more-calculators">
@@ -1044,7 +1044,7 @@
 
     <section class="prose" id="privacy">
       <h2>Privacy</h2>
-      <p>No account and no advertising cookies. Calculator figures stay in this browser’s local storage and are not filled in until you restore them. Demo plates and make, model and year stay in this browser. A registration lookup is sent to this site when it can answer it. Otherwise a live lookup is sent to DVLA only if this browser has a key saved. We don’t upload your van.</p>
+      <p>No account and no tracking or advertising cookies. Calculator figures stay in this browser’s local storage and are not filled in until you restore them. A UK registration lookup is sent to a Cloudflare Worker, which asks DVLA. Demo plates and make, model and year stay in this browser if that lookup cannot be answered. We don’t upload your van. The full notice is on the <a href="privacy.html">privacy page</a>.</p>
     </section>
   </main>
 
@@ -1054,7 +1054,7 @@
       <div class="hint" id="dockHint">Remaining payload</div>
       <strong id="dockValue">—</strong>
     </div>
-    <a class="btn btn-primary" href="#results">Full breakdown</a>
+    <a class="btn" href="#results">Full breakdown</a>
   </div>
 
   <footer class="site-footer">
@@ -1069,7 +1069,9 @@
         <a href="#faq">FAQ</a>
         <a href="#weight-plate">VIN plate</a>
         <a href="#about">About</a>
-        <a href="#privacy">Privacy</a>
+        <a href="privacy.html">Privacy</a>
+        <a href="cookies.html">Cookies</a>
+        <a href="terms.html">Terms</a>
       </nav>
       <section class="footer-hubs" aria-labelledby="footer-hubs-title">
         <h2 id="footer-hubs-title">More calculators</h2>
@@ -1080,7 +1082,7 @@
           <a href="https://motorhometools.co.uk/guides/">Guides</a>
         </nav>
       </section>
-      <p class="fine">Full legal pages live on the tools home site: <a href="https://motorhometools.co.uk/privacy.html">Privacy</a>, <a href="https://motorhometools.co.uk/cookies.html">Cookies</a>, <a href="https://motorhometools.co.uk/disclaimer.html">Disclaimer</a>.</p>
+      <p class="fine"><a href="privacy.html">Privacy</a>, <a href="cookies.html">Cookies</a> and <a href="terms.html">Terms</a> are on this site.</p>
       <p class="fine">Not affiliated with Fiat, Peugeot, Citroën or any converter. Plated weights on your vehicle always take priority.</p>
     </div>
   </footer>

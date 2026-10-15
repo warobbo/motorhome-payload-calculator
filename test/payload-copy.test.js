@@ -165,13 +165,17 @@ describe("payload page identity and honesty", function () {
     assert.doesNotMatch(nav, /target="_blank"/);
     assert.doesNotMatch(foot, /target="_blank"/);
     assert.ok(nav.indexOf(">Home<") < nav.indexOf("Payload"), "Home should lead the hub nav");
+    assert.match(foot, /href="privacy\.html">Privacy</);
+    assert.match(foot, /href="cookies\.html">Cookies</);
+    assert.match(foot, /href="terms\.html">Terms</);
     assert.match(
       html,
-      /Full legal pages live on the tools home site:[\s\S]*href="https:\/\/motorhometools\.co\.uk\/privacy\.html">Privacy<\/a>/
+      /<a href="privacy\.html">Privacy<\/a>, <a href="cookies\.html">Cookies<\/a> and <a href="terms\.html">Terms<\/a> are on this site\./
     );
-    assert.match(html, /href="https:\/\/motorhometools\.co\.uk\/cookies\.html">Cookies<\/a>/);
-    assert.match(html, /href="https:\/\/motorhometools\.co\.uk\/disclaimer\.html">Disclaimer<\/a>/);
-    assert.match(foot, /href="#privacy">Privacy</);
+    assert.doesNotMatch(html, /motorhometools\.co\.uk\/privacy\.html/);
+    assert.doesNotMatch(html, /motorhometools\.co\.uk\/cookies\.html/);
+    assert.doesNotMatch(html, /motorhometools\.co\.uk\/disclaimer\.html/);
+    assert.doesNotMatch(html, /Full legal pages live on the tools home site/);
   });
 
   it("cross-links Power, Water and Motorhome Tools without breaking Wave A legal or guides", function () {
@@ -267,7 +271,7 @@ describe("payload page identity and honesty", function () {
     assert.match(html, />Clear saved van</);
     assert.match(html, /Saved on this phone only\. We don’t upload your van\./);
     assert.match(html, /Figures stay on this device only and are not filled in until you tap Restore last van/);
-    assert.match(html, /styles\.css\?v=20260923qa/);
+    assert.match(html, /styles\.css\?v=20261015golive/);
     assert.match(html, /app\.js\?v=20261014worker/);
     assert.match(app, /var state = freshState\(\)/);
     assert.match(app, /var pageLoadSnapshot = readSavedVan\(\)/);

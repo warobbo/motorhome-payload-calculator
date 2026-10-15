@@ -69,7 +69,20 @@ describe("sitemap lastmod", function () {
       sitemap,
       /<loc>https:\/\/motorhomepayload\.co\.uk\/tyres\.html<\/loc>\s*<lastmod>2026-09-15<\/lastmod>/
     );
-    assert.equal((sitemap.match(/<lastmod>/g) || []).length, 2);
+    assert.match(
+      sitemap,
+      /<loc>https:\/\/motorhomepayload\.co\.uk\/privacy\.html<\/loc>\s*<lastmod>2026-10-15<\/lastmod>/
+    );
+    assert.match(
+      sitemap,
+      /<loc>https:\/\/motorhomepayload\.co\.uk\/cookies\.html<\/loc>\s*<lastmod>2026-10-15<\/lastmod>/
+    );
+    assert.match(
+      sitemap,
+      /<loc>https:\/\/motorhomepayload\.co\.uk\/terms\.html<\/loc>\s*<lastmod>2026-10-15<\/lastmod>/
+    );
+    assert.doesNotMatch(sitemap, /404\.html/);
+    assert.equal((sitemap.match(/<lastmod>/g) || []).length, 5);
   });
 });
 
@@ -134,6 +147,22 @@ describe("static server", function () {
     const map = await request(port, "/sitemap.xml");
     assert.equal(map.status, 200);
     assert.match(map.body, /<lastmod>2026-09-15<\/lastmod>/);
+    assert.match(map.body, /privacy\.html/);
+    assert.match(map.body, /cookies\.html/);
+    assert.match(map.body, /terms\.html/);
+
+    const privacy = await request(port, "/privacy.html");
+    assert.equal(privacy.status, 200);
+    assert.match(privacy.body, /<h1>Privacy<\/h1>/);
+
+    const missing = await request(port, "/no-such-page");
+    assert.equal(missing.status, 404);
+    assert.match(missing.body, /<h1>Page not found<\/h1>/);
+    assert.match(missing.body, /Motorhome Payload Calculator/);
+
+    const missingFile = await request(port, "/404.html");
+    assert.equal(missingFile.status, 200);
+    assert.match(missingFile.body, /<h1>Page not found<\/h1>/);
   });
 
   it("returns 404 for dotfiles and dot-folders without changing public routes", async function () {

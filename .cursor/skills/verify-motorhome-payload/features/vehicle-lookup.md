@@ -11,7 +11,7 @@ Lookup fills make, year, and a MAM figure. Mass in Service is not on a DVLA reco
 
 ## How to get to it (user POV)
 
-- On `/`, Vehicle base, type a registration in UK registration (`#vrm`) and press Look up vehicle (`#lookupBtn`). Enter works too.
+- On `/`, Vehicle base, type a registration in UK registration (`#vrm`) and press Look up vehicle (`#lookupBtn`). Enter works too. That button is the only filled call to action on the page. Restore last van, Look up make / model / year, presets, print, the water comparison and the dock link are outline.
 - Or type Make, Model / platform, and Year, then press Look up make / model / year (`#lookupSpecBtn`).
 - The status line is `#lookupStatus`. The identity card is `#identityTitle`.
 - `/?setup=1` reveals the browser-only key boxes. Do not type a key.

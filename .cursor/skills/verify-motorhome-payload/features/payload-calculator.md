@@ -17,7 +17,7 @@ The payload page turns a plated MAM and a van base (Mass in Service, or an empty
 
 - Open `/` or the header link Payload.
 - The results sit in Loaded weight vs MAM (`#results`) and in the bottom dock (`#dockValue`).
-- Presets are the four buttons under Start from a typical van.
+- Presets are the four buttons under Start from a typical van. A selected preset is a soft pine outline (`aria-pressed="true"`). It does not become a second filled button. Look up vehicle stays the only filled call to action.
 - Sections Vehicle base, People & pets, Fluids, Gas bottles, Electrical & solar, and Gear & other hold the inputs. Gas, Electrical, and Gear start closed.
 - Metric and Imperial are the unit radios in the header.
 

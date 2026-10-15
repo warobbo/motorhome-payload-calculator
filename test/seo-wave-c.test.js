@@ -34,13 +34,15 @@ describe("SEO Wave C cross-family links", function () {
     assert.match(more, /href="https:\/\/motorhometools\.co\.uk\/guides\/"/);
   });
 
-  it("keeps Wave A Tools legal links and on-page privacy", function () {
+  it("points footer legal links at this site and keeps the on-page privacy note", function () {
     for (const html of [index, tyres]) {
-      assert.match(html, /Full legal pages live on the tools home site:/);
-      assert.match(html, /href="https:\/\/motorhometools\.co\.uk\/privacy\.html">Privacy</);
-      assert.match(html, /href="https:\/\/motorhometools\.co\.uk\/cookies\.html">Cookies</);
-      assert.match(html, /href="https:\/\/motorhometools\.co\.uk\/disclaimer\.html">Disclaimer</);
-      assert.match(html, /href="#privacy">Privacy</);
+      assert.match(html, /<a href="privacy\.html">Privacy<\/a>, <a href="cookies\.html">Cookies<\/a> and <a href="terms\.html">Terms<\/a> are on this site\./);
+      assert.match(html, /href="privacy\.html">Privacy</);
+      assert.match(html, /href="cookies\.html">Cookies</);
+      assert.match(html, /href="terms\.html">Terms</);
+      assert.match(html, /id="privacy"/);
+      assert.doesNotMatch(html, /motorhometools\.co\.uk\/(?:privacy|cookies|disclaimer)\.html/);
+      assert.doesNotMatch(html, /Full legal pages live on the tools home site/);
     }
   });
 

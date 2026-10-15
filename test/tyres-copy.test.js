@@ -45,8 +45,8 @@ describe("tyres missing-size capture copy", function () {
   });
 
   it("bumps cache-bust and keeps the sticky bar off the form footer", function () {
-    assert.match(html, /ASSET_VERSION=20260923qa/);
-    assert.match(html, /styles\.css\?v=20260923qa/);
+    assert.match(html, /ASSET_VERSION=20261015golive/);
+    assert.match(html, /styles\.css\?v=20261015golive/);
     assert.match(html, /tyre-amber-db\.js\?v=20260912lt1/);
     assert.match(html, /tyre-calc\.js\?v=20260912lt1/);
     assert.match(html, /tyres-app\.js\?v=20260912lt1/);
@@ -75,12 +75,16 @@ describe("tyres missing-size capture copy", function () {
     assert.match(html, /<a class="brand" href="\/">/);
     assert.match(html, /<a href="\/">Payload<\/a>/);
     assert.match(html, /<a href="\/">payload calculator<\/a>/);
+    assert.match(foot, /href="privacy\.html">Privacy</);
+    assert.match(foot, /href="cookies\.html">Cookies</);
+    assert.match(foot, /href="terms\.html">Terms</);
     assert.match(
       html,
-      /Full legal pages live on the tools home site:[\s\S]*href="https:\/\/motorhometools\.co\.uk\/privacy\.html">Privacy<\/a>/
+      /<a href="privacy\.html">Privacy<\/a>, <a href="cookies\.html">Cookies<\/a> and <a href="terms\.html">Terms<\/a> are on this site\./
     );
-    assert.match(html, /href="https:\/\/motorhometools\.co\.uk\/cookies\.html">Cookies<\/a>/);
-    assert.match(html, /href="https:\/\/motorhometools\.co\.uk\/disclaimer\.html">Disclaimer<\/a>/);
+    assert.doesNotMatch(html, /motorhometools\.co\.uk\/privacy\.html/);
+    assert.doesNotMatch(html, /motorhometools\.co\.uk\/cookies\.html/);
+    assert.doesNotMatch(html, /motorhometools\.co\.uk\/disclaimer\.html/);
     assert.match(html, /rel="canonical" href="https:\/\/motorhomepayload\.co\.uk\/tyres\.html"/);
     assert.match(html, /property="og:image" content="https:\/\/motorhomepayload\.co\.uk\/og-image\.png"/);
     assert.match(html, /<script type="application\/ld\+json">/);

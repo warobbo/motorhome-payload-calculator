@@ -34,9 +34,11 @@ Update this feature map in the same PR whenever a build changes pages or tools. 
 - `https://motorhomepayload.co.uk/` and local `/` — payload calculator. The live Node host and this server answer lookup on `/api/vehicle-lookup`. The static publish posts to `window.VEHICLE_LOOKUP_ENDPOINT` (the Worker `/api/vehicle-lookup` route). If that request fails, that copy looks up demo plates and the catalogue in the page.
 - `https://motorhomepayload.co.uk/tyres.html` and local `/tyres.html` — tyre pressures. The research note posts to `site-config.js` (`/api/missing-size` on this verification server, the Worker URL in production).
 - `/index.html` redirects to `/`
-- `/robots.txt` is the static file `robots.txt`: allow `/`, disallow `/api/`, and a sitemap line. `/sitemap.xml` lists the payload page and the tyres page.
-- `/privacy` is a section on the payload page (`#privacy`), not a separate route
-- Header Home points at `https://motorhometools.co.uk/`. That site is outside this repo.
+- `/robots.txt` is the static file `robots.txt`: allow `/`, disallow `/api/`, and a sitemap line. `/sitemap.xml` lists the payload page, the tyres page, and `privacy.html`, `cookies.html` and `terms.html`. It does not list `404.html`.
+- `/privacy.html`, `/cookies.html` and `/terms.html` are this site’s legal pages. Footer links on the payload and tyres pages point at those files. The payload and tyres pages also keep a short `#privacy` note.
+- `/404.html` is the branded missing page. Render serves it for an unknown path. This server returns that file with status 404 for a missing public path such as `/no-such-page`, and returns the file itself with status 200 at `/404.html`. A dot path stays plain text `Not found`.
+- Header Home points at `https://motorhometools.co.uk/`. That site is outside this repo. Power, Water and Guides still leave for it. The legal pages do not.
+- On `/`, Look up vehicle (`#lookupBtn`) is the only filled button. Restore, the catalogue lookup, presets, print, the water comparison, the tyres link and the dock link are outline. A selected preset is a soft pine outline, not a second filled button. The tyre page calculates as you type and has no filled button.
 
 ## Features
 
@@ -46,4 +48,4 @@ Update this feature map in the same PR whenever a build changes pages or tools. 
 - [Tyre pressure](./tyre-pressure.md) — cold inflation from the published tables, plus the bar/PSI converter.
 - [Missing tyre size](./missing-tyre-size.md) — refusal and the research note. No invented pressure.
 - [Saved on this device](./saved-figures.md) — restore and clear for the van and for tyres.
-- [Site pages](./site-pages.md) — the two tools, the `/index.html` redirect, the header links between them, and the crawl rules in `/robots.txt`.
+- [Site pages](./site-pages.md) — the two tools, the legal pages, the branded 404, the `/index.html` redirect, the header links, and the crawl rules in `/robots.txt`.

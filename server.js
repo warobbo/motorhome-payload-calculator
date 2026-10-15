@@ -60,6 +60,20 @@ function notFound(res) {
   res.end("Not found");
 }
 
+function sendMissingPage(res) {
+  fs.readFile(path.join(ROOT, "404.html"), (err, data) => {
+    if (err || !data) {
+      notFound(res);
+      return;
+    }
+    res.writeHead(404, {
+      "Content-Type": "text/html; charset=utf-8",
+      "Cache-Control": "no-cache",
+    });
+    res.end(data);
+  });
+}
+
 const server = http.createServer((req, res) => {
   const urlPath = decodeURIComponent((req.url || "/").split("?")[0]);
 
@@ -101,7 +115,11 @@ const server = http.createServer((req, res) => {
 
   fs.readFile(filePath, (err, data) => {
     if (err) {
-      notFound(res);
+      if (urlPath.startsWith("/api/")) {
+        notFound(res);
+        return;
+      }
+      sendMissingPage(res);
       return;
     }
     const ext = path.extname(filePath);

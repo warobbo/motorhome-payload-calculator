@@ -151,9 +151,11 @@ a { color: var(--pine); }
   display: block;
   overflow: hidden;
 }
-.brand h1 {
+.brand h1,
+.brand-name {
   margin: 0;
   font-size: 0.98rem;
+  font-weight: 650;
   letter-spacing: -0.02em;
   line-height: 1.2;
 }
@@ -578,8 +580,37 @@ input[aria-invalid="true"]:focus {
   border-color: var(--pine);
   color: #fff;
 }
-.btn-ghost { background: transparent; }
-.btn-warn { background: var(--copper); border-color: var(--copper); color: #fff; }
+/* Look up vehicle is the only filled call to action on the calculator. */
+#lookupBtn {
+  min-height: 3.25rem;
+  padding: 0.8rem 1.4rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  box-shadow: 0 10px 22px rgba(30, 79, 67, 0.28);
+}
+#lookupBtn:hover {
+  background: var(--pine-2);
+  border-color: var(--pine-2);
+}
+@media (max-width: 559px) {
+  #lookupBtn { width: 100%; }
+}
+.btn-ghost { background: transparent; color: var(--muted); font-weight: 550; }
+.btn-ghost:hover { color: var(--ink); }
+.preset-btn[aria-pressed="true"] {
+  background: var(--pine-soft);
+  border-color: var(--pine);
+  color: var(--pine);
+  font-weight: 700;
+}
+.btn-warn {
+  background: transparent;
+  border-color: var(--copper);
+  color: #8a3e16;
+  font-weight: 550;
+}
+.btn-warn:hover { background: var(--copper-soft); border-color: var(--copper); }
 
 /* Results */
 .results {
@@ -1102,6 +1133,32 @@ footer.site-footer {
   font-size: 0.88rem;
 }
 .fine { opacity: 0.8; font-size: 0.78rem; margin: 0.8rem 0 0; }
+
+body.doc-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+body.doc-page .wrap { flex: 1 0 auto; padding-bottom: 2.5rem; }
+.legal { max-width: 42rem; }
+.legal h1,
+.missing-page h1 {
+  font-family: var(--display);
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  margin: 0.35rem 0 0.45rem;
+}
+.legal h2 { font-family: var(--display); font-size: 1.35rem; margin: 1.4rem 0 0.4rem; }
+.legal .updated { color: var(--muted); margin-top: 0; }
+.missing-page { max-width: 36rem; }
+.missing-page .eyebrow { margin-bottom: 0.35rem; }
+.missing-actions { display: flex; flex-wrap: wrap; gap: 0.55rem; margin-top: 1.15rem; }
+@media (max-width: 979px) {
+  body.doc-page footer.site-footer {
+    padding-bottom: calc(1.6rem + env(safe-area-inset-bottom, 0px));
+  }
+}
 
 /* Mobile dock — body child, so full-bleed without negative margins (those overflow iPhone). */
 .dock {

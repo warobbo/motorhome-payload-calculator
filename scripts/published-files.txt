@@ -1,5 +1,9 @@
 index.html
 tyres.html
+privacy.html
+cookies.html
+terms.html
+404.html
 styles.css
 app.js
 tyres-app.js

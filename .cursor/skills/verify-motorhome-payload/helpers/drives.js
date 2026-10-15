@@ -443,8 +443,36 @@ async function sitePages(ctx) {
   const sitemap = await httpGet(origin + "/sitemap.xml");
   const sitemapOk = sitemap.status === 200
     && sitemap.body.indexOf("https://motorhomepayload.co.uk/</loc>") !== -1
-    && sitemap.body.indexOf("https://motorhomepayload.co.uk/tyres.html") !== -1;
-  compare(rows, "GET /sitemap.xml", "200 and both public URLs", sitemapOk ? "200 and both public URLs" : String(sitemap.status));
+    && sitemap.body.indexOf("https://motorhomepayload.co.uk/tyres.html") !== -1
+    && sitemap.body.indexOf("https://motorhomepayload.co.uk/privacy.html") !== -1
+    && sitemap.body.indexOf("https://motorhomepayload.co.uk/cookies.html") !== -1
+    && sitemap.body.indexOf("https://motorhomepayload.co.uk/terms.html") !== -1
+    && sitemap.body.indexOf("404.html") === -1;
+  compare(rows, "GET /sitemap.xml", "200 and the public pages", sitemapOk ? "200 and the public pages" : String(sitemap.status));
+  const legalLocal = home.body.indexOf('href="privacy.html"') !== -1
+    && home.body.indexOf('href="cookies.html"') !== -1
+    && home.body.indexOf('href="terms.html"') !== -1
+    && home.body.indexOf("motorhometools.co.uk/privacy.html") === -1
+    && home.body.indexOf("motorhometools.co.uk/cookies.html") === -1
+    && home.body.indexOf("motorhometools.co.uk/disclaimer.html") === -1
+    && tyres.body.indexOf('href="privacy.html"') !== -1
+    && tyres.body.indexOf("motorhometools.co.uk/privacy.html") === -1;
+  compare(rows, "Footer legal links", "local privacy, cookies and terms", legalLocal ? "local privacy, cookies and terms" : "off-site or missing");
+  const privacy = await httpGet(origin + "/privacy.html");
+  const cookies = await httpGet(origin + "/cookies.html");
+  const termsPage = await httpGet(origin + "/terms.html");
+  const missingFile = await httpGet(origin + "/404.html");
+  const missing = await httpGet(origin + "/no-such-page");
+  const privacyOk = privacy.status === 200 && privacy.body.indexOf("<h1>Privacy</h1>") !== -1 && privacy.body.indexOf("Cloudflare Worker") !== -1 && privacy.body.indexOf("DVLA") !== -1;
+  compare(rows, "GET /privacy.html", "200 Privacy, Worker, DVLA", privacyOk ? "200 Privacy, Worker, DVLA" : String(privacy.status));
+  const cookiesOk = cookies.status === 200 && cookies.body.indexOf("<h1>Cookies</h1>") !== -1 && cookies.body.indexOf("does not use tracking cookies") !== -1;
+  compare(rows, "GET /cookies.html", "200 Cookies, no tracking cookies", cookiesOk ? "200 Cookies, no tracking cookies" : String(cookies.status));
+  const termsOk = termsPage.status === 200 && termsPage.body.indexOf("<h1>Terms</h1>") !== -1;
+  compare(rows, "GET /terms.html", "200 Terms", termsOk ? "200 Terms" : String(termsPage.status));
+  const fileOk = missingFile.status === 200 && missingFile.body.indexOf("<h1>Page not found</h1>") !== -1 && missingFile.body.indexOf("Motorhome Payload Calculator") !== -1;
+  compare(rows, "GET /404.html", "200 branded missing page", fileOk ? "200 branded missing page" : String(missingFile.status));
+  const missingOk = missing.status === 404 && missing.body.indexOf("<h1>Page not found</h1>") !== -1;
+  compare(rows, "GET /no-such-page", "404 branded missing page", missingOk ? "404 branded missing page" : String(missing.status));
   const opened = await openPage(ctx.browser, ctx.baseUrl);
   try {
     await click(opened.page, 'nav[aria-label="Hub tools"] a[href="tyres.html"]');
@@ -455,7 +483,22 @@ async function sitePages(ctx) {
     await opened.page.waitForSelector("h1");
     await boot(opened.page);
     compare(rows, "Header Payload link", "Motorhome Payload Calculator", await text(opened.page, "h1"));
+    await click(opened.page, 'footer.site-footer a[href="privacy.html"]');
+    await opened.page.waitForFunction(function () {
+      const heading = document.querySelector("h1");
+      return heading && heading.textContent.trim() === "Privacy";
+    });
+    compare(rows, "Footer Privacy link", "Privacy", await text(opened.page, "h1"));
+    await shot(opened.page, path.join(dir, "privacy-page.png"));
+    await opened.page.goto(ctx.baseUrl, { waitUntil: "domcontentloaded" });
+    await opened.page.waitForSelector("#lookupBtn");
+    await boot(opened.page);
     await shot(opened.page, path.join(dir, "payload-header.png"));
+    await shot(opened.page, path.join(dir, "lookup-cta.png"), ".lookup");
+    const lookupOnly = await opened.page.$$eval(".btn-primary", function (nodes) {
+      return nodes.map(function (node) { return node.id || node.textContent.trim(); });
+    });
+    compare(rows, "Filled call to action", "lookupBtn", lookupOnly.length === 1 && lookupOnly[0] === "lookupBtn" ? "lookupBtn" : lookupOnly.join(","));
   } finally {
     await opened.context.close();
   }
