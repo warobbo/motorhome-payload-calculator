@@ -162,7 +162,10 @@ describe("tyres opt-in restore", function () {
     assert.match(sources, /11R22\.5/);
     assert.doesNotMatch(sources, /rear never below 5\.5 bar/);
     assert.doesNotMatch(sources, /Don’t go above the maximum/);
-    assert.match(sources, /tyresafe\.org\/vehicle-owners\/motorhome-tyre-safety\/load-and-inflation-tables/);
+    assert.match(sources, /tyresafe\.org\/the-checks\/check-your-pressures\/motorhome-tyre-pressure\//);
+    assert.doesNotMatch(sources, /load-and-inflation-tables/);
+    assert.match(sources, /gov\.uk\/guidance\/mot-inspection-manual-for-private-passenger-and-light-commercial-vehicles\/appendix-b-tyre-load-index-tables/);
+    assert.match(sources, /Open Government Licence v3\.0/);
     assert.match(html, /<p class="lede">Enter the size printed on the tyre you fitted\.<\/p>/);
     assert.doesNotMatch(html, /that box names/);
     assert.doesNotMatch(html, /you can send the size so we can look/);
