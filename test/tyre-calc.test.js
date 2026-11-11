@@ -655,18 +655,22 @@ describe("C vs LT path", function () {
     assert.equal(r.capacityKg, 1685);
   });
 
-  it("keeps the ETRTO path for a C size that is not in the book", function () {
+  it("refuses a C size that is not in the book, with no number (fallback estimate switched off)", function () {
     const parsed = parseSidewall("195/75 R15C 110/108 R");
     assert.equal(parsed.family, "C");
-    assert.equal(resolvePressurePath(parsed).path, "c-etrto");
+    const path = resolvePressurePath(parsed);
+    assert.equal(path.path, "no-table");
+    assert.equal(path.reason, "c-size-unknown");
     const r = coldPressureForAxle({
       sidewall: "195/75 R15C 110/108 R",
       axleLoadKg: 1600,
       tyresOnAxle: 2
     });
-    assert.equal(r.path, "c-etrto");
-    assert.equal(r.status, "ok");
-    assert.ok(r.bar > 0);
+    assert.equal(r.ok, false);
+    assert.equal(r.error, "no-table");
+    assert.equal(r.reason, "c-size-unknown");
+    assert.equal(r.bar, undefined);
+    assert.equal(r.capacityKg, undefined);
   });
 
   it("does not invent a table for a P-metric size we have not embedded", function () {
