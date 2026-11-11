@@ -402,6 +402,9 @@
         if (result.reason === "lt-size-unknown") {
           return "That LT size is not in our table yet, so this page will not invent a pressure.";
         }
+        if (result.reason === "c-size-unknown") {
+          return "That van tyre size is not in our maker tables, so this page will not give a pressure or capacity. Check the tyre maker’s own load and pressure table.";
+        }
         if (result.reason === "cp-size-unknown") {
           return "That camping tyre size is not in our table yet, so this page will not invent a pressure.";
         }
@@ -625,6 +628,9 @@
     }
     if (result.reason === "lt-size-unknown") {
       return "That LT size is not in our table yet.";
+    }
+    if (result.reason === "c-size-unknown") {
+      return "That van tyre size is not in our maker tables yet.";
     }
     if (result.reason === "cp-size-unknown") {
       return "That camping tyre size is not in our table yet.";

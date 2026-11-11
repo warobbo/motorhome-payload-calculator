@@ -48,8 +48,8 @@ describe("tyres missing-size capture copy", function () {
     assert.match(html, /ASSET_VERSION=20261015golive/);
     assert.match(html, /styles\.css\?v=20261015golive/);
     assert.match(html, /tyre-amber-db\.js\?v=20260912lt1/);
-    assert.match(html, /tyre-calc\.js\?v=20260912lt1/);
-    assert.match(html, /tyres-app\.js\?v=20260912lt1/);
+    assert.match(html, /tyre-calc\.js\?v=20261111cfb/);
+    assert.match(html, /tyres-app\.js\?v=20261111cfb/);
     assert.match(css, /Keep the last fields and Send above the sticky cold-pressure bar/);
     assert.match(css, /\.missing-size/);
     assert.match(css, /\[hidden\] \{ display: none !important; \}/);
@@ -116,7 +116,7 @@ describe("tyres opt-in restore", function () {
     assert.match(html, />Clear saved</);
     assert.match(html, /Saved on this phone only\. We don’t upload your tyres\./);
     assert.match(html, /are not filled in until you restore them/);
-    assert.match(html, /tyres-app\.js\?v=20260912lt1/);
+    assert.match(html, /tyres-app\.js\?v=20261111cfb/);
     assert.match(app, /function restoreLastTyres/);
     assert.match(app, /function clearSaved/);
     assert.match(app, /if \(booting \|\| !persistEnabled\) return;/);
