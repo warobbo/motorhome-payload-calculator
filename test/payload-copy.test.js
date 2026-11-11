@@ -222,23 +222,26 @@ describe("payload page identity and honesty", function () {
     assert.match(html, /id="axleMamNote"/);
   });
 
-  it("offers one Maps search for a nearby weighbridge under the Best path", function () {
+  it("offers the GOV.UK weighbridge finder, then one Maps search, under the Best path", function () {
     const pathStart = html.indexOf('class="path-card"');
     const pathEnd = html.indexOf('id="weighbridge-axle"');
     const path = html.slice(pathStart, pathEnd);
     assert.ok(pathStart > 0 && pathEnd > pathStart, "Best path card should sit above the axle card");
     assert.match(path, /<strong>Best:<\/strong> an empty weighbridge ticket/);
+    assert.match(path, /href="https:\/\/www\.gov\.uk\/find-weighbridge"/);
+    assert.match(path, />Find a weighbridge using the official GOV\.UK service</);
     assert.match(
       path,
       /href="https:\/\/www\.google\.com\/maps\/search\/\?api=1&query=weighbridge\+near\+me"/
     );
-    assert.match(path, />Find a weighbridge near you</);
+    assert.match(path, />Or find a weighbridge on Google Maps</);
+    assert.ok(path.indexOf("gov.uk/find-weighbridge") < path.indexOf("google.com/maps"), "GOV.UK finder comes first");
     assert.match(path, /target="_blank"/);
     assert.match(path, /rel="noopener noreferrer"/);
-    assert.match(path, /Opens Maps — check it’s public \/ suitable for your van\./);
+    assert.match(path, /Secondary option — check it’s public \/ suitable for your van\./);
     assert.doesNotMatch(path, /open now/i);
     assert.doesNotMatch(html, /places\.googleapis|weighbridge directory|weighbridge-directory/i);
-    assert.equal((html.match(/Find a weighbridge near you/g) || []).length, 1);
+    assert.equal((html.match(/google\.com\/maps\/search\/\?api=1&query=weighbridge/g) || []).length, 1);
   });
 
   it("locks the payload copy: legally, VIN plate path, empty make/year, driver and fuel helpers", function () {
