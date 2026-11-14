@@ -262,10 +262,10 @@ describe("payload page identity and honesty", function () {
     assert.match(html, /Mass in Service includes 90% fuel\. Only the difference over 90% is added\./);
     assert.match(html, /id="fuelAssumptionMiro"/);
     assert.match(html, /id="fuelAssumptionEmpty"[^>]*hidden/);
-    assert.match(html, /The full fuel tank is added\. If the van was already weighed with fuel in the tank, enter only the fuel you will add after that weighing, or 0\./);
+    assert.match(html, /All the fuel set here is added, because the ticket is the van only\. If you were weighed with fuel in the tank, set Fuel fill level \(%\) to just the extra you’ll add \(for example 50 if you were half full and will fill up\), or 0\./);
     assert.match(html, /id="fluidsLedeMiro"/);
     assert.match(html, /id="fluidsLedeEmpty"[^>]*hidden/);
-    assert.match(html, /Your empty weighbridge ticket is treated as the van only, so water and the full fuel tank are added\./);
+    assert.match(html, /Your empty weighbridge ticket is treated as the van only, so water and all the fuel you set below are added\./);
     assert.match(app, /getElementById\("fluidsLedeMiro"\)/);
     assert.match(app, /getElementById\("fluidsLedeEmpty"\)/);
     assert.match(app, /getElementById\("fuelAssumptionMiro"\)/);

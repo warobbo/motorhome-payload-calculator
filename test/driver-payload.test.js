@@ -26,7 +26,7 @@ describe("driverPayloadKg", function () {
     assert.equal(driverPayloadKg({ driverKg: 70, actualEmpty: 3000 }), 70);
   });
 
-  it("on the equivalent Mass in Service path, a 70 kg driver brings the total to 3106 kg", function () {
+  it("on the empty-ticket-equivalent Mass in Service path, a 70 kg driver brings the total to 3106 kg", function () {
     const base = 2800 + ASSUMED_DRIVER_KG + 90 * 0.9 * 0.84;
     const people = driverPayloadKg({ driverKg: 70, actualEmpty: "" }) + 80;
     const water = 80;
@@ -39,5 +39,22 @@ describe("driverPayloadKg", function () {
     const total = base + people + water + fuel;
     assert.equal(people, 75);
     assert.equal(Math.round(total), 3106);
+    assert.equal(Math.round(3500 - total), 394);
+  });
+
+  it("on a 3050 kg Mass in Service path, a 70 kg driver brings the total to 3213 kg", function () {
+    const base = 3050;
+    const people = driverPayloadKg({ driverKg: 70, actualEmpty: "" }) + 80;
+    const water = 80;
+    const fuel = fuelPayloadKg({
+      fuelCap: 90,
+      fuelFill: 100,
+      fuelDensity: 0.84,
+      actualEmpty: ""
+    });
+    const total = base + people + water + fuel;
+    assert.equal(people, 75);
+    assert.equal(Math.round(total), 3213);
+    assert.equal(Math.round(3500 - total), 287);
   });
 });
