@@ -567,7 +567,8 @@
             </span>
           </summary>
           <div class="body">
-            <p class="lede">Water is 1 kg per litre and is usually empty in Mass in Service, so a full tank is extra. Mass in Service includes most diesel (about 90%); this page only adds the top-up — on a 90 L tank filled to 100% that is about 8 <span class="u-weight">kg</span>, not the whole 76 <span class="u-weight">kg</span>.</p>
+            <p class="lede" id="fluidsLedeMiro">Water is 1 kg per litre and is usually empty in Mass in Service, so a full tank is extra. Mass in Service includes most diesel (about 90%); this page only adds the top-up — on a 90 L tank filled to 100% that is about 8 <span class="u-weight">kg</span>, not the whole 76 <span class="u-weight">kg</span>.</p>
+            <p class="lede" id="fluidsLedeEmpty" hidden>Water is 1 kg per litre. Your empty weighbridge ticket is treated as the van only, so water and all the fuel you set below are added. Diesel is about 0.84 kg per litre.</p>
             <div class="grid-2">
               <div class="field">
                 <label for="freshCap">Fresh water capacity</label>
@@ -608,7 +609,8 @@
                 <label for="fuelFill">Fuel fill level (%)</label>
                 <input id="fuelFill" type="number" inputmode="decimal" min="0" max="100" step="1" data-key="fuelFill">
               </div>
-              <p class="assumption assumption-fuel">Mass in Service includes 90% fuel. Only the difference over 90% is added.</p>
+              <p class="assumption assumption-fuel" id="fuelAssumptionMiro">Mass in Service includes 90% fuel. Only the difference over 90% is added.</p>
+              <p class="assumption assumption-fuel" id="fuelAssumptionEmpty" hidden>All the fuel set here is added, because the ticket is the van only. If you were weighed with fuel in the tank, set Fuel fill level (%) to just the extra you’ll add (for example 50 if you were half full and will fill up), or 0.</p>
               <div class="field">
                 <label for="fuelDensity">Diesel density</label>
                 <input id="fuelDensity" type="number" inputmode="decimal" min="0.7" max="1" step="0.01" data-key="fuelDensity">
@@ -1093,7 +1095,7 @@
   </footer>
 
   <script src="lib/fuel-payload.js?v=20260910need1"></script>
-  <script src="lib/driver-payload.js?v=20260910need1"></script>
+  <script src="lib/driver-payload.js?v=20261114driver"></script>
   <script src="lib/mass-in-service.js?v=20260910need1"></script>
   <script src="lib/custom-kit.js?v=20260910need1"></script>
   <script src="lib/axle-check.js?v=20260911amend1"></script>
@@ -1103,6 +1105,6 @@
   <script src="lib/van-catalogue.js?v=20261014static"></script>
   <script src="lib/vehicle-lookup.js?v=20261014static"></script>
   <script src="site-config.js?v=20261014worker"></script>
-  <script src="app.js?v=20261015a11y"></script>
+  <script src="app.js?v=20261114fluids"></script>
 </body>
 </html>

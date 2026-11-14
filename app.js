@@ -615,8 +615,17 @@
   }
 
   function syncWeighedEmptyUi() {
+    var usingEmpty = usingActualEmpty();
     var emptyNote = document.getElementById("weighedEmptyNote");
-    if (emptyNote) emptyNote.hidden = !usingActualEmpty();
+    if (emptyNote) emptyNote.hidden = !usingEmpty;
+    var ledeMiro = document.getElementById("fluidsLedeMiro");
+    var ledeEmpty = document.getElementById("fluidsLedeEmpty");
+    if (ledeMiro) ledeMiro.hidden = usingEmpty;
+    if (ledeEmpty) ledeEmpty.hidden = !usingEmpty;
+    var fuelMiro = document.getElementById("fuelAssumptionMiro");
+    var fuelEmpty = document.getElementById("fuelAssumptionEmpty");
+    if (fuelMiro) fuelMiro.hidden = usingEmpty;
+    if (fuelEmpty) fuelEmpty.hidden = !usingEmpty;
   }
 
   function syncAxleModeUi() {
@@ -976,7 +985,7 @@
     document.getElementById("warnOver").classList.toggle("show", r.remaining < 0);
     document.getElementById("warnLow").classList.toggle("show", r.remaining >= 0 && r.remaining < 100);
 
-    var maxCat = Math.max(r.people, r.water, Math.abs(r.fuel), r.gas, r.electrical, r.gear, 1);
+    var maxCat = Math.max(Math.abs(r.people), r.water, Math.abs(r.fuel), r.gas, r.electrical, r.gear, 1);
     document.getElementById("breakdown").innerHTML =
       barRow("People & pets", r.people, maxCat) +
       barRow("Fresh / grey / black water", r.water, maxCat) +
