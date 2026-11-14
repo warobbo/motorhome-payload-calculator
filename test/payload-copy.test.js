@@ -260,6 +260,18 @@ describe("payload page identity and honesty", function () {
     assert.match(html, /Mass in Service includes most diesel \(about 90%\)/);
     assert.doesNotMatch(html, /Mass in Service usually already includes most diesel/);
     assert.match(html, /Mass in Service includes 90% fuel\. Only the difference over 90% is added\./);
+    assert.match(html, /id="fuelAssumptionMiro"/);
+    assert.match(html, /id="fuelAssumptionEmpty"[^>]*hidden/);
+    assert.match(html, /The full fuel tank is added\. If the van was already weighed with fuel in the tank, enter only the fuel you will add after that weighing, or 0\./);
+    assert.match(html, /id="fluidsLedeMiro"/);
+    assert.match(html, /id="fluidsLedeEmpty"[^>]*hidden/);
+    assert.match(html, /Your empty weighbridge ticket is treated as the van only, so water and the full fuel tank are added\./);
+    assert.match(app, /getElementById\("fluidsLedeMiro"\)/);
+    assert.match(app, /getElementById\("fluidsLedeEmpty"\)/);
+    assert.match(app, /getElementById\("fuelAssumptionMiro"\)/);
+    assert.match(app, /getElementById\("fuelAssumptionEmpty"\)/);
+    assert.match(app, /if \(fuelMiro\) fuelMiro\.hidden = usingEmpty;/);
+    assert.match(app, /if \(fuelEmpty\) fuelEmpty\.hidden = !usingEmpty;/);
     assert.doesNotMatch(html, /difference from 90%/);
     assert.doesNotMatch(html, /90% fuel \(usual\)/);
     assert.match(html, /<span>Awning<\/span>/);
@@ -275,7 +287,7 @@ describe("payload page identity and honesty", function () {
     assert.match(html, /Saved on this phone only\. We don’t upload your van\./);
     assert.match(html, /Figures stay on this device only and are not filled in until you tap Restore last van/);
     assert.match(html, /styles\.css\?v=20261015golive/);
-    assert.match(html, /app\.js\?v=20261015a11y/);
+    assert.match(html, /app\.js\?v=20261114fluids/);
     assert.match(app, /var state = freshState\(\)/);
     assert.match(app, /var pageLoadSnapshot = readSavedVan\(\)/);
     assert.match(app, /if \(booting \|\| !persistEnabled\) return;/);
